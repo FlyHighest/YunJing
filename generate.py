@@ -4,12 +4,15 @@ from pywebio.output import *
 from pywebio.pin import *
 
 import time 
-
+import httpx
 from aiohttp import web
 from pywebio.platform.aiohttp import webio_handler
 
+from secret import MODEL_URL
+import json
 image_gen_text = ""
 server_error_text = "服务器错误"
+
 
 @use_scope('images', clear=True)
 def preview_image_gen():
@@ -19,9 +22,28 @@ def preview_image_gen():
 
     try:
         with put_loading(shape="grow",color="primary"):
-            time.sleep(15)
-        image_data = None 
-        put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
+            text2image_data = {
+                "type":"text2image",
+                "model_name": "openjourney",
+                "scheduler_name": pin['scheduler'],
+                "prompt": pin['prompt'],
+                "negative_prompt":pin['negative_prompt'],
+                "height":pin['height'],
+                "width": pin['width'],
+                "num_inference_steps": pin['num_steps'],
+                "guidance_scale": pin['guidance_scale']
+            }
+            print(text2image_data)
+            prediction = httpx.post(
+                MODEL_URL,
+                data=json.dumps(text2image_data),
+            )
+
+            if prediction.status_code == 200:
+                output_img_url = json.loads(prediction.content)['img_url']
+                put_image(output_img_url)
+            else:
+                print(prediction.status_code, prediction.content)
 
     except Exception as e:
         logging.exception(e)
@@ -102,26 +124,26 @@ def main():
         ])
         put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=0.5)
         put_row([ 
-            put_column(put_select("num_steps",label="推理步骤",options=[20,25,30,35,40],value=25)),
-            put_column(put_select("scheduler",label="采样器",options=["Euler A","DPM","Euler","LMS"],value="Euler A")),
+            put_column(put_select("num_steps",label="推理步骤",options=[20,25,30,35,40],value=20)),
+            put_column(put_select("scheduler",label="采样器",options=["DPM","K_Euler","K_EULER_ANCESTRAL","DDIM","K_LMS","PNDM"],value="DPM")),
         ])
         put_button('开始绘制',onclick=preview_image_gen)
     
     session.run_js('$("div.webio-scrollable.scrollable-border").css("max-height","calc(100vh - 150px)")')
 
-    with use_scope('history'):
-        put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
-        put_markdown("---")
-        put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
-        put_markdown("---")
-        put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
-        put_markdown("---")
-        put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
-        put_markdown("---")
-        put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
-        put_markdown("---")
-        put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
-        put_markdown("---")
+    # with use_scope('history'):
+        # put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
+        # put_markdown("---")
+        # put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
+        # put_markdown("---")
+        # put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
+        # put_markdown("---")
+        # put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
+        # put_markdown("---")
+        # put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
+        # put_markdown("---")
+        # put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
+        # put_markdown("---")
 
 
 
