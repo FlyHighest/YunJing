@@ -39,11 +39,16 @@ def preview_image_gen():
                 data=json.dumps(text2image_data),
             )
 
-            if prediction.status_code == 200:
-                output_img_url = json.loads(prediction.content)['img_url']
-                put_image(output_img_url)
-            else:
-                print(prediction.status_code, prediction.content)
+        if prediction.status_code == 200:
+            output_img_url = json.loads(prediction.content)['img_url']
+            put_image(output_img_url)
+        else:
+            output_img_url = 'http://storage.dong-liu.com/rabit-newyear.jpg'
+            put_image(output_img_url)
+            print(prediction.status_code, prediction.content)
+            toast(server_error_text)
+        with use_scope('history_images'):
+            put_image(output_img_url)
 
     except Exception as e:
         logging.exception(e)
@@ -55,16 +60,30 @@ def preview_image_gen():
 
 
 css = """
+#pywebio-scope-history_images img {
+    max-width: 45%;
+    margin: 2%;
+    border-radius: 6% ;
+}
+
 #pywebio-scope-images {
     height: calc(100vh - 150px);
-    overflow-y: hidden;
+    overflow-y: scroll;
+}
+#pywebio-scope-history {
+    height: calc(100vh - 150px);
+    overflow-y: scroll;
+}
+#pywebio-scope-history:hover {
+    overflow-y: scroll;
 }
 #pywebio-scope-images:hover {
     overflow-y: scroll;
 }
 #pywebio-scope-input {
     height: calc(100vh - 150px);
-    overflow-y: hidden;
+    overflow-y: scroll;
+    text-align: center;
 }
 #pywebio-scope-input:hover {
     overflow-y: scroll;
@@ -103,13 +122,11 @@ def main():
 
     put_row(
         [
-            put_scope('input'),
-            None, 
-            put_scope('images'),
-            None,
-            put_scrollable(put_scope('history'), height=100, keep_bottom=True)
+            put_scope('input'),   
+            put_scope('images').style("text-align: center"),
+            put_scope('history'), 
         ],
-        size="2fr 30px 6fr 30px 2fr",
+        size="3fr 4fr 3fr",
     )
 
     with use_scope('input'):
@@ -124,12 +141,20 @@ def main():
         ])
         put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=0.5)
         put_row([ 
-            put_column(put_select("num_steps",label="推理步骤",options=[20,25,30,35,40],value=20)),
-            put_column(put_select("scheduler",label="采样器",options=["DPM","K_Euler","K_EULER_ANCESTRAL","DDIM","K_LMS","PNDM"],value="DPM")),
-        ])
-        put_button('开始绘制',onclick=preview_image_gen)
+            put_column(put_select("num_inference_steps",label="推理步骤",options=[20,25,30,35,40],value=20)),
+            put_column(put_select("scheduler",label="采样器",options=["DPM","Euler","EULER_A","DDIM","K_LMS","PNDM"],value="DPM")),
+        ]),
+        put_select("model_name",label="模型",options=["stable-diffusion","anything-v3","openjourney","太乙"],value="太乙"),
+        put_input("seed",label="随机种子",value="-1")
+        put_button('开始绘制',onclick=preview_image_gen).style("")
     
-    session.run_js('$("div.webio-scrollable.scrollable-border").css("max-height","calc(100vh - 150px)")')
+    with use_scope('history'):
+        
+        put_text("历史记录")
+        put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)
+        
+        
+    #session.run_js('$("div.webio-scrollable.scrollable-border").css("max-height","calc(100vh - 150px)")')
 
     # with use_scope('history'):
         # put_image("http://storage.dong-liu.com/rabit-newyear.jpg")
@@ -152,4 +177,4 @@ if __name__ == '__main__':
     # app.add_routes([web.get('/', webio_handler(main, cdn=True))])
 
     # web.run_app(app, host='localhost', port=8800)
-    start_server(main)
+    start_server(main,port=8888)

@@ -1,0 +1,11 @@
+class ImageInfo:
+    prompt=""
+    negative_prompt=""
+    width=""
+    height=""
+    guidance_scale=""
+    num_inference_steps=""
+    scheduler=""
+    seed=""
+    model_name=""
+    img_url=""
