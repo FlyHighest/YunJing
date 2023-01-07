@@ -165,8 +165,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # app = web.Application()
-    # app.add_routes([web.get('/', webio_handler(main, cdn=True))])
+    app = web.Application()
+    app.add_routes([web.get('/', webio_handler(main, cdn=True))])
 
-    # web.run_app(app, host='localhost', port=8800)
-    start_server(main,port=8888)
+    web.run_app(app, host='localhost', port=3407)
