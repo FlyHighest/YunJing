@@ -163,7 +163,7 @@ def main():
         put_text("历史记录 (仅保留20张)")
         put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)
 
-async def my_web_app():
+async def aiohttp_app():
     app = web.Application()
     app.add_routes([web.get('/', webio_handler(main, cdn=True))])
     return app
