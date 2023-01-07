@@ -82,7 +82,7 @@ def get_upscale_url():
             else:
                 raise ServerError
             
-            put_text('高清图下载地址: '+output_img_url)
+            put_link('高清图片链接',url=output_img_url,new_window=True)
 
     except ServerError as _:
         toast(server_error_text,duration=4,color="warn")
@@ -132,8 +132,8 @@ def preview_image_gen():
 
         # 这里是正常处理
         put_row([
-            put_button("获取高清图(x4)",color="secondary", onclick=get_upscale_url),
-            put_button("发布到画廊",onclick=lambda: toast("暂未开放"))
+            put_button("获取高清图(x4)",color="info", onclick=get_upscale_url),
+            put_button("发布到画廊",color="info",onclick=lambda: toast("暂未开放"))
         ]).style("margin: 5%")
         with use_scope('history_images'):
             session.local.history_image_cnt += 1
@@ -203,4 +203,4 @@ if __name__ == '__main__':
     app = web.Application()
     app.add_routes([web.get('/', webio_handler(main, cdn=True))])
 
-    web.run_app(app, host='localhost', port=3407)
+    web.run_app(app, host='localhost', port=5001)
