@@ -100,7 +100,7 @@ def preview_image_gen():
 
         # 这里是正常处理
         put_row([
-            put_button("下载", onclick=None),
+            put_button("下载", onclick=lambda: toast("在图像上点击右键存储")),
             put_button("发布",onclick=lambda: toast("暂未开放"))
         ]).style("margin: 5%")
         with use_scope('history_images'):
