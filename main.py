@@ -59,6 +59,37 @@ css = """
   border: 2px
 }
 """
+@use_scope('images', clear=False)
+def get_upscale_url():
+    try:
+        with put_loading():
+            upscale_data = {
+                    "type":"upscale",
+                    "img_url":session.local.current_img
+                }
+
+            post_data = json.dumps(upscale_data)
+            prediction = httpx.post(
+                MODEL_URL,
+                data=post_data,
+            )
+            if prediction.status_code == 200:
+                output_img_url = json.loads(prediction.content)['img_url']
+                session.local.current_img = output_img_url
+                if output_img_url =="Error":
+                    raise ServerError
+
+            else:
+                raise ServerError
+            
+            put_text('高清图下载地址: '+output_img_url)
+
+    except ServerError as _:
+        toast(server_error_text,duration=4,color="warn")
+    except Exception as _:
+        toast(server_error_text,duration=4,color="warn")
+
+
 
 
 @use_scope('images', clear=True)
@@ -90,6 +121,7 @@ def preview_image_gen():
         # 检查结果，异常抛出
         if prediction.status_code == 200:
             output_img_url = json.loads(prediction.content)['img_url']
+            session.local.current_img = output_img_url
             if output_img_url =="Error":
                 raise ServerError
             elif output_img_url =="NSFW":
@@ -100,8 +132,8 @@ def preview_image_gen():
 
         # 这里是正常处理
         put_row([
-            put_button("下载", onclick=lambda: toast("在图像上点击右键存储")),
-            put_button("发布",onclick=lambda: toast("暂未开放"))
+            put_button("获取高清图(x4)",color="secondary", onclick=get_upscale_url),
+            put_button("发布到画廊",onclick=lambda: toast("暂未开放"))
         ]).style("margin: 5%")
         with use_scope('history_images'):
             session.local.history_image_cnt += 1
@@ -115,8 +147,7 @@ def preview_image_gen():
     except ServerError as _:
         toast(server_error_text,duration=4,color="warn")
     except Exception as _:
-        clear()
-        popup(server_error_text)
+        toast(server_error_text,duration=4,color="warn")
 
     session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",false)''')
 
