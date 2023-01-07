@@ -152,10 +152,10 @@ def main():
         ])
         put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=0.5)
         put_row([ 
-            put_column(put_select("num_inference_steps",label="推理步骤",options=[20,25,30,35,40],value=20)),
+            put_column(put_select("num_inference_steps",label="推理步骤",options=[20,25,30,35,40],value=30)),
             put_column(put_select("scheduler",label="采样器",options=["DPM","EULER","EULER_A","DDIM","K_LMS","PNDM"],value="DPM")),
         ]),
-        put_select("model_name",label="模型",options=["Stable-Diffusion-2.1","AltDiffusion","OpenJourney","Anything-v3","Taiyi-Chinese-v0.1"],value="AltDiffusion"),
+        put_select("model_name",label="模型",options=["OpenJourney","Anything-v3","Taiyi-Chinese-v0.1","Stable-Diffusion-2.1","AltDiffusion"],value="OpenJourney"),
         put_input("seed",label="随机种子",value="-1")
         put_scope("generate_button",put_button('开始绘制',onclick=preview_image_gen)).style("text-align: center")
     
