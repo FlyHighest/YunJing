@@ -76,63 +76,76 @@ css = """
 
 # @popup("title")
 def show_image_information_window(img_url):
-    text2image_data = session.local.rclient.get_history_image_information(img_url)
-    put_row([ 
-        put_image(img_url),
-        put_scope("popup_image_info")
-    ])
-    with use_scope("popup_image_info"):
-        put_text("提示词: "+text2image_data["prompt"])
-        put_text("反向提示词: "+text2image_data["negative_prompt"])
+    generation_id = get_generation_id(img_url)
+    with popup("生成参数信息"):
+        text2image_data = session.local.rclient.get_history_image_information(img_url)
         put_row([ 
-            put_column(put_select("width",label="宽度",value=text2image_data["width"])),
-            put_column(put_select("height",label="高度",value=text2image_data["height"])),
-        ])
-        put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=text2image_data["guidance_scale"])
-        put_row([ 
-            put_column(put_select("num_inference_steps",label="推理步骤",options=[20,25,30,35,40],value=text2image_data["num_inference_steps"])),
-            put_column(put_select("scheduler",label="采样器",value=text2image_data["scheduler"])),
-        ]),
-        put_select("model_name",label="模型",value=text2image_data["model_name"]),
-        put_input("seed",label="随机种子",value=text2image_data["seed"])
-        
+            put_scope("popup_image_disp"),
+            None,
+            put_scope("popup_image_info")
+        ],size="48% 4% 48%")
+        with use_scope("popup_image_disp"):
+            put_image(img_url)
+            put_column([
+                put_button("获取高清图",color="info", onclick=partial(put_upscale_url, scope="popup_image_disp", img_url=img_url)),
+                put_button("发布到画廊",color="info",onclick=lambda: toast("暂未开放")),
+                put_button("复刻这张图", color="info", onclick=lambda: session.go_app(f"{generation_id}"))
+            ]).style("margin: 3%")
 
-@use_scope('images', clear=False)
-def put_upscale_url():
-    session.local.rclient.enter_queue()
-    try:
-        if session.local.rclient.get_queue_size() > MAX_QUEUE:
-            raise QueueTooLong
-        with put_loading():
-            upscale_data = {
-                    "type":"upscale",
-                    "img_url":session.local.current_img
-                }
 
-            post_data = json.dumps(upscale_data)
-            prediction = httpx.post(
-                MODEL_URL,
-                data=post_data,
-            )
-            if prediction.status_code == 200:
-                output_img_url = json.loads(prediction.content)['img_url']
-                session.local.current_img = output_img_url
-                if output_img_url =="Error":
-                    raise ServerError
-
-            else:
-                raise ServerError
+        with use_scope("popup_image_info"):
+            put_text("✅ "+ (text2image_data["prompt"] or "(无提示词)" ) )
             
-            put_link('高清图片链接',url=output_img_url,new_window=True)
+            put_text("❌ "+ (text2image_data["negative_prompt"] or "(无反向提示词)" ) )
+            put_row([ 
+                put_column(put_select("width_info",label="宽度",options=[text2image_data["width"]],value=text2image_data["width"])),
+                put_column(put_select("height_info",label="高度",options=[text2image_data["height"]],value=text2image_data["height"])),
+            ])
+            put_slider('guidance_scale_info',label="引导程度",min_value=0,max_value=30,value=text2image_data["guidance_scale"])
+            put_row([ 
+                put_column(put_select("num_inference_steps_info",label="推理步骤",options=[text2image_data["num_inference_steps"]],value=text2image_data["num_inference_steps"])),
+                put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
+            ]),
+            put_select("model_name_info",label="模型",options=[text2image_data["model_name"]],value=text2image_data["model_name"]),
+            put_input("seed_info",label="随机种子",value=text2image_data["seed"])
+            
 
-    except ServerError as _:
-        toast(server_error_text,   duration=4,color="warn")
-    except QueueTooLong as _:
-        toast(queue_too_long_text, duration=4,color="warn")
-    except Exception as _:
-        toast(unknown_error_text , duration=4,color="warn")
+def put_upscale_url(scope, img_url):
+    with use_scope(scope):
+        session.local.rclient.enter_queue()
+        try:
+            if session.local.rclient.get_queue_size() > MAX_QUEUE:
+                raise QueueTooLong
+            with put_loading():
+                upscale_data = {
+                        "type":"upscale",
+                        "img_url": img_url
+                    }
 
-    session.local.rclient.enter_queue()
+                post_data = json.dumps(upscale_data)
+                prediction = httpx.post(
+                    MODEL_URL,
+                    data=post_data,
+                    timeout=40000
+                )
+                if prediction.status_code == 200:
+                    output_img_url = json.loads(prediction.content)['img_url']
+                    if output_img_url =="Error":
+                        raise ServerError
+
+                else:
+                    raise ServerError
+                
+                put_link('高清图片链接',url=output_img_url,new_window=True)
+
+        except ServerError as _:
+            toast(server_error_text,   duration=4,color="warn")
+        except QueueTooLong as _:
+            toast(queue_too_long_text, duration=4,color="warn")
+        except Exception as _:
+            toast(unknown_error_text , duration=4,color="warn")
+
+        session.local.rclient.enter_queue()
 
 
 
@@ -148,14 +161,12 @@ def preview_image_gen():
             raise QueueTooLong
 
         with put_loading(shape="border",color="primary"):
-            if int(pin['seed'])==-1:
-                # 可复现的生成。
-                seed = random.randint(-2**31,2**31-1)
-                
+            seed = random.randint(-2**31,2**31-1) if int(pin['seed'])==-1 else int(pin['seed'])
+        
             text2image_data = {
                 "type":"text2image",
                 "model_name":          pin['model_name'],
-                "scheduler_name":      pin['scheduler'],
+                "scheduler_name":      pin['scheduler_name'],
                 "prompt":              pin['prompt'],
                 "negative_prompt":     pin['negative_prompt'],
                 "height":              pin['height'],
@@ -180,26 +191,26 @@ def preview_image_gen():
                 raise ServerError
             elif output_img_url =="NSFW":
                 raise NSFWDetected
-            put_image(output_img_url)
+            put_image(output_img_url) # 大图output
         else:
             raise ServerError
 
         # 这里是正常处理
         put_row([
-            put_button("获取高清图(x4)",color="info", onclick=put_upscale_url),
+            put_button("获取高清图(x4)",color="info", onclick=partial(put_upscale_url, scope="images",img_url=output_img_url)),
             put_button("发布到画廊",color="info",onclick=lambda: toast("暂未开放"))
         ]).style("margin: 5%")
 
         # 历史记录相关
         with use_scope('history_images'):
             session.local.history_image_cnt += 1
-            session.local.rclient.append_history(session.local.client_id, output_img_url)
+            session.local.rclient.append_history(session.local.client_id, output_img_url,text2image_data)
 
             if  session.local.history_image_cnt > MAX_HISTORY:
                 session.local.history_image_cnt -= 1
                 session.local.rclient.pop_history(session.local.client_id)
                 session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
-            put_image(output_img_url)
+            put_image(output_img_url).onclick(partial(show_image_information_window, img_url=output_img_url))
         
     except NSFWDetected as _:
         toast(nsfw_warn_text,duration=4,color="warn")
@@ -257,7 +268,7 @@ def main():
         put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=0.5)
         put_row([ 
             put_column(put_select("num_inference_steps",label="推理步骤",options=[20,25,30,35,40],value=30)),
-            put_column(put_select("scheduler",label="采样器",options=["DPM","EULER","EULER_A","DDIM","K_LMS","PNDM"],value="DPM")),
+            put_column(put_select("scheduler_name",label="采样器",options=["DPM","EULER","EULER_A","DDIM","K_LMS","PNDM"],value="DPM")),
         ]),
         put_select("model_name",label="模型",options=["OpenJourney","Anything-v3","Taiyi-Chinese-v0.1","Stable-Diffusion-2.1","AltDiffusion"],value="OpenJourney"),
         put_input("seed",label="随机种子",value="-1")

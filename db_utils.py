@@ -76,7 +76,7 @@ class RClient:
 
     def get_history_image_information(self, img_url):
         generation_id = get_generation_id(img_url)
-        text2image_data = self.r.hmget("InfoHis:"+generation_id, keys=[
+        keys=[
             "type",
             "model_name",
             "scheduler_name",
@@ -86,8 +86,9 @@ class RClient:
             "width",
             "num_inference_steps",
             "guidance_scale",
-            "seed"])
-        return text2image_data
+            "seed"]
+        text2image_data_values = self.r.hmget("InfoHis:"+generation_id, keys)
+        return {k:v for k,v in zip(keys,text2image_data_values)}
 
     def store_gallery_image_information(self, img_url):
         generation_id = get_generation_id(img_url)
