@@ -14,6 +14,7 @@ from db_utils import RClient
 from custom_exception import *
 import random 
 import os 
+from functools import partial
 from utils import get_generation_id
 
 MAX_HISTORY = 10
@@ -73,15 +74,28 @@ css = """
 }
 """
 
-@popup("title")
+# @popup("title")
 def show_image_information_window(img_url):
-    generation_id = get_generation_id(img_url)
-
-
-    
-
-
-
+    text2image_data = session.local.rclient.get_history_image_information(img_url)
+    put_row([ 
+        put_image(img_url),
+        put_scope("popup_image_info")
+    ])
+    with use_scope("popup_image_info"):
+        put_text("提示词: "+text2image_data["prompt"])
+        put_text("反向提示词: "+text2image_data["negative_prompt"])
+        put_row([ 
+            put_column(put_select("width",label="宽度",value=text2image_data["width"])),
+            put_column(put_select("height",label="高度",value=text2image_data["height"])),
+        ])
+        put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=text2image_data["guidance_scale"])
+        put_row([ 
+            put_column(put_select("num_inference_steps",label="推理步骤",options=[20,25,30,35,40],value=text2image_data["num_inference_steps"])),
+            put_column(put_select("scheduler",label="采样器",value=text2image_data["scheduler"])),
+        ]),
+        put_select("model_name",label="模型",value=text2image_data["model_name"]),
+        put_input("seed",label="随机种子",value=text2image_data["seed"])
+        
 
 @use_scope('images', clear=False)
 def put_upscale_url():
@@ -255,7 +269,7 @@ def main():
     
     with use_scope('history_images'):
         for img in session.local.rclient.get_history(session.local.client_id):
-            put_image(img).onclick(lambda: toast("click"))
+            put_image(img).onclick(partial(show_image_information_window, img_url=img))
 
 if __name__ == '__main__':
     # app = web.Application()

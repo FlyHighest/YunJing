@@ -74,7 +74,7 @@ class RClient:
         self.r.hmset("InfoHis:"+generation_id, text2image_data)
         self.r.expire("InfoHis:"+generation_id, EXP_7DAYS)
 
-    def store_gallery_image_information(self, img_url):
+    def get_history_image_information(self, img_url):
         generation_id = get_generation_id(img_url)
         text2image_data = self.r.hmget("InfoHis:"+generation_id, keys=[
             "type",
@@ -87,4 +87,9 @@ class RClient:
             "num_inference_steps",
             "guidance_scale",
             "seed"])
+        return text2image_data
+
+    def store_gallery_image_information(self, img_url):
+        generation_id = get_generation_id(img_url)
+        text2image_data = self.get_history_image_information(img_url)
         self.r.hmset("InfoGal:"+generation_id, text2image_data)
