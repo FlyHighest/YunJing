@@ -5,3 +5,6 @@ class ServerError(Exception):
 class NSFWDetected(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
+
+class QueueTooLong(Exception):
+    pass 
