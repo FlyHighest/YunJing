@@ -25,6 +25,7 @@ server_error_text = "模型服务错误，请稍后再试"
 nsfw_warn_text = "检测到不适宜内容，请尝试更换提示词或随机种子"
 queue_too_long_text = "当前排队过长，请稍后再试"
 unknown_error_text = "未知错误"
+generation_outdated_error = "生成参数已过期"
 
 css = """
 #pywebio-scope-history_images img {
@@ -74,41 +75,63 @@ css = """
 }
 """
 
+def set_generation_params(generation_id):
+    text2image_data = session.local.rclient.get_image_information(generation_id=generation_id)
+    if text2image_data is None:
+        toast(generation_outdated_error,color="warn",duration=4)
+    else:
+        pin.model_name = text2image_data['model_name']
+        pin.scheduler_name = text2image_data["scheduler_name"]
+        pin.prompt= text2image_data["prompt"] 
+        pin.negative_prompt = text2image_data["negative_prompt"]
+        pin.height = text2image_data["height"]
+        pin.width = text2image_data["width"],
+        pin.num_inference_steps = text2image_data["num_inference_steps"]
+        pin.guidance_scale = text2image_data["guidance_scale"]
+        pin.seed = text2image_data["seed"]
+
+def close_popup_and_set_params(generation_id):
+    close_popup()
+    set_generation_params(generation_id)
+
 # @popup("title")
 def show_image_information_window(img_url):
     generation_id = get_generation_id(img_url)
-    with popup("生成参数信息"):
-        text2image_data = session.local.rclient.get_history_image_information(img_url)
-        put_row([ 
-            put_scope("popup_image_disp"),
-            None,
-            put_scope("popup_image_info")
-        ],size="48% 4% 48%")
-        with use_scope("popup_image_disp"):
-            put_image(img_url)
-            put_column([
-                put_button("获取高清图",color="info", onclick=partial(put_upscale_url, scope="popup_image_disp", img_url=img_url)),
-                put_button("发布到画廊",color="info",onclick=lambda: toast("暂未开放")),
-                put_button("复刻这张图", color="info", onclick=lambda: session.go_app(f"{generation_id}"))
-            ]).style("margin: 3%")
+    with popup("图像信息"):
+        text2image_data = session.local.rclient.get_image_information(img_url)
+        if text2image_data is None:
+            put_warning(generation_outdated_error)
+        else:
+            put_row([ 
+                put_scope("popup_image_disp"),
+                None,
+                put_scope("popup_image_info")
+            ],size="48% 4% 48%")
+            with use_scope("popup_image_disp"):
+                put_image(img_url)
+                put_column([
+                    put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
+                    put_button("发布到画廊",color="info",onclick=lambda: toast("暂未开放")),
+                    put_button("获取高清图",color="info", onclick=partial(put_upscale_url, scope="popup_image_disp", img_url=img_url)),
+                ]).style("margin: 3%")
 
 
-        with use_scope("popup_image_info"):
-            put_text("✅ "+ (text2image_data["prompt"] or "(无提示词)" ) )
-            
-            put_text("❌ "+ (text2image_data["negative_prompt"] or "(无反向提示词)" ) )
-            put_row([ 
-                put_column(put_select("width_info",label="宽度",options=[text2image_data["width"]],value=text2image_data["width"])),
-                put_column(put_select("height_info",label="高度",options=[text2image_data["height"]],value=text2image_data["height"])),
-            ])
-            put_slider('guidance_scale_info',label="引导程度",min_value=0,max_value=30,value=text2image_data["guidance_scale"])
-            put_row([ 
-                put_column(put_select("num_inference_steps_info",label="推理步骤",options=[text2image_data["num_inference_steps"]],value=text2image_data["num_inference_steps"])),
-                put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
-            ]),
-            put_select("model_name_info",label="模型",options=[text2image_data["model_name"]],value=text2image_data["model_name"]),
-            put_input("seed_info",label="随机种子",value=text2image_data["seed"])
-            
+            with use_scope("popup_image_info"):
+                put_text("✅ "+ (text2image_data["prompt"] or "(无提示词)" ) )
+                
+                put_text("❌ "+ (text2image_data["negative_prompt"] or "(无反向提示词)" ) )
+                put_row([ 
+                    put_column(put_select("width_info",label="宽度",options=[text2image_data["width"]],value=text2image_data["width"])),
+                    put_column(put_select("height_info",label="高度",options=[text2image_data["height"]],value=text2image_data["height"])),
+                ])
+                put_slider('guidance_scale_info',label="引导程度",min_value=0,max_value=30,value=text2image_data["guidance_scale"])
+                put_row([ 
+                    put_column(put_select("num_inference_steps_info",label="推理步骤",options=[text2image_data["num_inference_steps"]],value=text2image_data["num_inference_steps"])),
+                    put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
+                ]),
+                put_select("model_name_info",label="模型",options=[text2image_data["model_name"]],value=text2image_data["model_name"]),
+                put_input("seed_info",label="随机种子",value=text2image_data["seed"])
+                
 
 def put_upscale_url(scope, img_url):
     with use_scope(scope):
