@@ -3,7 +3,7 @@ secret.py
 __pycache__/
 *.py[cod]
 *$py.class
-
+*qiniu*
 # C extensions
 *.so
 
