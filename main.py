@@ -115,7 +115,7 @@ def set_generation_params(generation_id):
         pin.negative_prompt = text2image_data["negative_prompt"]
         pin.height = text2image_data["height"]
         pin.width = text2image_data["width"]
-        pin.num_inference_steps = text2image_data["num_inferencesteps"]
+        pin.num_inference_steps = text2image_data["num_inference_steps"]
         pin.guidance_scale = text2image_data["guidance_scale"]
         pin.seed = text2image_data["seed"]
 
@@ -324,7 +324,7 @@ def main():
         ])
         put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=0.5)
         put_row([ 
-            put_column(put_select("num_inference_steps",label="推理步骤",options=[20,25,30,35,40],value=30)),
+            put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="30")),
             put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="DPM")),
         ]),
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
