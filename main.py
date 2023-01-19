@@ -56,7 +56,7 @@ def show_image_information_window(img_url, fuke_func=None):
             put_warning(generation_outdated_error_text)
         else:
             put_row([ 
-                put_scope("popup_image_disp"),
+                put_scope("popup_image_disp").style("text-align: center"),
                 None,
                 put_scope("popup_image_info")
             ],size="48% 4% 48%")
@@ -108,7 +108,7 @@ def put_upscale_url(scope, img_url):
                 prediction = httpx.post(
                     MODEL_URL,
                     data=post_data,
-                    timeout=40000
+                    timeout=180000
                 )
                 if prediction.status_code == 200:
                     output_img_url = json.loads(prediction.content)['img_url']
@@ -130,7 +130,11 @@ def put_upscale_url(scope, img_url):
         finally:
             session.local.rclient.quit_queue()
 
-
+def convert_int(s):
+    try:
+        return int(s)
+    except:
+        return -1
 
 
 @use_scope('images', clear=False)
@@ -144,7 +148,9 @@ def preview_image_gen():
             raise QueueTooLong
 
         with put_loading(shape="border",color="primary"):
-            seed = random.randint(-2**31,2**31-1) if int(pin['seed'])==-1 else int(pin['seed'])
+            seed = convert_int(pin['seed'])
+            
+            seed = random.randint(-2**31,2**31-1) if seed==-1 else seed
         
             text2image_data = {
                 "type":"text2image",
@@ -163,7 +169,7 @@ def preview_image_gen():
             prediction = httpx.post(
                 MODEL_URL,
                 data=post_data,
-                timeout=40000
+                timeout=180000
             )
 
         # 检查结果，异常抛出
@@ -249,7 +255,7 @@ def main():
         put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=0.5)
         put_row([ 
             put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="30")),
-            put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="DPM")),
+            put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="Euler_A")),
         ]),
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
         put_input("seed",label="随机种子",value="-1")

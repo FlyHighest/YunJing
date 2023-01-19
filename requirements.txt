@@ -2,3 +2,5 @@ httpx
 pywebio
 pywebio-battery
 tornado
+nanoid
+qiniu
