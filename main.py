@@ -4,10 +4,7 @@ from pywebio.output import *
 from pywebio.pin import *
 from pywebio_battery.web import *
 import traceback
-import time 
 import httpx
-from aiohttp import web
-from pywebio.platform.aiohttp import webio_handler
 from secret import MODEL_URL
 import json
 from db_utils import RClient
@@ -17,6 +14,10 @@ import os
 from functools import partial
 from utils import get_generation_id
 from pywebio.io_ctrl import output_register_callback
+
+import tornado.ioloop
+import tornado.web
+from pywebio.platform.tornado import webio_handler
 
 from constants import *
 
@@ -383,11 +384,12 @@ def index():
 
 
 if __name__ == '__main__':
-    app = web.Application()
-    app.add_routes([web.get('/', webio_handler(index, cdn=True))])
+    application = tornado.web.Application([
+        ('/', webio_handler(index, cdn=True)),
+        ('/main', webio_handler(main, cdn=True)),
+        ('/gallery', webio_handler(gallery, cdn=True))
+    ])
+    application.listen(port=5001, address='localhost')
+    tornado.ioloop.IOLoop.current().start()
 
-    app.add_routes([web.get('/main', webio_handler(main, cdn=True))])
-    app.add_routes([web.get('/gallery', webio_handler(gallery, cdn=True))])
-
-    web.run_app(app, host='localhost', port=5001)
     # start_server(gallery, port=5001)
