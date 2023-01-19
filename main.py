@@ -18,87 +18,10 @@ from functools import partial
 from utils import get_generation_id
 from pywebio.io_ctrl import output_register_callback
 
-from constants import MODELS,SCHEDULERS
-MAX_HISTORY = 10
-MAX_QUEUE = 10
-IMAGE_NUM_PER_LOAD = 20
-IMAGE_NUM_PER_ROW = 5
-image_gen_text = "正在生成，请稍后"
-server_error_text = "模型服务错误，请稍后再试"
-nsfw_warn_text = "检测到不适宜内容，请尝试更换提示词或随机种子"
-queue_too_long_text = "当前排队过长，请稍后再试"
-unknown_error_text = "未知错误"
-generation_outdated_error_text = "生成参数已过期"
-publish_success_text = "发布成功"
-publish_fail_text = "发布失败，请稍后再试"
-
-css = """
-#pywebio-scope-image_flow{
-    text-align:center;
-}
-#pywebio-scope-image_flow img{
-    width: 19%;
-    margin:0.5%;
-    float:left;
-    border-radius: 5% ;
-    transition: all 0.2s;
-}
-#pywebio-scope-image_flow img:hover {
-    transform: scale(1.05);
-}
-
-#pywebio-scope-history_images img {
-    max-width: 45%;
-    margin: 2%;
-    border-radius: 6% ;
-    transition: all 0.2s;
-}
-
-#pywebio-scope-history_images img:hover {
-
-    transform: scale(1.05);
-}
-#pywebio-scope-images {
-    height: calc(100vh - 150px);
-    overflow-y: scroll;
-}
-#pywebio-scope-history {
-    height: calc(100vh - 150px);
-    overflow-y: scroll;
-}
-#pywebio-scope-history:hover {
-    overflow-y: scroll;
-}
-#pywebio-scope-images:hover {
-    overflow-y: scroll;
-}
-#pywebio-scope-input {
-    height: calc(100vh - 150px);
-    overflow-y: scroll;
-}
-#pywebio-scope-input:hover {
-    overflow-y: scroll;
-}
-/* Works on Firefox */
-* {
-  scrollbar-width: thin;
-}
-/* Works on Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  width: 7px;
-}
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-*::-webkit-scrollbar-thumb {
-  background-color: gray;
-  border-radius: 20px;
-  border: 2px
-}
-"""
+from constants import *
 
 def publish_to_gallery(img_url):
-    ret = session.local.rclient.publish(img_url)
+    ret = session.local.rclient.record_publish(img_url)
     if ret:
         toast(publish_success_text, color="success")
     else:
@@ -195,7 +118,7 @@ def put_upscale_url(scope, img_url):
                     raise ServerError
                 
                 put_link('高清图片链接',url=output_img_url,new_window=True)
-
+                session.local.rclient.record_upscale_task()
         except ServerError as _:
             toast(server_error_text,   duration=4,color="warn")
         except QueueTooLong as _:
@@ -263,7 +186,7 @@ def preview_image_gen():
         # 历史记录相关
         with use_scope('history_images'):
             session.local.history_image_cnt += 1
-            session.local.rclient.append_history(session.local.client_id, output_img_url,text2image_data)
+            session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,text2image_data)
 
             if  session.local.history_image_cnt > MAX_HISTORY:
                 session.local.history_image_cnt -= 1
@@ -425,8 +348,44 @@ def gallery():
 
     load_more_images_on_gallery(0)
 
+@use_scope("current_server_status",clear=True)
+def show_server_status():
+    queue_size, generated_num, upscale_num, gallery_num = session.local.rclient.get_server_status()
+    put_markdown(f" \
+- 当前排队任务数：{queue_size} \n\
+- 已生成图像数：{generated_num} \n\
+- 超分辨率次数：{upscale_num} \n\
+- 画廊图像数：{gallery_num}  \
+    ") 
+
+@config(theme="minty", css_style=css)
+def index():
+    session.set_env(title='云景 · 首页', output_max_width='80%')
+    session.local.rclient: RClient = RClient()
+    put_markdown("# 云景 · 首页")
+    put_markdown("""
+
+[云景 · 绘图](/main)：在这里创作您的作品，用一组文本描述绘制画面。
+
+[云景 · 画廊](/gallery)：在这里分享您的创作参数，并参考别人的作品，也许其他人的经验能为您提供良好的开端。
+
+------
+    
+1. 免费的在线生成服务，无需付费、无广告烦扰。
+2. 多钟最新模型一键切换，还包括了两种支持中文提示词的文生图模型。
+3. 在画廊，与其他人分享你的创意或者复刻他人的创意。
+    """)
+    put_markdown("## 服务器状态")
+    put_button("刷新",onclick=show_server_status)
+    put_scope("current_server_status")
+    show_server_status()
+
+
+
 if __name__ == '__main__':
     app = web.Application()
+    app.add_routes([web.get('/', webio_handler(index, cdn=True))])
+
     app.add_routes([web.get('/main', webio_handler(main, cdn=True))])
     app.add_routes([web.get('/gallery', webio_handler(gallery, cdn=True))])
 

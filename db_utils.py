@@ -1,22 +1,3 @@
-'''
-需要记录的信息
-1. 用户信息，是否要做登陆，个人信息页面？
-2. text2image图像信息库: 当用户点击上传到画廊时，将图像移到另一个桶，获得新的url，并保存图像信息
-    - model_name          
-    - scheduler_name      
-    - prompt              
-    - negative_prompt     
-    - height              
-    - width               
-    - num_inference_steps 
-    - guidance_scale      
-    - seed
-    - img_url
-    - datetime : 提交时间
-    - checked : 是否确认过是高质量图像
-    - likes : 获赞数
-
-'''
 import random 
 import nanoid , os, traceback
 import redis
@@ -36,25 +17,71 @@ class RClient:
         self.r = redis.Redis("localhost", 6379, decode_responses=True)
         self.r.set("mosec_queue", 0)
 
+    # 整体统计
+    def get_server_status(self):
+        # 排队任务数
+        queue_size = self.get_queue_size()
+        # 已生成图像数
+        generated_num = self.get_generated_number()
+        # 高清图生成数量
+        upscale_num = self.get_upscale_number()
+        # 画廊图像数
+        gallery_num = self.get_gallery_number()
+        return queue_size, generated_num, upscale_num, gallery_num
+
+    def add_generated_number(self):
+        self.r.incr("status_generated_num")
+    
+    def get_generated_number(self):
+        try:
+            return int(self.r.get("status_generated_num"))
+        except:
+            return 0 
+
+    def add_upscale_number(self):
+        self.r.incr("status_upscale_num")
+
+    def get_upscale_number(self):
+        try:
+            return int(self.r.get("status_upscale_num"))
+        except:
+            return 0
+
+    def record_upscale_task(self):
+        self.add_upscale_number()
+
+    def add_gallery_number(self):
+        self.r.incr("status_gallery_num")
+    
+    def get_gallery_number(self):
+        try:
+            return int(self.r.get("status_gallery_num"))
+        except:
+            return 0
+
     # mosec服务器队列情况
     def enter_queue(self):
-        self.r.incr("mosec_queue")
+        self.r.incr("status_mosec_queue")
 
     def quit_queue(self):
-        self.r.decr("mosec_queue")
+        self.r.decr("status_mosec_queue")
 
     def get_queue_size(self):
-        return int(self.r.get("mosec_queue"))
+        try:
+            return int(self.r.get("status_mosec_queue"))
+        except:
+            return 0 
 
     # 用户历史记录相关
     def get_new_client_id(self):
         new_client_id = nanoid.generate(CLIENT_ID_ALPHABET, size=10)
         return new_client_id
 
-    def append_history(self, client_id, img_url, text2image_data):
+    def record_new_generated_image(self, client_id, img_url, text2image_data):
         self.r.rpush("His:"+client_id, img_url)
         self.r.expire("His:"+client_id, EXP_7DAYS)
         self.store_history_image_information(text2image_data, img_url)
+        self.add_generated_number()
 
     def pop_history(self, client_id):
         img_url = self.r.lpop("His:"+client_id)
@@ -104,10 +131,11 @@ class RClient:
         else :
             return None 
 
-    def publish(self,img_url):
+    def record_publish(self,img_url):
         try:
             self.update_lifecycle(img_url)
             self.store_gallery_image_information(img_url)
+            self.add_gallery_number()
             return True
         except Exception as _:
             traceback.print_exc()
@@ -134,6 +162,7 @@ class RClient:
         text2image_data = self.get_image_information(img_url)
         self.r.hmset("InfoGal:"+generation_id, text2image_data)
         self.r.rpush("Gal", img_url)
+        self.add_gallery_number()
 
     def get_random_samples_from_gallery(self, num):
         size = self.r.llen("Gal")
