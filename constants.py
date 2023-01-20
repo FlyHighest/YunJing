@@ -139,6 +139,7 @@ header_html_index = """
       </nav>
     </div>
   </header>
+  <hr />
 """
 
 header_html_main = """
@@ -163,4 +164,5 @@ header_html_gallery = """
       </nav>
     </div>
   </header>
+<hr />
 """

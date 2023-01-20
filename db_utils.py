@@ -162,7 +162,6 @@ class RClient:
         text2image_data = self.get_image_information(img_url)
         self.r.hmset("InfoGal:"+generation_id, text2image_data)
         self.r.rpush("Gal", img_url)
-        self.add_gallery_number()
 
     def get_random_samples_from_gallery(self, num):
         size = self.r.llen("Gal")
