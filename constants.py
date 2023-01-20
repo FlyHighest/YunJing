@@ -1,20 +1,31 @@
 MODELS = [
-    "Taiyi-Chinese-v0.1",
-    "Taiyi-Chinese-Anime-v0.1",
-    "Stable-Diffusion-2.1",
+    "Stable-Diffusion-v1.5",
     "Protogen-x5.8",
-    "Anything-v4.5"
+    "OpenJourney",
+    "ACertainThing",
+    "Anything-v3"
 ]
 
 SCHEDULERS = [
-    "PNDM", 
-    "LMS",
-    "DDIM",
+    "Euler a",
     "Euler",
-    "Euler_A",
-    "DPMSolver",
+    "LMS",
     "Heun",
-    "KDPM2_A"
+    "DPM2",
+    "DPM2 a",
+    "DPM++ 2S a",
+    "DPM++ 2M",
+    "DPM++ SDE",
+    "DPM fast",
+    "DPM adaptive",
+    "LMS Karras",
+    "DPM2 Karras",
+    "DPM2 a Karras",
+    "DPM++ 2S a Karras",
+    "DPM++ 2M Karras",
+    "DPM++ SDE Karras",
+    "DDIM",
+    "PLMS"
 ]
 
 MAX_HISTORY = 10
