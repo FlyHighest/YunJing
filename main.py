@@ -392,7 +392,10 @@ def page_index():
     put_button("刷新",onclick=show_server_status)
     put_scope("current_server_status")
     show_server_status()
-
+    put_markdown("""
+------
+如果您有疑问或者建议，欢迎加入交流群(QQ): 557228477
+    """)
 
 
 if __name__ == '__main__':
