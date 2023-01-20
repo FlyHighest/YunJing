@@ -29,7 +29,7 @@ unknown_error_text = "未知错误"
 generation_outdated_error_text = "生成参数已过期"
 publish_success_text = "发布成功"
 publish_fail_text = "发布失败，请稍后再试"
-
+too_frequent_error_text = "操作频率过于频繁，请三秒后再试"
 css = """
 #pywebio-scope-image_flow{
     text-align:center;
@@ -93,4 +93,74 @@ css = """
   border-radius: 20px;
   border: 2px
 }
+/*
+ * Header
+ */
+.masthead {
+  margin-bottom: 2rem;
+}
+
+.masthead-brand {
+  margin-bottom: 0;
+}
+
+.nav-masthead .nav-link {
+  padding: .25rem 0;
+  font-weight: 700;
+  color: rgba(0, 0, 0, .5);
+  background-color: transparent;
+  border-bottom: .25rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  border-bottom-color: rgba(0, 0, 0, .25);
+  text-decoration: none
+}
+
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+
+.nav-masthead .active {
+  color: #000;
+  border-bottom-color: #000;
+}
+
+"""
+
+header_html_index = """
+<header class="masthead mb-auto">
+    <div class="inner">
+      <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link active" href="/">首页</a>
+        <a class="nav-link" href="/main">绘图</a>
+        <a class="nav-link" href="/gallery">画廊</a>
+      </nav>
+    </div>
+  </header>
+"""
+
+header_html_main = """
+<header class="masthead mb-auto">
+    <div class="inner">
+      <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link" href="/">首页</a>
+        <a class="nav-link active" href="/main">绘图</a>
+        <a class="nav-link" href="/gallery">画廊</a>
+      </nav>
+    </div>
+  </header>
+"""
+
+header_html_gallery = """
+<header class="masthead mb-auto">
+    <div class="inner">
+      <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link" href="/">首页</a>
+        <a class="nav-link" href="/main">绘图</a>
+        <a class="nav-link active" href="/gallery">画廊</a>
+      </nav>
+    </div>
+  </header>
 """

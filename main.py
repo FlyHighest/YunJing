@@ -14,7 +14,7 @@ import os
 from functools import partial
 from utils import get_generation_id
 from pywebio.io_ctrl import output_register_callback
-
+import time 
 import tornado.ioloop
 import tornado.web
 from pywebio.platform.tornado import webio_handler
@@ -139,6 +139,9 @@ def convert_int(s):
 
 @use_scope('images', clear=False)
 def preview_image_gen():
+    if time.time() - session.local.last_task_time < 3:
+        toast(too_frequent_error_text)
+        return 
     toast(image_gen_text)
     clear()
     session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",true)''')
@@ -218,7 +221,7 @@ def preview_image_gen():
 
 
 @config(theme="minty", css_style=css)
-def main():
+def page_main():
     session.set_env(title='云景 · 绘图', output_max_width='100%')
     session.local.rclient: RClient = RClient()
     # 检查本地有没有cookie client id，如果没有，让服务器赋予一个。
@@ -226,12 +229,12 @@ def main():
         new_client_id = session.local.rclient.get_new_client_id()
         set_cookie("client_id", new_client_id)
     session.local.client_id = get_cookie("client_id")
-
+    session.local.last_task_time = time.time()
     session.local.history_image_cnt = session.local.rclient.get_history_length(session.local.client_id)
-
-    put_row([ 
-            put_column(put_markdown('## 云景 · 绘图')),
-        ])
+    put_html(header_html_main)
+    # put_row([ 
+    #         put_column(put_markdown('## 云景 · 绘图')),
+    #     ])
     
     put_row(
         [
@@ -311,11 +314,12 @@ def load_more_images_on_gallery(val):
     """)
 
 @config(theme="minty", css_style=css)
-def gallery():
+def page_gallery():
     session.set_env(title='云景 · 画廊', output_max_width='100%')
     session.local.rclient: RClient = RClient()
     callback_loadimages_id = output_register_callback(load_more_images_on_gallery)
- 
+    put_html(header_html_gallery)
+
     put_html("""
     <script>
            var index = 0;
@@ -348,9 +352,9 @@ def gallery():
         checkScroll();
     </script>
     """%callback_loadimages_id)
-    put_row([ 
-            put_column(put_markdown('## 云景 · 画廊')),
-        ])
+    # put_row([ 
+    #         put_column(put_markdown('## 云景 · 画廊')),
+    #     ])
     put_scope("image_flow")
 
     load_more_images_on_gallery(0)
@@ -366,9 +370,11 @@ def show_server_status():
     ") 
 
 @config(theme="minty", css_style=css)
-def index():
+def page_index():
     session.set_env(title='云景 · 首页', output_max_width='80%')
     session.local.rclient: RClient = RClient()
+    put_html(header_html_index)
+
     put_markdown("# 云景 · 首页")
     put_markdown("""
 
@@ -391,9 +397,9 @@ def index():
 
 if __name__ == '__main__':
     application = tornado.web.Application([
-        ('/', webio_handler(index, cdn=True)),
-        ('/main', webio_handler(main, cdn=True)),
-        ('/gallery', webio_handler(gallery, cdn=True))
+        ('/', webio_handler(page_index, cdn=True)),
+        ('/main', webio_handler(page_main, cdn=True)),
+        ('/gallery', webio_handler(page_gallery, cdn=True))
     ])
     application.listen(port=5001, address='localhost')
     tornado.ioloop.IOLoop.current().start()
