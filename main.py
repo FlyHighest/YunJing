@@ -294,8 +294,8 @@ def page_main():
                 rows=5,
             ),
             None,
-            put_button("帮我写!",onclick=task_post_enhance_prompt).style("position: relative;top: 50%;transform: translateY(-50%);")
-        ],size="7fr 1fr 2fr")
+            put_button("帮我写!",onclick=task_post_enhance_prompt).style("position: relative;top: 50%;transform: translateY(-30%);")
+        ],size="80% 3% 17%")
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
