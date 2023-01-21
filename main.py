@@ -294,8 +294,8 @@ def page_main():
                 rows=5,
             ),
             None,
-            put_button("帮我写!",onclick=task_post_enhance_prompt).style("position: relative;top: 50%;transform: translateY(-30%);")
-        ],size="80% 3% 17%")
+            put_scope("prompt_operator")
+        ],size="77% 3% 20%")
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
@@ -309,7 +309,17 @@ def page_main():
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
         put_input("seed",label="随机种子",value="-1")
         put_scope("generate_button",put_button('开始绘制',onclick=task_post_image_gen)).style("text-align: center")
-    
+    with use_scope('prompt_operator'):
+        def clear_prompt():
+            pin['prompt']=""
+        put_column([
+            None,
+            put_button("帮我写!",color="info",onclick=task_post_enhance_prompt), 
+            None,
+            put_button("清空",color="info",onclick=clear_prompt )
+        ], size="25% 25% 25% 25%").style("text-align:center")
+
+        #.style("position: relative;top: 50%;transform: translateY(-30%);")s
     with use_scope('history'):
         put_text(f"历史记录 (保留{MAX_HISTORY}张，详细信息保留7天)")
         put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)
