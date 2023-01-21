@@ -61,11 +61,6 @@ class RClient:
             return 0
 
     # mosec服务器队列情况
-    def enter_queue(self):
-        self.r.incr("status_mosec_queue")
-
-    def quit_queue(self):
-        self.r.decr("status_mosec_queue")
 
     def get_queue_size(self):
         try:

@@ -8,3 +8,6 @@ class NSFWDetected(Exception):
 
 class QueueTooLong(Exception):
     pass 
+
+class TooFrequent(Exception):
+    pass 

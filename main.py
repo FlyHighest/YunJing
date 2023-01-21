@@ -66,12 +66,12 @@ def show_image_information_window(img_url, fuke_func=None):
                     put_column([
                         put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
                         put_button("发布到画廊",color="info",onclick=partial(publish_to_gallery, img_url= img_url)),
-                        put_button("获取高清图",color="info", onclick=partial(put_upscale_url, scope="popup_image_disp", img_url=img_url)),
+                        put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
                     ]).style("margin: 3%; text-align: center")
                 else:
                     put_column([
                         put_button("复刻这张图", color="info", onclick=fuke_func),
-                        put_button("获取高清图",color="info", onclick=partial(put_upscale_url, scope="popup_image_disp", img_url=img_url)),
+                        put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
                     ]).style("margin: 3%; text-align: center")
 
 
@@ -92,10 +92,10 @@ def show_image_information_window(img_url, fuke_func=None):
                 put_input("seed_info",label="随机种子",value=text2image_data["seed"])
                 
 
-def put_upscale_url(scope, img_url):
+def task_post_upscale(scope, img_url):
     with use_scope(scope):
-        session.local.rclient.enter_queue()
         try:
+            
             if session.local.rclient.get_queue_size() > MAX_QUEUE:
                 raise QueueTooLong
             with put_loading():
@@ -124,11 +124,12 @@ def put_upscale_url(scope, img_url):
             toast(server_error_text,   duration=4,color="warn")
         except QueueTooLong as _:
             toast(queue_too_long_text, duration=4,color="warn")
+        except TooFrequent as _:
+            toast(too_frequent_error_text, duration=4,color="warn")
         except Exception as _:
             traceback.print_exc()
             toast(unknown_error_text , duration=4,color="warn")
-        finally:
-            session.local.rclient.quit_queue()
+        
 
 def convert_int(s):
     try:
@@ -136,19 +137,24 @@ def convert_int(s):
     except:
         return -1
 
+def before_post():
+    if time.time() - session.local.last_task_time < 3:
+        raise TooFrequent
+    else:
+        session.local.last_task_time = time.time()
+    if session.local.rclient.get_queue_size() > MAX_QUEUE:
+        raise QueueTooLong
+
+
 
 @use_scope('images', clear=False)
-def preview_image_gen():
-    if time.time() - session.local.last_task_time < 3:
-        toast(too_frequent_error_text)
-        return 
+def task_post_image_gen():
+
     toast(image_gen_text)
     clear()
     session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",true)''')
-    session.local.rclient.enter_queue()
     try:
-        if session.local.rclient.get_queue_size() > MAX_QUEUE:
-            raise QueueTooLong
+        before_post()
 
         with put_loading(shape="border",color="primary"):
             seed = convert_int(pin['seed'])
@@ -189,7 +195,7 @@ def preview_image_gen():
 
         # 这里是正常处理
         put_row([
-            put_button("获取高清图(x4)",color="info", onclick=partial(put_upscale_url, scope="images",img_url=output_img_url)),
+            put_button("获取高清图(x4)",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
             put_button("发布到画廊",color="info",onclick=partial(publish_to_gallery,img_url=output_img_url))
         ]).style("margin: 5%")
 
@@ -212,13 +218,49 @@ def preview_image_gen():
     except QueueTooLong as _:
         traceback.print_exc()
         toast(queue_too_long_text, duration=4,color="warn" )
+    except TooFrequent as _:
+        toast(too_frequent_error_text, duration=4,color="warn")
     except Exception as _:
         traceback.print_exc()
         toast(unknown_error_text,duration=4,color="warn")
     finally:
         session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",false)''')
-        session.local.rclient.quit_queue()
 
+def task_post_enhance_prompt():
+    session.run_js('''$("#pywebio-scope-input textarea:first").prop("disabled",true)''')
+    try:
+        before_post()
+        data ={
+            "type": "enhanceprompt",
+            "starting_text":  pin['prompt']
+        }
+        post_data = json.dumps(data)
+        prediction = httpx.post(
+            MODEL_URL,
+            data=post_data,
+            timeout=180000
+        )
+        if prediction.status_code == 200:
+            enhanced_text = json.loads(prediction.content)['enhanced_text']
+            pin['prompt'] = enhanced_text
+        else:
+            raise ServerError
+    except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
+        traceback.print_exc()
+        toast(server_error_text,duration=4,color="warn")
+    except QueueTooLong as _:
+        traceback.print_exc()
+        toast(queue_too_long_text, duration=4,color="warn" )
+    except TooFrequent as _:
+        toast(too_frequent_error_text, duration=4,color="warn")
+    except Exception as _:
+        traceback.print_exc()
+        toast(unknown_error_text,duration=4,color="warn")
+
+    finally:
+        session.run_js('''$("#pywebio-scope-input textarea:first").prop("disabled",false)''')
+
+    
 
 @config(theme="minty", css_style=css)
 def page_main():
@@ -246,10 +288,13 @@ def page_main():
     )
 
     with use_scope('input'):
-        put_textarea('prompt',label="提示词",
-            placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
-            rows=5,
-        )
+        put_row([
+            put_textarea('prompt',label="提示词",
+                placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
+                rows=5,
+            ),
+            put_button("帮我写!",onclick=task_post_enhance_prompt)
+        ],size="8fr 2fr")
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
@@ -262,7 +307,7 @@ def page_main():
         ]),
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
         put_input("seed",label="随机种子",value="-1")
-        put_scope("generate_button",put_button('开始绘制',onclick=preview_image_gen)).style("text-align: center")
+        put_scope("generate_button",put_button('开始绘制',onclick=task_post_image_gen)).style("text-align: center")
     
     with use_scope('history'):
         put_text(f"历史记录 (保留{MAX_HISTORY}张，详细信息保留7天)")
