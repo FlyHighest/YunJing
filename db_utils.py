@@ -1,8 +1,9 @@
 import random 
 import nanoid , os, traceback
 import redis
+import httpx,re
 from utils import get_generation_id
-from secret import qiniu_access_key_id,qiniu_access_key_secret,qiniu_public_url
+from secret import qiniu_access_key_id,qiniu_access_key_secret,qiniu_public_url, MODEL_URL
 from qiniu import Auth as QiniuAuth
 from qiniu import BucketManager as QiniuBucketManager
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
@@ -68,7 +69,9 @@ class RClient:
 
     def get_queue_size(self):
         try:
-            return int(self.r.get("status_mosec_queue"))
+            metrics = httpx.get(MODEL_URL.replace("inference","metrics")).content.decode()
+            remain = re.findall(r"mosec_service_remaining_task \d+", metrics)[0]
+            return int(remain.split(" ")[-1])
         except:
             return 0 
 
