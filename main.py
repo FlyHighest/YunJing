@@ -215,9 +215,9 @@ def preview_image_gen():
     except Exception as _:
         traceback.print_exc()
         toast(unknown_error_text,duration=4,color="warn")
-
-    session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",false)''')
-    session.local.rclient.quit_queue()
+    finally:
+        session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",false)''')
+        session.local.rclient.quit_queue()
 
 
 @config(theme="minty", css_style=css)
