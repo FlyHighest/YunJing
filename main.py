@@ -293,8 +293,9 @@ def page_main():
                 placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
                 rows=5,
             ),
-            put_button("帮我写!",onclick=task_post_enhance_prompt)
-        ],size="8fr 2fr")
+            None,
+            put_button("帮我写!",onclick=task_post_enhance_prompt).style("position: relative;top: 50%;transform: translateY(-50%);")
+        ],size="7fr 1fr 2fr")
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
