@@ -150,12 +150,12 @@ def before_post():
 @use_scope('images', clear=False)
 def task_post_image_gen():
 
-    toast(image_gen_text)
+
     clear()
     session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",true)''')
     try:
         before_post()
-
+        toast(image_gen_text)
         with put_loading(shape="border",color="primary"):
             seed = convert_int(pin['seed'])
             
