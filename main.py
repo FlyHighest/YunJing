@@ -21,13 +21,49 @@ from pywebio.platform.tornado import webio_handler
 
 from constants import *
 
-def publish_to_gallery(img_url):
-    ret = session.local.rclient.record_publish(img_url)
-    if ret:
-        toast(publish_success_text, color="success")
-    else:
-        toast(publish_fail_text, color="warn")
+def publish_to_gallery(scope, img_url):
+    with use_scope(scope):
+        try:
+            before_post()
+            with put_loading():
+                data = {
+                    "type":"safety_check",
+                    "img_url": img_url
+                }
+                post_data = json.dumps(data)
+                prediction = httpx.post(
+                    MODEL_URL,
+                    data=post_data,
+                    timeout=180000
+                )
+                if prediction.status_code == 200:
+                    output_img_url = json.loads(prediction.content)['result']
+                    if output_img_url =="NSFW":
+                        raise NSFWDetected
+                else:
+                    raise ServerError
 
+                ret = session.local.rclient.record_publish(img_url)
+                
+                if ret:
+                    toast(publish_success_text, color="success")
+                else:
+                    toast(publish_fail_text, color="warn")
+        except NSFWDetected as _:
+            toast(nsfw_warn_text,duration=4,color="warn")
+        except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
+            traceback.print_exc()
+            toast(server_error_text,duration=4,color="warn")
+        except QueueTooLong as _:
+            traceback.print_exc()
+            toast(queue_too_long_text, duration=4,color="warn" )
+        except TooFrequent as _:
+            toast(too_frequent_error_text, duration=4,color="warn")
+        except Exception as _:
+            toast(unknown_error_text , duration=4,color="warn")
+
+
+        
 def set_generation_params(generation_id):
     text2image_data = session.local.rclient.get_image_information(generation_id=generation_id)
     if text2image_data is None:
@@ -65,7 +101,7 @@ def show_image_information_window(img_url, fuke_func=None):
                 if fuke_func is None:
                     put_column([
                         put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
-                        put_button("发布到画廊",color="info",onclick=partial(publish_to_gallery, img_url= img_url)),
+                        put_button("发布到画廊",color="info",onclick=partial(publish_to_gallery, scope="popup_image_disp", img_url= img_url)),
                         put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
                     ]).style("margin: 3%; text-align: center")
                 else:
@@ -96,8 +132,6 @@ def task_post_upscale(scope, img_url):
     with use_scope(scope):
         try:
             before_post()
-            if session.local.rclient.get_queue_size() > MAX_QUEUE:
-                raise QueueTooLong
             with put_loading():
                 upscale_data = {
                         "type":"upscale",
@@ -196,7 +230,7 @@ def task_post_image_gen():
         # 这里是正常处理
         put_row([
             put_button("获取高清图(x4)",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
-            put_button("发布到画廊",color="info",onclick=partial(publish_to_gallery,img_url=output_img_url))
+            put_button("发布到画廊",color="info",onclick=partial(publish_to_gallery,scope="images", img_url=output_img_url))
         ]).style("margin: 5%")
 
         # 历史记录相关

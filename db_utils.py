@@ -1,9 +1,10 @@
 import random 
 import nanoid , os, traceback
 import redis
+import pymysql,pymysql.cursors
 import httpx,re
 from utils import get_generation_id
-from secret import qiniu_access_key_id,qiniu_access_key_secret,qiniu_public_url, MODEL_URL
+from secret import *
 from qiniu import Auth as QiniuAuth
 from qiniu import BucketManager as QiniuBucketManager
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
@@ -17,6 +18,15 @@ class RClient:
     def __init__(self) -> None:
         self.r = redis.Redis("localhost", 6379, decode_responses=True)
         self.r.set("mosec_queue", 0)
+
+        # self.mysql = pymysql.connect(
+        #     host=mysql_db_host,
+        #     user=mysql_db_user,
+        #     password=mysql_db_password,
+        #     database=mysql_db_database,
+        #     cursorclass=pymysql.cursors.DictCursor
+        # )
+
 
     # 整体统计
     def get_server_status(self):
@@ -56,7 +66,7 @@ class RClient:
     
     def get_gallery_number(self):
         try:
-            return int(self.r.get("Gal"))
+            return int(self.r.llen("Gal"))
         except:
             return 0
 
