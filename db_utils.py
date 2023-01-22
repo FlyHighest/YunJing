@@ -35,7 +35,7 @@ class RClient:
     
     def get_generated_number(self):
         try:
-            return int(self.r.llen("Gal"))
+            return int(self.r.get("status_generated_num"))
         except:
             return 0 
 
@@ -56,7 +56,7 @@ class RClient:
     
     def get_gallery_number(self):
         try:
-            return int(self.r.get("status_gallery_num"))
+            return int(self.r.get("Gal"))
         except:
             return 0
 
