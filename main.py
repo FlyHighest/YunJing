@@ -430,35 +430,128 @@ def page_index():
     session.set_env(title='云景 · 首页', output_max_width='80%')
     session.local.rclient: RClient = RClient()
     put_html(header_html_index)
-
-    put_markdown("# 云景 · 首页")
     put_markdown("""
 
+------
 [云景 · 绘图](/main)：在这里创作您的作品，用一组文本描述绘制画面。
 
 [云景 · 画廊](/gallery)：在这里分享您的创作参数，并参考别人的作品，也许其他人的经验能为您提供良好的开端。
 
-------
-    
+-----
+
+**简介**
+
+☁️云景☁️是一个公益项目，目的是给更多人提供AI绘图的免费工具。
+
+您可以将您认为优秀的、或者对他人有帮助的创作成果分享到云景画廊，这完全是自愿的，您未发布的创作参数将被严格保密。
+
 1. 免费的在线生成服务，无需付费、无广告烦扰。
 2. 多种最新模型一键切换。
 3. 在画廊，与其他人分享你的创意或者复刻他人的创意(请勿公开发布不适合工作场合观看的内容)。
+
+------
+
+**服务器状态**
+
     """)
-    put_markdown("## 服务器状态")
     put_button("刷新",onclick=show_server_status)
     put_scope("current_server_status")
     show_server_status()
     put_markdown("""
 ------
+
 如果您有疑问或者建议，欢迎加入交流群(QQ): 557228477
+
+您也可以在[爱发电](https://afdian.net/a/terryzhang)赞助我，帮助云景扩充GPU资源。
+
     """)
+
+@config(theme="minty", css_style=css)
+def page_handbook():
+    session.set_env(title='云景 · 帮助', output_max_width='80%')
+    put_html(header_html_help)
+    put_markdown("""
+## 一、云景·绘图
+
+当前支持以下功能：
+- 文本生成图像
+- 图像超分辨率
+- 提示词自动扩写
+
+### 1. 文本生成图像
+
+#### (1) 参数说明
+
+在绘图页面，左侧是文本生成图像的参数输入区，中间部分是图像预览区，右侧是最近生成的图像。
+
+文本生成图像的参数说明：
+
+| 输入参数   | 说明                                                                                                                                                            |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 提示词     | 对图像内容或特性的描述文本                                                                                                                                      |
+| 反向提示词 | 对不希望在图像中出现的内容或特性的描述文本                                                                                                                      |
+| 宽度、高度 | 生成图像的尺寸                                                                                                                                                  |
+| 引导程度   | 生成图像时对提示词的重视度，更大的值会更严格绘制提示词的内容，但会限制模型发挥                                                                                  |
+| 推理步骤   | 一般越大图像质量越高，但生成速度更慢                                                                                                                            |
+| 采样器     | [这里](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features#sampling-method-selection)有一些不同采样器效果对比，如果生成效果不好可尝试换采样器 |
+| 模型       | 详见下面的"模型介绍"章节                                                                                                                                        |
+| 随机种子   | 可以手动指定，为空或-1时将由系统随机生成，保证生成结果可以复现                                                                                                  |
+
+#### (2) 模型介绍
+
+当前后台集成了5个模型，可在“模型”选项自由切换：
+
+- [Stable-Diffusion-v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5): 原版的stable diffusion 1.5，许多微调模型的基础，比较全能，写实、动漫，人物、风景，包括背景图、头像风格都都能生成，但非常依赖提示词。
+- [Protogen-x5.8](https://huggingface.co/darkstorm2150/Protogen_x5.8_Official_Release): AI模型分享网站civiai上最火的模型之一，比较擅长画人物，有时候提示词没有人物相关的也会画个人出来。
+- [OpenJourney](https://huggingface.co/prompthero/openjourney): prompthero基于著名的midjourney生成的图像训练stable diffusion获得的模型。使用该模型请在提示词最前面加上'mdjrny-v4 style'。
+- [ACertainThing](https://huggingface.co/JosephusCheung/ACertainThing): Joseph Cheung训练的二次元风格的图像生成模型，同NovelAI一样，支持danbooru标签。
+- [Anything-v3](https://huggingface.co/Linaqruf/anything-v3.0): 另一个大家喜闻乐见的二次元风格图像生成模型，同NovelAI一样，支持danbooru标签。
+
+### 2. 图像超分辨率
+
+在点击“开始生成”按钮后，稍等片刻，图像预览区会显示图像，同时下方出现“获取高清图”按钮，点击按钮即可获得高清图下载链接。
+
+此外，在历史图像记录区或者画廊中，点击缩略图会弹出详细参数框，详细参数预览框中也有获取高清图按钮。
+
+服务器使用[RealESRGAN](https://github.com/xinntao/Real-ESRGAN)模型进行图像超分。
+
+### 3. 提示词自动扩写
+
+在提示词输入框右侧有“帮我写”按钮，点击后将对当前输入的内容自动扩写。扩写模型使用[MagicPrompt](https://huggingface.co/Gustavosta/MagicPrompt-Stable-Diffusion)，主要是为stable diffusion准备的，protogen和openjourney也可以参考。
+
+虽然会拓展出来一些提高质量、风格或者艺术家的词汇，但仍无法百分之百保证生成图像的质量，还需手动调整，仅供参考。
+
+## 二、云景·画廊
+
+生成图像后，点击发布按钮，即可将图像分享到画廊，与其他用户分享您的成果和创作参数。您也可以在画廊中点击您喜欢的图像，打开参数详情预览框，点击复刻按钮，快速填写该图的生成参数，在此基础上根据您的需要进行调整。
+
+目前画廊随机展示图像，按关键词搜索图像的功能正在开发中，敬请期待。
+
+欢迎大家多贡献好图~
+
+## 三、常见问题
+
+### 1. 常见错误提示和说明
+
+- "模型服务错误，请稍后再试": GPU服务器异常，如果一直出现请联系我解决(QQ 369945942, email tyz.xyz@qq.com)
+- "检测到不适宜内容，请尝试更换提示词或随机种子": 不适宜工作场所观看的内容禁止发布在画廊
+- "当前排队过长，请稍后再试": 在排队的任务过多，可以在首页查看当前排队任务数
+- "生成参数已过期": 未发布在画廊中的图像，生成参数仅保留7天
+- "操作频率过于频繁，请三秒后再试": 提示词扩展、超分、图像生成都会使用GPU资源，公益项目预算有限，因此对频率进行了限制
+
+### 2. 其他
+
+网站刚上线，还有许多不足，如有其他问题或者建议，可以联系我或加入我们的交流群(QQ群: 557228477)。
+
+""")
 
 
 if __name__ == '__main__':
     application = tornado.web.Application([
         ('/', webio_handler(page_index, cdn=True)),
         ('/main', webio_handler(page_main, cdn=True)),
-        ('/gallery', webio_handler(page_gallery, cdn=True))
+        ('/gallery', webio_handler(page_gallery, cdn=True)),
+        ('/help', webio_handler(page_handbook, cdn=True))
     ])
     application.listen(port=5001, address='localhost')
     tornado.ioloop.IOLoop.current().start()
