@@ -50,7 +50,7 @@ def close_popup_and_set_params(generation_id):
 # @popup("title")
 def show_image_information_window(img_url, fuke_func=None):
     generation_id = get_generation_id(img_url)
-    with popup("图像信息"):
+    with popup("图像信息",size="large"):
         text2image_data = session.local.rclient.get_image_information(img_url)
         if text2image_data is None:
             put_warning(generation_outdated_error_text)
@@ -59,7 +59,7 @@ def show_image_information_window(img_url, fuke_func=None):
                 put_scope("popup_image_disp").style("text-align: center"),
                 None,
                 put_scope("popup_image_info")
-            ],size="48% 4% 48%")
+            ],size="70% 4% 26%")
             with use_scope("popup_image_disp"):
                 put_image(img_url)
                 if fuke_func is None:
@@ -541,7 +541,7 @@ def page_handbook():
 
 ### 2. 其他
 
-网站刚上线，还有许多不足，如有其他问题或者建议，可以联系我或加入我们的交流群(QQ群: 557228477)。
+如有其他问题或者建议，可以联系我或加入我们的交流群(QQ群: 557228477)。
 
 """)
 
