@@ -95,7 +95,7 @@ def show_image_information_window(img_url, fuke_func=None):
 def task_post_upscale(scope, img_url):
     with use_scope(scope):
         try:
-            
+            before_post()
             if session.local.rclient.get_queue_size() > MAX_QUEUE:
                 raise QueueTooLong
             with put_loading():
@@ -271,7 +271,7 @@ def page_main():
         new_client_id = session.local.rclient.get_new_client_id()
         set_cookie("client_id", new_client_id)
     session.local.client_id = get_cookie("client_id")
-    session.local.last_task_time = time.time()
+    session.local.last_task_time = time.time() - 3
     session.local.history_image_cnt = session.local.rclient.get_history_length(session.local.client_id)
     put_html(header_html_main)
     # put_row([ 
