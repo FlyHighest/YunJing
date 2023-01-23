@@ -31,7 +31,7 @@ def show_image_information_window(img_url, fuke_func=None):
                 put_row([
                     put_text("@"+text2image_data["user"]),
                     None,
-                    put_text()
+                    put_text(text2image_data["gentime"])
                 ])
                 put_column([
                     put_button("复刻这张图", color="info", onclick=fuke_func),
