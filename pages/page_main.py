@@ -24,9 +24,9 @@ def set_generation_params(generation_id):
         pin.scheduler_name = text2image_data["scheduler_name"]
         pin.prompt= text2image_data["prompt"] 
         pin.negative_prompt = text2image_data["negative_prompt"]
-        pin.height = text2image_data["height"]
-        pin.width = text2image_data["width"]
-        pin.num_inference_steps = text2image_data["num_inference_steps"]
+        pin.height = str(text2image_data["height"])
+        pin.width = str(text2image_data["width"])
+        pin.num_inference_steps = str(text2image_data["num_inference_steps"])
         pin.guidance_scale = text2image_data["guidance_scale"]
         pin.seed = text2image_data["seed"]
 
@@ -132,7 +132,7 @@ def page_main():
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
             put_column(put_select("height",label="高度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
         ])
-        put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=0.5)
+        put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=1)
         put_row([ 
             put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="30")),
             put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="Euler_A")),
