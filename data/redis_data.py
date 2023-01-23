@@ -9,7 +9,7 @@ from utils import get_generation_id
 from secret import *
 from qiniu import Auth as QiniuAuth
 from qiniu import BucketManager as QiniuBucketManager
-from peewee import fn
+from peewee import fn, IntegrityError
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
 EXP_7DAYS = 7*24*60*60
@@ -85,37 +85,41 @@ class RClient:
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.add_generated_number()
         gen_id = get_generation_id(img_url)
-        if client_id.startswith("@"):
-            self.r.rpush("His:"+client_id, img_url)
-            self.r.expire("His:"+client_id, EXP_7DAYS)
-            text2image_data["img_url"] = img_url
-            
-            with self.mysql_db.atomic():
-                Image.get_or_create(
-                    genid=gen_id,
-                    imgurl=img_url,
-                    params=json.dumps(text2image_data),
-                    modelname=text2image_data['model_name'],
-                    prompt=text2image_data['prompt'],
-                    published=False,
-                    userid=1 # 匿名用户
-                )
-        else:
-            
-            with self.mysql_db.atomic():
-                Histories.create(
-                    userid=client_id,
-                    imgurl=img_url
-                )
-                Image.get_or_create(
-                    genid=gen_id,
-                    imgurl=img_url,
-                    params=json.dumps(text2image_data),
-                    modelname=text2image_data['model_name'],
-                    prompt=text2image_data['prompt'],
-                    published=False,
-                    userid=client_id
-                )
+        try:
+            if client_id.startswith("@"):
+                self.r.rpush("His:"+client_id, img_url)
+                self.r.expire("His:"+client_id, EXP_7DAYS)
+                text2image_data["img_url"] = img_url
+                
+                with self.mysql_db.atomic():
+                    Image.create(
+                        genid=gen_id,
+                        imgurl=img_url,
+                        params=json.dumps(text2image_data),
+                        modelname=text2image_data['model_name'],
+                        prompt=text2image_data['prompt'],
+                        published=False,
+                        userid=1 # 匿名用户
+                    )
+            else:
+                
+                with self.mysql_db.atomic():
+                    Histories.create(
+                        userid=client_id,
+                        imgurl=img_url
+                    )
+                    Image.create(
+                        genid=gen_id,
+                        imgurl=img_url,
+                        params=json.dumps(text2image_data),
+                        modelname=text2image_data['model_name'],
+                        prompt=text2image_data['prompt'],
+                        published=False,
+                        userid=client_id
+                    )
+        except IntegrityError:
+            pass
+
 
     def get_history(self, client_id):
         if client_id.startswith("@"):
@@ -123,7 +127,7 @@ class RClient:
         else:
             images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc).limit(100)
             img_urls = [image.imgurl for image in images]
-            return img_urls[::-1]
+            return img_urls
 
     def get_image_information_old(self, img_url=None, generation_id=None):
         generation_id = generation_id or get_generation_id(img_url)
