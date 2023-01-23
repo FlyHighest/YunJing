@@ -531,10 +531,24 @@ def page_handbook():
 | 模型       | 详见下面的"模型介绍"章节                                                                                                                                        |
 | 随机种子   | 可以手动指定，为空或-1时将由系统随机生成，保证生成结果可以复现                                                                                                  |
 
-#### (2) 提示词说明**
+#### (2) 提示词说明
 
-提示词和反向提示词请使用英文输入，支持webui的多种语法特性，包括Attention/emphasis等。
+**a. 支持webui特性（仅英语）**
+支持webui的多种语法特性，包括Attention/emphasis、Prompt editing等。
 
+**b. 支持多语言提示词和反向提示词**
+
+云景后台接入了经过蒸馏的[NLLB-200翻译大模型](https://huggingface.co/facebook/nllb-200-distilled-600M)，输入非英语文本会自动翻译为英文后再进行图像生成。
+翻译后会去掉括号、改变标点符号等，因为使用非英语语言时无法使用webui的特性。
+
+支持的语言：
+- 汉语
+- 法语
+- 日语
+- 阿拉伯语
+- 韩语
+- 俄语
+- 西班牙语
 
 #### (3) 模型介绍
 
@@ -542,7 +556,7 @@ def page_handbook():
 
 - [Stable-Diffusion-v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5): 原版的stable diffusion 1.5，许多微调模型的基础，比较全能，写实、动漫，人物、风景，包括背景图、头像风格都都能生成，但非常依赖提示词。
 - [Protogen-x5.8](https://huggingface.co/darkstorm2150/Protogen_x5.8_Official_Release): AI模型分享网站civitai上最火的模型之一，比较擅长画人物，有时候提示词没有人物相关的也会画个人出来。
-- [OpenJourney](https://huggingface.co/prompthero/openjourney): prompthero基于著名的midjourney生成的图像训练stable diffusion获得的模型。使用该模型请在提示词最前面加上'mdjrny-v4 style'。
+- [OpenJourney](https://huggingface.co/prompthero/openjourney): prompthero基于著名的midjourney生成的图像训练stable diffusion获得的模型。系统会自动在提示词最前面加上'mdjrny-v4 style'。
 - [ACertainThing](https://huggingface.co/JosephusCheung/ACertainThing): Joseph Cheung训练的二次元风格的图像生成模型，同NovelAI一样，支持danbooru标签。
 - [Anything-v3](https://huggingface.co/Linaqruf/anything-v3.0): 另一个大家喜闻乐见的二次元风格图像生成模型，同NovelAI一样，支持danbooru标签。
 
