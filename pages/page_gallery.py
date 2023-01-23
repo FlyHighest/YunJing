@@ -32,7 +32,7 @@ def show_image_information_window(img_url, fuke_func=None):
                     put_text("@"+text2image_data["user"]),
                     None,
                     put_text(text2image_data["gentime"])
-                ])
+                ],size="45% 10% 45%")
                 put_column([
                     put_button("复刻这张图", color="info", onclick=fuke_func),
                     put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
