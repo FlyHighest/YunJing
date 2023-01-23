@@ -550,11 +550,11 @@ Prompt Editing:
 
 第二种语法是 `[关键词1|关键词2]`。
 
-两个关键词交替使用，每个采样步骤都更换一次。比如`a picture of [cat|bird]`，可画类似猫头鹰的猫、鸟融合兽。
+两个关键词交替使用，每个采样步骤都更换一次。比如`a picture of [cat|bird]`，可画出类似猫头鹰的猫、鸟融合兽。
 
 **b. 支持中文提示词和反向提示词**
 
-云景后台接入了[机器翻译模型](https://huggingface.co/Helsinki-NLP/opus-mt-zh-en)，输入韩语文本会自动翻译为英文后再进行图像生成。
+云景后台接入了[机器翻译模型](https://huggingface.co/Helsinki-NLP/opus-mt-zh-en)，输入汉语文本会自动翻译为英文后再进行图像生成。
 翻译后会去掉括号、改变标点符号等，因此使用汉语时无法使用webui的特性。
 
 
