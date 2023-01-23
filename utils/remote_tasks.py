@@ -4,7 +4,7 @@ import time
 import traceback
 from functools import partial
 
-import httpx
+import hashlib,httpx
 from pywebio import session
 from pywebio.output import *
 from pywebio.pin import *
@@ -94,25 +94,29 @@ def task_post_image_gen(callback):
                 "guidance_scale":      int(pin['guidance_scale']),
                 "seed":                seed
             }
+            image_gen_id = hashlib.sha1(json.dumps(text2image_data).encode('utf-8')).hexdigest()
+            output_img_url = session.local.rclient.check_genid_in_imagetable(image_gen_id)
 
-            post_data = json.dumps(text2image_data)
-            prediction = httpx.post(
-                MODEL_URL,
-                data=post_data,
-                timeout=180000
-            )
+            if output_img_url is None:
+                text2image_data['gen_id'] = image_gen_id
+                post_data = json.dumps(text2image_data)
+                prediction = httpx.post(
+                    MODEL_URL,
+                    data=post_data,
+                    timeout=180000
+                )
+                if prediction.status_code == 200:
+                    output_img_url = json.loads(prediction.content)['img_url']
+                    session.local.current_img = output_img_url
+                    if output_img_url =="Error":
+                        raise ServerError
+                    elif output_img_url =="NSFW":
+                        raise NSFWDetected
+                else:
+                    raise ServerError
+            
+        put_image(output_img_url) # 大图output
 
-        # 检查结果，异常抛出
-        if prediction.status_code == 200:
-            output_img_url = json.loads(prediction.content)['img_url']
-            session.local.current_img = output_img_url
-            if output_img_url =="Error":
-                raise ServerError
-            elif output_img_url =="NSFW":
-                raise NSFWDetected
-            put_image(output_img_url) # 大图output
-        else:
-            raise ServerError
 
         # 这里是正常处理
         put_row([

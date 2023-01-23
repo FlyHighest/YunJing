@@ -24,6 +24,8 @@ class User(BaseModel):
     jointime = DateTimeField(default=datetime.datetime.now)
     level = IntegerField() 
 
+
+
 class Image(BaseModel):
     genid = CharField(unique=True,primary_key=True)
     imgurl = CharField()

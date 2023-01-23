@@ -129,6 +129,12 @@ class RClient:
             img_urls = [image.imgurl for image in images]
             return img_urls
 
+    def check_genid_in_imagetable(self,genid):
+        try:
+            return Image.get_by_id(genid).imgurl
+        except:
+            return None
+
     def get_image_information_old(self, img_url=None, generation_id=None):
         generation_id = generation_id or get_generation_id(img_url)
         keys=[
@@ -148,6 +154,7 @@ class RClient:
         else:
             text2image_data_values = self.r.hmget("InfoGal:"+generation_id, keys)
         text2image_data = {k:v for k,v in zip(keys,text2image_data_values)}
+        text2image_data["user"]="匿名用户"
         if text2image_data['type'] is not None:
             return text2image_data
         else :
@@ -156,8 +163,10 @@ class RClient:
     def get_image_information(self, img_url=None, generation_id=None):
         generation_id = generation_id or get_generation_id(img_url)
         try:
-            image_record = Image.get_by_id(generation_id).params
-            return json.loads(image_record)
+            image_record = Image.get_by_id(generation_id)
+
+            ret = json.loads(image_record.params)
+            ret["user"] = User.get_by_id(image_record.userid).username
         except:
             traceback.print_exc()
             return self.get_image_information_old(img_url,generation_id) 
