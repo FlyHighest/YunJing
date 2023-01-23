@@ -1,11 +1,16 @@
 from pywebio import config, session
-from pywebio.output import put_html,put_markdown,put_button,put_row
+from pywebio.output import put_html,put_markdown,put_button,put_row,toast
 from pywebio.pin import put_input,pin
 
 from utils.constants import header_html_help,css
 from utils import RClient
 def submit_img_to_check():
-    session.local.rclient.add_check_image(pin['img_url'])
+    try:
+        session.local.rclient.add_check_image(pin['img_url'])
+        toast("提交成功")
+        pin['img_url'] = ""
+    except:
+        toast("未知错误，请联系管理员")
 
 @config(theme="minty", css_style=css)
 def page_help():
@@ -115,11 +120,12 @@ Prompt Editing:
 为了平台的健康发展，内容安全检测器有时会表现的过于严格。如果您认为您生成的图像正常，请在下面提交图像的地址（在图像上右键，复制图像地址），我们会在人工核查后发布。
 """)
     put_row([
-        put_input("img_url"),
+        put_input("img_url", placeholder="https://storage.dong-liu.com/xxxxxxxx"),
         None,
         put_button("提交",onclick=submit_img_to_check)
-    ],size="80% 10% 10%")
+    ],size="85% 5% 10%")
     put_markdown("""
+### 3. 其他
 如有其他问题或者建议，可以联系我或加入我们的交流群(QQ群: 557228477)。
 """)
 

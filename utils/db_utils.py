@@ -181,3 +181,4 @@ class RClient:
 
     def add_check_image(self, img_url):
         self.r.rpush("Check",img_url)
+        return True 
