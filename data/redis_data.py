@@ -61,7 +61,8 @@ class RClient:
     
     def get_gallery_number(self):
         try:
-            return int(self.r.llen("Gal"))
+            return Image.select().where(Image.published==True).count()
+            
         except:
             return 0
 
