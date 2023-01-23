@@ -129,6 +129,7 @@ class RClient:
         generation_id = generation_id or get_generation_id(img_url)
         try:
             image_record = Image.get_by_id(generation_id).params
+            print(image_record)
             return json.loads(image_record)
         except:
             traceback.print_exc()
