@@ -128,7 +128,7 @@ class RClient:
     def get_image_information(self, img_url=None, generation_id=None):
         generation_id = generation_id or get_generation_id(img_url)
         try:
-            image_record = Image.get(generation_id).params
+            image_record = Image.get_by_id(generation_id).params
             return json.loads(image_record)
         except:
             traceback.print_exc()
