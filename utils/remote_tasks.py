@@ -125,7 +125,7 @@ def task_post_image_gen(callback):
             session.local.history_image_cnt += 1
             session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,text2image_data)
 
-            if  session.local.history_image_cnt > MAX_HISTORY:
+            if  session.local.history_image_cnt > MAX_HISTORY + session.local.max_history_bonus:
                 session.local.history_image_cnt -= 1
                 session.local.rclient.pop_history(session.local.client_id)
                 session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')

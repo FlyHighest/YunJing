@@ -2,7 +2,7 @@ from pywebio import session, config
 from pywebio.output import put_html,put_markdown,use_scope,put_scope,put_button
 
 
-from utils import RClient
+from data import RClient
 
 from utils.constants import css,header_html_index
 

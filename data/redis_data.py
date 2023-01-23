@@ -1,32 +1,27 @@
+import sys
+sys.path.append(".")
+sys.path.append("..")
 import random 
-import nanoid , os, traceback
+import nanoid, traceback
 import redis
-import pymysql,pymysql.cursors
-import httpx,re
-from .utils import get_generation_id
+import httpx,re,json
+from utils import get_generation_id
 from secret import *
 from qiniu import Auth as QiniuAuth
 from qiniu import BucketManager as QiniuBucketManager
+from peewee import fn
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
-GENERATION_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
 EXP_7DAYS = 7*24*60*60
 
+from .data_models import mysql_db, User,Image,Likes,Histories
 
 class RClient:
 
     def __init__(self) -> None:
         self.r = redis.Redis("localhost", 6379, decode_responses=True)
-        self.r.set("mosec_queue", 0)
-
-        # self.mysql = pymysql.connect(
-        #     host=mysql_db_host,
-        #     user=mysql_db_user,
-        #     password=mysql_db_password,
-        #     database=mysql_db_database,
-        #     cursorclass=pymysql.cursors.DictCursor
-        # )
-
+        self.mysql_db = mysql_db 
+        self.mysql_db.connect()
 
     # 整体统计
     def get_server_status(self):
@@ -82,38 +77,61 @@ class RClient:
 
     # 用户历史记录相关
     def get_new_client_id(self):
-        new_client_id = nanoid.generate(CLIENT_ID_ALPHABET, size=10)
+        new_client_id = "@"+nanoid.generate(CLIENT_ID_ALPHABET, size=10)
         return new_client_id
 
-    def record_new_generated_image(self, client_id, img_url, text2image_data):
-        self.r.rpush("His:"+client_id, img_url)
-        self.r.expire("His:"+client_id, EXP_7DAYS)
-        self.store_history_image_information(text2image_data, img_url)
+    def record_new_generated_image(self, client_id, img_url, text2image_data): 
+        # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.add_generated_number()
+        gen_id = get_generation_id(img_url)
+        if client_id.startswith("@"):
+            self.r.rpush("His:"+client_id, img_url)
+            self.r.expire("His:"+client_id, EXP_7DAYS)
+            generation_id = get_generation_id(img_url)
+            text2image_data["img_url"] = img_url
+            self.r.hmset("InfoHis:"+generation_id, text2image_data)
+            self.r.expire("InfoHis:"+generation_id, EXP_7DAYS)
+            with self.mysql_db.atomic():
+                Image.get_or_create(
+                    genid=gen_id,
+                    imgurl=img_url,
+                    params=json.dumps(text2image_data),
+                    modelname=text2image_data['model_name'],
+                    prompt=text2image_data['prompt'],
+                    published=False,
+                    userid=1 # 匿名用户
+                )
+        else:
+            
+            with self.mysql_db.atomic():
+                Histories.create(
+                    userid=client_id,
+                    imgurl=img_url
+                )
+                Image.get_or_create(
+                    genid=gen_id,
+                    imgurl=img_url,
+                    params=json.dumps(text2image_data),
+                    modelname=text2image_data['model_name'],
+                    prompt=text2image_data['prompt'],
+                    published=False,
+                    userid=client_id
+                )
+                
+                
 
     def pop_history(self, client_id):
-        img_url = self.r.lpop("His:"+client_id)
-        self.r.delete("InfoHis:"+get_generation_id(img_url))
+        if client_id.startswith("@"):
+            img_url = self.r.lpop("His:"+client_id)
+            self.r.delete("InfoHis:"+get_generation_id(img_url))
 
     def get_history(self, client_id):
-        return self.r.lrange("His:"+client_id, 0, -1)
-
-    def get_history_length(self, client_id):
-        try:
-            return self.r.llen("His:"+client_id)
-        except:
-            return 0
-
-    # 图像信息存储
-    # HisInfo:generation_id : image information dict
-    # 用户历史图像的信息存储，pop history时删除，设置exp为7天。
-    # 上传到画廊的，信息永久存储，且同步到mysql数据库。
-    # GalleryInfo:generation_id : image information dict
-    def store_history_image_information(self, text2image_data, img_url):
-        generation_id = get_generation_id(img_url)
-        text2image_data["img_url"] = img_url
-        self.r.hmset("InfoHis:"+generation_id, text2image_data)
-        self.r.expire("InfoHis:"+generation_id, EXP_7DAYS)
+        if client_id.startswith("@"):
+            return self.r.lrange("His:"+client_id, 0, -1)
+        else:
+            images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc).limit(100)
+            img_urls = [image.img_url for image in images]
+            return img_urls[::-1]
 
     def get_image_information(self, img_url=None, generation_id=None):
         generation_id = generation_id or get_generation_id(img_url)
@@ -137,7 +155,12 @@ class RClient:
         if text2image_data['type'] is not None:
             return text2image_data
         else :
-            return None 
+            try:
+                image_record = Image.get(generation_id).params
+                return json.loads(image_record)
+            except:
+                traceback.print_exc()
+                return None 
 
     def record_publish(self,img_url):
         try:
@@ -167,18 +190,42 @@ class RClient:
 
     def store_gallery_image_information(self, img_url):
         generation_id = get_generation_id(img_url)
-        text2image_data = self.get_image_information(img_url)
-        self.r.hmset("InfoGal:"+generation_id, text2image_data)
-        self.r.rpush("Gal", img_url)
+        image = Image.get_by_id(generation_id)
+        image.published = True
+        image.save()
 
     def get_random_samples_from_gallery(self, num):
-        size = self.r.llen("Gal")
+        images = Image.select().where(Image.published==True).order_by(fn.Rand()).limit(num)
         ret = []
-        for _ in range(num):
-            ind = random.randint(0,size-1)
-            ret.append(self.r.lindex("Gal", ind))
+        for img in images:
+            ret.append(img.imgurl)
         return ret 
 
     def add_check_image(self, img_url):
         self.r.rpush("Check",img_url)
         return True 
+
+    def move_redis_gallery_to_mysql(self):
+        for i in range(1,1+self.r.llen("Gal")):
+            img_url = self.r.lindex("Gal",i)
+            print(img_url)
+
+            genid = get_generation_id(img_url)
+            text2image_data = self.get_image_information(img_url)
+            try:
+                Image.get_by_id(genid)
+            except:
+                with self.mysql_db.atomic():
+                    Image.create(
+                        genid=genid,
+                        imgurl=img_url,
+                        params=json.dumps(text2image_data),
+                        modelname=text2image_data['model_name'],
+                        prompt=text2image_data['prompt'],
+                        published=True,
+                        userid=1 # 匿名用户
+                    )
+
+if __name__=="__main__":
+    r=RClient()
+    r.move_redis_gallery_to_mysql()

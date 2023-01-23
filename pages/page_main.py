@@ -7,7 +7,7 @@ from pywebio.pin import *
 from pywebio_battery.web import *
 
 from utils.custom_exception import *
-from utils import RClient
+from data import RClient
 
 from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
@@ -92,7 +92,8 @@ def page_main():
         set_cookie("client_id", new_client_id)
     session.local.client_id = get_cookie("client_id")
     session.local.last_task_time = time.time() - 3
-    session.local.history_image_cnt = session.local.rclient.get_history_length(session.local.client_id)
+    session.local.history_image_cnt = 0
+    session.local.max_history_bonus = 0
     put_html(header_html_main)
     # put_row([ 
     #         put_column(put_markdown('## 云景 · 绘图')),
@@ -147,6 +148,7 @@ def page_main():
     with use_scope('history_images'):
         for img in session.local.rclient.get_history(session.local.client_id):
             put_image(img).onclick(partial(show_image_information_window, img_url=img))
+            session.local.history_image_cnt += 1
     
     param_gen_id = get_query("gen")
     if param_gen_id is not None:

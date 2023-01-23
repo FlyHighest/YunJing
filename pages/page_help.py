@@ -3,7 +3,7 @@ from pywebio.output import put_html,put_markdown,put_button,put_row,toast
 from pywebio.pin import put_input,pin
 
 from utils.constants import header_html_help,css
-from utils import RClient
+from data import RClient
 def submit_img_to_check():
     try:
         session.local.rclient.add_check_image(pin['img_url'])

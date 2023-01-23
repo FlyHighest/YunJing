@@ -1,4 +1,3 @@
-from .db_utils import RClient
 from .utils import get_generation_id
 from .constants import *
 from  .custom_exception import QueueTooLong,NSFWDetected,ServerError,TooFrequent

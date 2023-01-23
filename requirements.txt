@@ -4,3 +4,5 @@ pywebio-battery
 tornado
 nanoid
 qiniu
+peewee
+cryptography
