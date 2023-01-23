@@ -125,6 +125,30 @@ class RClient:
             img_urls = [image.img_url for image in images]
             return img_urls[::-1]
 
+    def get_image_information_old(self, img_url=None, generation_id=None):
+        generation_id = generation_id or get_generation_id(img_url)
+        keys=[
+            "type",
+            "img_url",
+            "model_name",
+            "scheduler_name",
+            "prompt",
+            "negative_prompt",
+            "height",
+            "width",
+            "num_inference_steps",
+            "guidance_scale",
+            "seed"]
+        if self.r.exists("InfoHis:"+generation_id)>0:
+            text2image_data_values = self.r.hmget("InfoHis:"+generation_id, keys)
+        else:
+            text2image_data_values = self.r.hmget("InfoGal:"+generation_id, keys)
+        text2image_data = {k:v for k,v in zip(keys,text2image_data_values)}
+        if text2image_data['type'] is not None:
+            return text2image_data
+        else :
+            return None 
+
     def get_image_information(self, img_url=None, generation_id=None):
         generation_id = generation_id or get_generation_id(img_url)
         try:
@@ -133,7 +157,7 @@ class RClient:
             return json.loads(image_record)
         except:
             traceback.print_exc()
-            return None 
+            return self.get_image_information_old(img_url,generation_id) 
 
     def record_publish(self,img_url):
         try:
