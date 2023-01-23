@@ -12,7 +12,7 @@ from data import RClient
 from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
                            task_post_upscale, task_publish_to_gallery)
-from utils import get_generation_id
+from utils import get_generation_id, get_username
 
 
 def set_generation_params(generation_id):
@@ -86,14 +86,24 @@ def show_image_information_window(img_url, fuke_func=None):
 def page_main():
     session.set_env(title='云景 · 绘图', output_max_width='100%')
     session.local.rclient: RClient = RClient()
+    # 检查有没有登陆
+    username = get_username()
+    if username:
+        session.local.client_id = session.local.rclient.get_userid(username)
+        print(session.local.client_id)
+    else:
     # 检查本地有没有cookie client id，如果没有，让服务器赋予一个。
-    if get_cookie("client_id") is None:
-        new_client_id = session.local.rclient.get_new_client_id()
-        set_cookie("client_id", new_client_id)
-    session.local.client_id = get_cookie("client_id")
+        if get_cookie("client_id") is None:
+            new_client_id = session.local.rclient.get_new_client_id()
+            set_cookie("client_id", new_client_id)
+        session.local.client_id = get_cookie("client_id")
+
     session.local.last_task_time = time.time() - 3
     session.local.history_image_cnt = 0
-    session.local.max_history_bonus = 0
+    if not session.local.client_id.startswith("@"):
+        session.local.max_history_bonus = 90
+    else:
+        session.local.max_history_bonus = 0
     put_html(header_html_main)
     # put_row([ 
     #         put_column(put_markdown('## 云景 · 绘图')),

@@ -1,7 +1,7 @@
 import sys
 sys.path.append(".")
 sys.path.append("..")
-import random 
+import random ,hashlib
 import nanoid, traceback
 import redis
 import httpx,re,json
@@ -122,7 +122,7 @@ class RClient:
             return self.r.lrange("His:"+client_id, 0, -1)
         else:
             images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc).limit(100)
-            img_urls = [image.img_url for image in images]
+            img_urls = [image.imgurl for image in images]
             return img_urls[::-1]
 
     def get_image_information_old(self, img_url=None, generation_id=None):
@@ -153,7 +153,6 @@ class RClient:
         generation_id = generation_id or get_generation_id(img_url)
         try:
             image_record = Image.get_by_id(generation_id).params
-            print(image_record)
             return json.loads(image_record)
         except:
             traceback.print_exc()
@@ -180,7 +179,6 @@ class RClient:
         key = "/".join(img_url.split("/")[-2:])
         #您要更新的生命周期
         days = '-1'
-        print(key)
         ret, info = bucket.delete_after_days(bucket_name, key, days)
         assert info.status_code==200
 
@@ -201,6 +199,39 @@ class RClient:
     def add_check_image(self, img_url):
         self.r.rpush("Check",img_url)
         return True 
+
+    def register_user(self,username,password):
+        try:
+            sub_str = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",username)
+            if username!=sub_str:
+                return False
+            if len(username)>20:
+                return False
+
+            pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
+            User.create(
+                username=username,
+                password=pw_hash,
+                level=1
+            )
+            return True
+        except:
+            return False
+
+    def verif_user(self,username,password):
+        try:
+            pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
+            user = User.get(User.username==username and User.password==pw_hash)
+            return True
+        except:
+            return False
+
+    def get_userid(self, username):
+        try:
+            return str(User.get(User.username==username).userid)
+        except:
+            traceback.print_exc()
+            return None
 
     def move_redis_gallery_to_mysql(self):
         for i in range(1,1+self.r.llen("Gal")):

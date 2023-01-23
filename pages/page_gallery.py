@@ -68,14 +68,14 @@ def load_more_images_on_gallery(val):
                     fuke_func=partial(open_main_page_with_generate_params, generate_url="/main?gen="+get_generation_id(img_url))
                 )
             )
-            
     session.run_js("""
-        requirejs(["//unpkg.com/masonry-layout@4/dist/masonry.pkgd"], function( Masonry ) {
+        requirejs(["//unpkg.com/masonry-layout@4/dist/masonry.pkgd.min"], function( Masonry ) {
             new Masonry( '#pywebio-scope-image_flow',{ 
                 percentPosition: true,horizontalOrder: true
             });
         });
     """)
+
 
 @config(theme="minty", css_style=css)
 def page_gallery():

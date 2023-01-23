@@ -148,6 +148,7 @@ header_html_index = """
         <a class="nav-link" href="/main">绘图</a>
         <a class="nav-link" href="/gallery">画廊</a>
         <a class="nav-link" href="/help">帮助</a>
+        <a class="nav-link" href="/account">账户</a>
 
       </nav>
     </div>
@@ -163,6 +164,7 @@ header_html_main = """
         <a class="nav-link active" href="/main">绘图</a>
         <a class="nav-link" href="/gallery">画廊</a>
         <a class="nav-link" href="/help">帮助</a>
+        <a class="nav-link" href="/account">账户</a>
 
       </nav>
     </div>
@@ -178,6 +180,7 @@ header_html_gallery = """
         <a class="nav-link" href="/main">绘图</a>
         <a class="nav-link active" href="/gallery">画廊</a>
          <a class="nav-link" href="/help">帮助</a>
+        <a class="nav-link" href="/account">账户</a>
 
       </nav>
     </div>
@@ -193,6 +196,23 @@ header_html_help = """
         <a class="nav-link" href="/main">绘图</a>
         <a class="nav-link" href="/gallery">画廊</a>
         <a class="nav-link active" href="/help">帮助</a>
+        <a class="nav-link" href="/account">账户</a>
+
+      </nav>
+    </div>
+  </header>
+<hr />
+"""
+
+header_html_account = """
+<header class="masthead mb-auto">
+    <div class="inner">
+      <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link" href="/">首页</a>
+        <a class="nav-link" href="/main">绘图</a>
+        <a class="nav-link" href="/gallery">画廊</a>
+        <a class="nav-link" href="/help">帮助</a>
+        <a class="nav-link active" href="/account">账户</a>
       </nav>
     </div>
   </header>
