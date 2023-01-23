@@ -88,10 +88,8 @@ class RClient:
         if client_id.startswith("@"):
             self.r.rpush("His:"+client_id, img_url)
             self.r.expire("His:"+client_id, EXP_7DAYS)
-            generation_id = get_generation_id(img_url)
             text2image_data["img_url"] = img_url
-            self.r.hmset("InfoHis:"+generation_id, text2image_data)
-            self.r.expire("InfoHis:"+generation_id, EXP_7DAYS)
+            
             with self.mysql_db.atomic():
                 Image.get_or_create(
                     genid=gen_id,
@@ -118,13 +116,6 @@ class RClient:
                     published=False,
                     userid=client_id
                 )
-                
-                
-
-    def pop_history(self, client_id):
-        if client_id.startswith("@"):
-            img_url = self.r.lpop("His:"+client_id)
-            self.r.delete("InfoHis:"+get_generation_id(img_url))
 
     def get_history(self, client_id):
         if client_id.startswith("@"):
@@ -136,32 +127,12 @@ class RClient:
 
     def get_image_information(self, img_url=None, generation_id=None):
         generation_id = generation_id or get_generation_id(img_url)
-        keys=[
-            "type",
-            "img_url",
-            "model_name",
-            "scheduler_name",
-            "prompt",
-            "negative_prompt",
-            "height",
-            "width",
-            "num_inference_steps",
-            "guidance_scale",
-            "seed"]
-        if self.r.exists("InfoHis:"+generation_id)>0:
-            text2image_data_values = self.r.hmget("InfoHis:"+generation_id, keys)
-        else:
-            text2image_data_values = self.r.hmget("InfoGal:"+generation_id, keys)
-        text2image_data = {k:v for k,v in zip(keys,text2image_data_values)}
-        if text2image_data['type'] is not None:
-            return text2image_data
-        else :
-            try:
-                image_record = Image.get(generation_id).params
-                return json.loads(image_record)
-            except:
-                traceback.print_exc()
-                return None 
+        try:
+            image_record = Image.get(generation_id).params
+            return json.loads(image_record)
+        except:
+            traceback.print_exc()
+            return None 
 
     def record_publish(self,img_url):
         try:
