@@ -169,7 +169,7 @@ class RClient:
             ret = json.loads(image_record.params)
             ret["gentime"] = str(image_record.gentime)
             ret["user"] = User.get_by_id(image_record.userid).username
-            print(ret)
+            return ret 
         except:
             traceback.print_exc()
             return self.get_image_information_old(img_url,generation_id) 
