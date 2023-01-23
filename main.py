@@ -536,19 +536,11 @@ def page_handbook():
 **a. 支持webui特性（仅英语）**
 支持webui的多种语法特性，包括Attention/emphasis、Prompt editing等。
 
-**b. 支持多语言提示词和反向提示词**
+**b. 支持中文提示词和反向提示词**
 
-云景后台接入了经过蒸馏的[NLLB-200翻译大模型](https://huggingface.co/facebook/nllb-200-distilled-600M)，输入非英语文本会自动翻译为英文后再进行图像生成。
-翻译后会去掉括号、改变标点符号等，因为使用非英语语言时无法使用webui的特性。
+云景后台接入了[机器翻译模型](https://huggingface.co/Helsinki-NLP/opus-mt-zh-en)，输入韩语文本会自动翻译为英文后再进行图像生成。
+翻译后会去掉括号、改变标点符号等，因为使用汉语时无法使用webui的特性。
 
-支持的语言：
-- 汉语
-- 法语
-- 日语
-- 阿拉伯语
-- 韩语
-- 俄语
-- 西班牙语
 
 #### (3) 模型介绍
 
