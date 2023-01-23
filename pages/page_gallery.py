@@ -28,7 +28,11 @@ def show_image_information_window(img_url, fuke_func=None):
             ],size="66% 2% 32%")
             with use_scope("popup_image_disp"):
                 put_image(img_url)
-                
+                put_row([
+                    put_text("@"+text2image_data["user"]),
+                    None,
+                    put_text()
+                ])
                 put_column([
                     put_button("复刻这张图", color="info", onclick=fuke_func),
                     put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),

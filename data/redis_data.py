@@ -155,6 +155,7 @@ class RClient:
             text2image_data_values = self.r.hmget("InfoGal:"+generation_id, keys)
         text2image_data = {k:v for k,v in zip(keys,text2image_data_values)}
         text2image_data["user"]="匿名用户"
+        text2image_data["gentime"] ="2023-01-24 00:00:00"
         if text2image_data['type'] is not None:
             return text2image_data
         else :
@@ -166,6 +167,7 @@ class RClient:
             image_record = Image.get_by_id(generation_id)
 
             ret = json.loads(image_record.params)
+            ret["gentime"] = image_record.gentime
             ret["user"] = User.get_by_id(image_record.userid).username
         except:
             traceback.print_exc()
