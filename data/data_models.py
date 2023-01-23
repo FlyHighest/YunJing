@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..")
-from peewee import Model,CharField, MySQLDatabase,DateTimeField,IntegerField,AutoField,ForeignKeyField,BooleanField
+from peewee import Model,CharField, MySQLDatabase,DateTimeField,IntegerField,AutoField,ForeignKeyField,BooleanField,TextField
 from secret import mysql_db_database,mysql_db_host,mysql_db_password,mysql_db_user
 import datetime
 
@@ -28,9 +28,9 @@ class Image(BaseModel):
     genid = CharField(unique=True,primary_key=True)
     imgurl = CharField()
     numlikes = IntegerField(default=0)
-    params = CharField()
+    params = TextField()
     modelname=CharField()
-    prompt=CharField()
+    prompt=TextField()
     published = BooleanField()
     gentime = DateTimeField(default=datetime.datetime.now)
     userid = ForeignKeyField(model=User,backref="images")
