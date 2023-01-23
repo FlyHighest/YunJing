@@ -3,7 +3,7 @@ import nanoid , os, traceback
 import redis
 import pymysql,pymysql.cursors
 import httpx,re
-from utils import get_generation_id
+from .utils import get_generation_id
 from secret import *
 from qiniu import Auth as QiniuAuth
 from qiniu import BucketManager as QiniuBucketManager
