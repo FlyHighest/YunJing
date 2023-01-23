@@ -1,10 +1,17 @@
 from pywebio import config, session
-from pywebio.output import put_html,put_markdown
+from pywebio.output import put_html,put_markdown,put_button,put_row
+from pywebio.pin import put_input,pin
+
 from utils.constants import header_html_help,css
+from utils import RClient
+def submit_img_to_check():
+    session.local.rclient.add_check_image(pin['img_url'])
 
 @config(theme="minty", css_style=css)
 def page_help():
     session.set_env(title='云景 · 帮助', output_max_width='80%')
+    session.local.rclient: RClient = RClient()
+
     put_html(header_html_help)
     put_markdown("""
 ## 一、云景·绘图
@@ -103,9 +110,16 @@ Prompt Editing:
 - "操作频率过于频繁，请三秒后再试": 提示词扩展、超分、图像生成都会使用GPU资源，公益项目预算有限，因此对频率进行了限制
 - "与服务器连接已断开，请刷新页面重新操作"/"Disconnected from the server,...": 长时间不操作自动断开，刷新网页即可重新连接
 
-### 2. 其他
+### 2. 我的图像中不含🔞内容，为何提示“检测到不适宜内容”？
 
+为了平台的健康发展，内容安全检测器有时会表现的过于严格。如果您认为您生成的图像正常，请在下面提交图像的地址（在图像上右键，复制图像地址），我们会在人工核查后发布。
+""")
+    put_row([
+        put_input("img_url"),
+        None,
+        put_button("提交",onclick=submit_img_to_check)
+    ],size="80% 10% 10%")
+    put_markdown("""
 如有其他问题或者建议，可以联系我或加入我们的交流群(QQ群: 557228477)。
-
 """)
 

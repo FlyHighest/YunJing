@@ -178,3 +178,6 @@ class RClient:
             ind = random.randint(0,size-1)
             ret.append(self.r.lindex("Gal", ind))
         return ret 
+
+    def add_check_image(self, img_url):
+        self.r.rpush("Check",img_url)
