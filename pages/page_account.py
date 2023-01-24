@@ -70,7 +70,7 @@ def login_auth(register_func,verify_func: Callable[[str, str], bool], secret: Un
                     {'label': '注册', 'color': 'warning', 'value':'signup'},
                 ], name='action')
             ])
-            if int(info['verif_answer'])!=answer:
+            if (info['verif_answer'].isdigit() or info['verif_answer'][1:].isdigit()) and int(info['verif_answer'])!=answer:
                 toast("验证问题错误",info['password'])
                 with put_loading():
                     time.sleep(wait_time)
@@ -99,6 +99,16 @@ def login_auth(register_func,verify_func: Callable[[str, str], bool], secret: Un
 
     return username
 
+def revoke_auth(token_name='pywebio_auth_token'):
+    """Revoke the auth state of current user
+
+    :param str token_name: the name of the token to store the auth state in user browser.
+
+    .. versionadded:: 0.4
+    """
+    set_localstorage(token_name, '')
+    session.run_js("location.reload();")
+
 from secret import verif_secret
 @config(theme="minty", css_style=css)
 def page_account():
@@ -110,4 +120,5 @@ def page_account():
         username = login_auth(session.local.rclient.register_user,session.local.rclient.verif_user, secret=verif_secret )
         put_text("您已成功登录，欢迎您，"+username)
         put_text("注册用户的历史记录保留7天，数量提升至100张；发布作品时会关联到您的用户名")
+        put_button("退出登录",onclick=revoke_auth)
 
