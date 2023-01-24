@@ -215,18 +215,13 @@ class RClient:
         self.r.rpush("Check",img_url)
         return True 
 
-    def register_user(self,username,password):
+    def register_user(self,username,password,email):
         try:
-            sub_str = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",username)
-            if username!=sub_str:
-                return False
-            if len(username)>20:
-                return False
-
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
             User.create(
                 username=username,
                 password=pw_hash,
+                email=email,
                 level=1
             )
             return True
@@ -248,6 +243,16 @@ class RClient:
             traceback.print_exc()
             return None
 
+    def check_published(self,img_url):
+        genid = get_generation_id(img_url)
+        try:
+            if Image.get_by_id(genid).published==True:
+                return True 
+            else:
+                return False
+        except:
+            return False 
+            
     def move_redis_gallery_to_mysql(self):
         for i in range(1,1+self.r.llen("Gal")):
             img_url = self.r.lindex("Gal",i)

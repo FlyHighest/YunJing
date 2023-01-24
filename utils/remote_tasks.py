@@ -24,6 +24,10 @@ def before_post():
         raise QueueTooLong
 
 def task_publish_to_gallery(scope, img_url):
+    # check if has published 
+    if session.local.rclient.check_published(img_url):
+        toast("图像已发布在画廊，请勿重复发布")
+        return
     with use_scope(scope):
         try:
             before_post()

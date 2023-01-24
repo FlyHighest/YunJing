@@ -22,6 +22,8 @@ class User(BaseModel):
     username = CharField(unique=True)
     password = CharField()
     jointime = DateTimeField(default=datetime.datetime.now)
+    email = CharField()
+    phone = CharField()
     level = IntegerField() 
 
 
@@ -57,8 +59,8 @@ class Histories(BaseModel):
 
 if __name__=="__main__":
     mysql_db.connect()
-    # mysql_db.create_tables([User,Image,Likes,Histories])
-    # mysql_db.execute_sql("CREATE FULLTEXT INDEX ft_index ON Image (prompt) WITH PARSER ngram")
+    mysql_db.create_tables([User,Image,Likes,Histories])
+    mysql_db.execute_sql("CREATE FULLTEXT INDEX ft_index ON Image (prompt) WITH PARSER ngram")
     import nanoid
     print(User.create(username="匿名用户",password=nanoid.generate(size=30)))
     mysql_db.close()
