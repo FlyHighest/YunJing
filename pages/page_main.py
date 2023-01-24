@@ -93,7 +93,7 @@ def page_main():
         print(session.local.client_id)
     else:
     # 检查本地有没有cookie client id，如果没有，让服务器赋予一个。
-        if get_cookie("client_id") is None:
+        if get_cookie("client_id") is None or not get_cookie("client_id").startswith("@"):
             new_client_id = session.local.rclient.get_new_client_id()
             set_cookie("client_id", new_client_id)
         session.local.client_id = get_cookie("client_id")
