@@ -156,6 +156,13 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
         if user_input["expected_code"]!=code:
             return "验证码错误"
 
+    def send_mail(target_address, verif_code):
+        if 'last_sendmail_time' not in session.local or time.time() - session.local.last_sendmail_time > 60:
+            send_verification_mail(target_address=user_input["email"] ,verif_code=random_code)
+            session.local.last_sendmail_time = time.time()
+        else:
+            toast("1分钟内只能发送一次",color="warn")
+
     token = get_localstorage(token_name)  # get token from user's web browser
     # try to decrypt the username from the token
     username = decode_signed_value(secret, token_name, token, max_age_days=expire_days)
