@@ -38,6 +38,8 @@ class Image(BaseModel):
     published = BooleanField()
     gentime = DateTimeField(default=datetime.datetime.now)
     userid = ForeignKeyField(model=User,backref="images")
+    height=IntegerField()
+    width =IntegerField()
 
 class Likes(BaseModel):
     userid = ForeignKeyField(model=User,backref="user_likes")

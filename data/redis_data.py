@@ -95,6 +95,8 @@ class RClient:
                     Image.create(
                         genid=gen_id,
                         imgurl=img_url,
+                        height=text2image_data['height'],
+                        width=text2image_data['width'],
                         params=json.dumps(text2image_data),
                         modelname=text2image_data['model_name'],
                         prompt=text2image_data['prompt'],
@@ -111,6 +113,8 @@ class RClient:
                     Image.create(
                         genid=gen_id,
                         imgurl=img_url,
+                        height=text2image_data['height'],
+                        width=text2image_data['width'],
                         params=json.dumps(text2image_data),
                         modelname=text2image_data['model_name'],
                         prompt=text2image_data['prompt'],
@@ -218,12 +222,13 @@ class RClient:
     def register_user(self,username,password,email):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
-            User.create(
-                username=username,
-                password=pw_hash,
-                email=email,
-                level=1
-            )
+            with self.mysql_db.atomic():
+                User.create(
+                    username=username,
+                    password=pw_hash,
+                    email=email,
+                    level=1
+                )
             return True
         except:
             return False
@@ -252,7 +257,7 @@ class RClient:
                 return False
         except:
             return False 
-            
+
     def move_redis_gallery_to_mysql(self):
         for i in range(1,1+self.r.llen("Gal")):
             img_url = self.r.lindex("Gal",i)
@@ -267,6 +272,8 @@ class RClient:
                     Image.create(
                         genid=genid,
                         imgurl=img_url,
+                        height=text2image_data['height'],
+                        width=text2image_data['width'],
                         params=json.dumps(text2image_data),
                         modelname=text2image_data['model_name'],
                         prompt=text2image_data['prompt'],

@@ -1,0 +1,1 @@
+from .search_app import SearchHandler
