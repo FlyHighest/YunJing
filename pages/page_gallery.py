@@ -64,7 +64,7 @@ def open_main_page_with_generate_params(generate_url):
 
 def load_more_images_on_gallery(val=None):
     images = []
-    for i in range(10):
+    for i in range(24):
         if len(session.local.image_list)>0:
             images.append(session.local.image_list.pop(0))
     # add images to the shortest col
