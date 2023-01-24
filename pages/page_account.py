@@ -158,7 +158,7 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
 
     def send_mail(target_address, verif_code):
         if 'last_sendmail_time' not in session.local or time.time() - session.local.last_sendmail_time > 60:
-            send_verification_mail(target_address=user_input["email"] ,verif_code=random_code)
+            send_verification_mail(target_address=target_address ,verif_code=verif_code)
             session.local.last_sendmail_time = time.time()
         else:
             toast("1分钟内只能发送一次",color="warn")
@@ -178,7 +178,7 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
                 input("用户名", name='username', validate=check_username,help_text="用户名小于20个字，允许汉字、字母和数字"),
                 input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
                 input("重复密码", type=PASSWORD,validate=check_secondpass, name='password2'),
-                input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_verification_mail(target_address=user_input["email"] ,verif_code=random_code))),
+                input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code))),
                 input("验证码", name='verif_answer',validate=check_verif),
                 actions('', [
                     {'label': '注册', 'color': 'warning', 'value':'signup'},
