@@ -165,7 +165,6 @@ class RClient:
         generation_id = generation_id or get_generation_id(img_url)
         try:
             image_record = Image.get_by_id(generation_id)
-
             ret = json.loads(image_record.params)
             ret["gentime"] = str(image_record.gentime)
             ret["user"] = User.get_by_id(image_record.userid).username
