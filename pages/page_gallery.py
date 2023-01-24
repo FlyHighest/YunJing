@@ -13,6 +13,8 @@ from utils.constants import *
 from utils import task_post_upscale
 from utils import get_generation_id
 
+from search import query_recent_images
+import numpy as np 
 
 def show_image_information_window(img_url, fuke_func=None):
     generation_id = get_generation_id(img_url)
@@ -60,26 +62,33 @@ def open_main_page_with_generate_params(generate_url):
     session.run_js(f'window.open("{generate_url}", "_blank");')
 
 
-@use_scope("image_flow")
-def load_more_images_on_gallery(val):
-    img_url_list = session.local.rclient.get_random_samples_from_gallery(IMAGE_NUM_PER_LOAD)
+def load_more_images_on_gallery(val=None):
+    images = []
+    for i in range(10):
+        if len(session.local.image_list)>0:
+            images.append(session.local.image_list.pop(0))
+    # add images to the shortest col
+    if len(images) > 0:
+        arr = []
+        for img_info in images:
 
-    for img_url in img_url_list:
-        put_image(img_url+"-w256").onclick(
-                partial(
-                    show_image_information_window, 
-                    img_url=img_url, 
-                    fuke_func=partial(open_main_page_with_generate_params, generate_url="/main?gen="+get_generation_id(img_url))
+            img_url = img_info["image"]
+            height=img_info["height"]
+            width = img_info['width']
+            username=img_info['username']  
+            # find col
+            short_ind = np.argmin(session.local.col_height)
+            session.local.col_height[short_ind] += height * (256 / width)
+            with use_scope("img-col"+str(short_ind)):
+                put_image(img_url+"-w256").onclick(
+                    partial(
+                        show_image_information_window, 
+                        img_url=img_url, 
+                        fuke_func=partial(open_main_page_with_generate_params, generate_url="/main?gen="+get_generation_id(img_url))
+                    )
                 )
-            )
-    session.run_js("""
-        requirejs(["//unpkg.com/masonry-layout@4/dist/masonry.pkgd.min"], function( Masonry ) {
-            new Masonry( '#pywebio-scope-image_flow',{ 
-                percentPosition: true,horizontalOrder: true
-            });
-        });
-    """)
-
+            
+    
 
 @config(theme="minty", css_style=css)
 def page_gallery():
@@ -124,8 +133,20 @@ def page_gallery():
     #         put_column(put_markdown('## 云景 · 画廊')),
     #     ])
     put_scope("image_flow")
-
+    with use_scope("image_flow"):
+        put_row([
+            put_scope("img-col0"),
+            None,
+            put_scope("img-col1"),
+            None,
+            put_scope("img-col2"),
+            None,
+            put_scope("img-col3"),
+            None,
+            put_scope("img-col4"),
+            None,
+            put_scope("img-col5"),
+        ])
+    session.local.col_height = [0,0,0,0,0,0]
+    session.local.image_list = query_recent_images()
     load_more_images_on_gallery(0)
-
-
-

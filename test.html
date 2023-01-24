@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>infinitescroll</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/waterfall.css">
+</head>
+<body>
+<div id="header">
+    <h1>infinitescroll</h1>
+</div>
+<div id="container"></div>
+<script type="text/x-handlebars-template" id="waterfall-tpl">
+{{#result}}
+    <div class="item">
+        <img src="{{image}}" width="{{width}}" height="{{height}}" />
+    </div>
+{{/result}}
+</script>
+<script src="https://cdn.jsdelivr.net/gh/wang0618/PyWebIO-assets@v1.7.1/js/jquery.min.js"></script>
+<script src="https://storage.dong-liu.com/js/handlebars-v4.7.7.js"></script>
+<script src="https://storage.dong-liu.com/js/waterfall.min.js"></script>
+<script>
+$('#container').waterfall({
+    itemCls: 'item',
+    colWidth: 222,  
+    gutterWidth: 15,
+    gutterHeight: 15,
+    checkImagesLoaded: false,
+    path: function(page) {
+        return 'http://localhost:5002/search?type=recent';
+    }
+});
+</script>
+
+</body>
+</html>
