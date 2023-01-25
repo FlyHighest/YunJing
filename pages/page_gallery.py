@@ -117,7 +117,7 @@ def load_more_images_on_gallery(val=None):
             short_ind = np.argmin(session.local.col_height)
             session.local.col_height[short_ind] += height * (256 / width)
             with use_scope("img-col"+str(short_ind)):
-                put_image(img_url+"-w256").onclick(
+                put_image(img_url+"-q50").onclick(
                     partial(
                         show_image_information_window, 
                         img_url=img_url, 
