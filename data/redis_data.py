@@ -245,7 +245,6 @@ class RClient:
         try:
             return str(User.get(User.username==username).userid)
         except:
-            traceback.print_exc()
             return None
 
     def check_likes(self,userid,genid):

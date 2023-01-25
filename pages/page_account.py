@@ -159,9 +159,16 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
             return "验证码错误"
 
     def send_mail(target_address, verif_code):
+        if check_email(target_address) is not None:
+            toast("地址错误或已被注册")
+            return 
         if 'last_sendmail_time' not in session.local or time.time() - session.local.last_sendmail_time > 60:
-            send_verification_mail(target_address=target_address ,verif_code=verif_code)
-            session.local.last_sendmail_time = time.time()
+            success = send_verification_mail(target_address=target_address ,verif_code=verif_code)
+            if success:
+                session.local.last_sendmail_time = time.time()
+                toast("验证码已发送，请查看邮箱")
+            else:
+                toast("验证码发送失败，请联系管理员")
         else:
             toast("1分钟内只能发送一次",color="warn")
 
@@ -176,6 +183,7 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
         while True:
             random_code = generate_random_code()
             user_input["expected_code"] = random_code
+            user_input["email"] = ""
             info = input_group('注册新账户', [
                 input("用户名", name='username', validate=check_username,help_text="用户名小于20个字，允许汉字、字母和数字"),
                 input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
