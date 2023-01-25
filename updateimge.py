@@ -16,7 +16,7 @@ res = cursor.fetchall()
 for r in res:
     genid, h,w,params = r 
     print(genid,h,w)
-    data = json.loads(params)
-    hei,wid = data['height'],data['width']
-    cursor.execute(f"update image set height={hei},width={wid} where genid='{genid}'; ")
-    mysql_db.commit()
+    if h is None:
+        data = json.loads(params)
+        hei,wid = data['height'],data['width']
+        cursor.execute(f"update image set height={hei},width={wid} where genid='{genid}'; ")
