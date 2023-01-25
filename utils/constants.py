@@ -146,41 +146,6 @@ css = """
   color: #000;
   border-bottom-color: #000;
 }
-
-
-#waterfall {
-    position: relative;
-    min-height: 500px;
-    margin: 16px auto 0;
-    background-color: #fff;
-}
-
-.pin {
-    position: absolute;
-    width: 216px;
-    font-size: 12px;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
-    transition: opacity .4s ease-in-out;
-}
-
-.pin img {
-    display: block;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.description {
-    display: block;
-    padding: 0 16px;
-    margin: 10px 0;
-    line-height: 1.35em;
-    overflow: hidden;
-    word-wrap: break-word;
-}
-
-
-
 """
 
 header_html_index = """
