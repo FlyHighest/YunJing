@@ -90,13 +90,13 @@ def page_main():
     username = get_username()
     if username:
         session.local.client_id = session.local.rclient.get_userid(username)
-        print(session.local.client_id)
     else:
     # 检查本地有没有cookie client id，如果没有，让服务器赋予一个。
         if get_cookie("client_id") is None or not get_cookie("client_id").startswith("@"):
             new_client_id = session.local.rclient.get_new_client_id()
             set_cookie("client_id", new_client_id)
         session.local.client_id = get_cookie("client_id")
+        
 
     session.local.last_task_time = time.time() - 3
     session.local.history_image_cnt = 0
@@ -105,10 +105,7 @@ def page_main():
     else:
         session.local.max_history_bonus = 0
     put_html(header_html_main)
-    # put_row([ 
-    #         put_column(put_markdown('## 云景 · 绘图')),
-    #     ])
-    
+
     put_row(
         [
             put_scope('input'),   
@@ -152,7 +149,7 @@ def page_main():
 
         #.style("position: relative;top: 50%;transform: translateY(-30%);")s
     with use_scope('history'):
-        put_text(f"历史记录 (保留{MAX_HISTORY}张，详细信息保留7天)")
+        put_text(f"历史记录 (保留{MAX_HISTORY+session.local.max_history_bonus}张，详细信息保留7天)")
         put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)
     
     with use_scope('history_images'):

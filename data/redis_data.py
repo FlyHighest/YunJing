@@ -95,6 +95,8 @@ class RClient:
                     Image.create(
                         genid=gen_id,
                         imgurl=img_url,
+                        height=text2image_data['height'],
+                        width=text2image_data['width'],
                         params=json.dumps(text2image_data),
                         modelname=text2image_data['model_name'],
                         prompt=text2image_data['prompt'],
@@ -111,6 +113,8 @@ class RClient:
                     Image.create(
                         genid=gen_id,
                         imgurl=img_url,
+                        height=text2image_data['height'],
+                        width=text2image_data['width'],
                         params=json.dumps(text2image_data),
                         modelname=text2image_data['model_name'],
                         prompt=text2image_data['prompt'],
@@ -215,20 +219,16 @@ class RClient:
         self.r.rpush("Check",img_url)
         return True 
 
-    def register_user(self,username,password):
+    def register_user(self,username,password,email):
         try:
-            sub_str = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",username)
-            if username!=sub_str:
-                return False
-            if len(username)>20:
-                return False
-
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
-            User.create(
-                username=username,
-                password=pw_hash,
-                level=1
-            )
+            with self.mysql_db.atomic():
+                User.create(
+                    username=username,
+                    password=pw_hash,
+                    email=email,
+                    level=1
+                )
             return True
         except:
             return False
@@ -236,8 +236,8 @@ class RClient:
     def verif_user(self,username,password):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
-            user = User.get(User.username==username and User.password==pw_hash)
-            return True
+            user = User.get((User.username==username) & (User.password==pw_hash))
+            return user is not None
         except:
             return False
 
@@ -245,8 +245,44 @@ class RClient:
         try:
             return str(User.get(User.username==username).userid)
         except:
-            traceback.print_exc()
             return None
+
+    def check_likes(self,userid,genid):
+        if Likes.select().where((Likes.userid==userid) & (Likes.genid==genid)).count()>0:
+            return True 
+        else:
+            return False
+
+    def set_likes(self,userid,genid):
+        with self.mysql_db.atomic():
+            if not self.check_likes(userid,genid):
+                Likes.create(
+                    userid=userid,
+                    genid=genid
+                )
+
+    def get_likenum(self,genid):
+        return Likes.select().where(Likes.genid==genid).count()
+        
+    def cancel_likes(self,userid,genid):
+        Likes.delete().where((Likes.userid==userid) & (Likes.genid==genid)).execute()
+
+    def check_email_exists(self,email):
+        if User.select().where(User.email==email).count()>0:
+            return True
+        else:
+            return False
+
+
+    def check_published(self,img_url):
+        genid = get_generation_id(img_url)
+        try:
+            if Image.get_by_id(genid).published==True:
+                return True 
+            else:
+                return False
+        except:
+            return False 
 
     def move_redis_gallery_to_mysql(self):
         for i in range(1,1+self.r.llen("Gal")):
@@ -262,12 +298,17 @@ class RClient:
                     Image.create(
                         genid=genid,
                         imgurl=img_url,
+                        height=text2image_data['height'],
+                        width=text2image_data['width'],
                         params=json.dumps(text2image_data),
                         modelname=text2image_data['model_name'],
                         prompt=text2image_data['prompt'],
                         published=True,
                         userid=1 # 匿名用户
                     )
+
+    # 点赞相关的功能
+    
 
 if __name__=="__main__":
     r=RClient()

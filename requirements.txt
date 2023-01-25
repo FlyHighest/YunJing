@@ -6,3 +6,5 @@ nanoid
 qiniu
 peewee
 cryptography
+tencentcloud-sdk-python
+tencentcloud-sdk-python-ses 
