@@ -11,13 +11,13 @@ mysql_db = pymysql.connect(
     )
 cursor = mysql_db.cursor()
 import json 
-cursor.execute("select genid,height,width,params from image")
+cursor.execute("select genid,height,width,params,gentime from image")
 res = cursor.fetchall()
 for r in res:
-    genid, h,w,params = r 
+    genid, h,w,params,gentime = r 
     
     if h is None:
-        print(genid,h,w)
+        print(genid,h,w,gentime)
         data = json.loads(params)
         hei,wid = data['height'],data['width']
         cursor.execute(f"update image set height={hei},width={wid} where genid='{genid}'; ")
