@@ -236,8 +236,8 @@ class RClient:
     def verif_user(self,username,password):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
-            user = User.get(User.username==username and User.password==pw_hash)
-            return True
+            user = User.get((User.username==username) & (User.password==pw_hash))
+            return user is not None
         except:
             return False
 
@@ -247,6 +247,33 @@ class RClient:
         except:
             traceback.print_exc()
             return None
+
+    def check_likes(self,userid,genid):
+        if Likes.select().where((Likes.userid==userid) & (Likes.genid==genid)).count()>0:
+            return True 
+        else:
+            return False
+
+    def set_likes(self,userid,genid):
+        with self.mysql_db.atomic():
+            if not self.check_likes(userid,genid):
+                Likes.create(
+                    userid=userid,
+                    genid=genid
+                )
+
+    def get_likenum(self,genid):
+        return Likes.select().where(Likes.genid==genid).count()
+        
+    def cancel_likes(self,userid,genid):
+        Likes.delete().where((Likes.userid==userid) & (Likes.genid==genid)).execute()
+
+    def check_email_exists(self,email):
+        if User.select().where(User.email==email).count()>0:
+            return True
+        else:
+            return False
+
 
     def check_published(self,img_url):
         genid = get_generation_id(img_url)
@@ -280,6 +307,9 @@ class RClient:
                         published=True,
                         userid=1 # 匿名用户
                     )
+
+    # 点赞相关的功能
+    
 
 if __name__=="__main__":
     r=RClient()

@@ -12,7 +12,7 @@ if __name__ == '__main__':
         ('/gallery', webio_handler(page_gallery, cdn=True,reconnect_timeout=reconnect_timeout)),
         ('/help', webio_handler(page_help, cdn=True,reconnect_timeout=reconnect_timeout)),
         ('/account', webio_handler(page_account, cdn=True,reconnect_timeout=reconnect_timeout)),
-        ('/search',SearchHandler)
+       # ('/search',SearchHandler)
     ])
     application.listen(port=5002, address='localhost')
     tornado.ioloop.IOLoop.current().start()

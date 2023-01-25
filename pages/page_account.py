@@ -151,6 +151,8 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
     def check_email(inp):
         if "@" not in inp:
             return "请输入有效的电子邮箱地址"
+        if session.local.rclient.check_email_exists(inp):
+            return "该电邮地址已被注册"
 
     def check_verif(code):
         if user_input["expected_code"]!=code:

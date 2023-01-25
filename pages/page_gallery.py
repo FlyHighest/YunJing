@@ -11,10 +11,23 @@ from data import RClient
 
 from utils.constants import *
 from utils import task_post_upscale
-from utils import get_generation_id
+from utils import get_generation_id,get_username
 
 from search import query_recent_images
 import numpy as np 
+@use_scope("popup_likes",clear=True)
+def popup_cancel_like(userid, genid):
+    session.local.rclient.cancel_likes(userid,genid)
+    like_num = session.local.rclient.get_likenum(genid)
+    put_html(thumbup_false).onclick(partial(popup_create_like,userid=userid,genid=genid)),
+    put_text(like_num)
+
+@use_scope("popup_likes",clear=True)
+def popup_create_like(userid,genid):
+    session.local.rclient.set_likes(userid,genid)
+    like_num = session.local.rclient.get_likenum(genid)
+    put_html(thumbup_true).onclick(partial(popup_cancel_like,userid=userid,genid=genid)),
+    put_text(like_num)
 
 def show_image_information_window(img_url, fuke_func=None):
     generation_id = get_generation_id(img_url)
@@ -30,16 +43,40 @@ def show_image_information_window(img_url, fuke_func=None):
             ],size="66% 2% 32%")
             with use_scope("popup_image_disp"):
                 put_image(img_url)
+
                 put_row([
-                    put_text("@"+text2image_data["user"]+"  |  "+text2image_data["gentime"].split(" ")[0])
-                    #put_html(thumbup_false), #TODO 这里获取点赞状态和点赞数
-                    #put_text("0")
-                ])
+                    put_scope("popup_user"),
+                    put_scope("popup_likes")
+                ]).style("margin:2%")
                 put_column([
                     put_button("复刻这张图", color="info", onclick=fuke_func),
                     put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
                 ]).style("margin: 3%; text-align: center")
 
+            with use_scope("popup_user"):
+                put_text("作者: @"+text2image_data["user"])
+                put_text("日期: "+text2image_data["gentime"].split(" ")[0])
+
+
+            with use_scope("popup_likes"):
+                # 登录否？
+                like_num = session.local.rclient.get_likenum(generation_id)
+
+                if session.local.client_id.startswith("@"):
+                    
+                    put_html(thumbup_false).onclick(lambda: toast("请先登录",duration=1)),
+                    put_text(like_num)
+                
+                else:
+                    userid = session.local.client_id
+                    if session.local.rclient.check_likes(userid,generation_id):
+                        put_html(thumbup_true).onclick(partial(popup_cancel_like,userid=userid,genid=generation_id)),
+                        put_text(like_num)
+                        
+                    else:
+                        put_html(thumbup_false).onclick(partial(popup_create_like,userid=userid,genid=generation_id)),
+                        put_text(like_num)
+                        
 
             with use_scope("popup_image_info"):
                 put_text("✅ "+ (text2image_data["prompt"] or "(无提示词)" ) )
@@ -94,6 +131,20 @@ def load_more_images_on_gallery(val=None):
 def page_gallery():
     session.set_env(title='云景 · 画廊', output_max_width='100%')
     session.local.rclient: RClient = RClient()
+
+    # 检查登录情况
+    username = get_username()
+    if username:
+        session.local.client_id = session.local.rclient.get_userid(username)
+        print(session.local.client_id)
+    else:
+    # 检查本地有没有cookie client id，如果没有，让服务器赋予一个。
+        if get_cookie("client_id") is None or not get_cookie("client_id").startswith("@"):
+            new_client_id = session.local.rclient.get_new_client_id()
+            set_cookie("client_id", new_client_id)
+        session.local.client_id = get_cookie("client_id")
+
+
     callback_loadimages_id = output_register_callback(load_more_images_on_gallery)
     put_html(header_html_gallery)
 
