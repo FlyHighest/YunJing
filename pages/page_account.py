@@ -163,9 +163,10 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
             toast("地址错误或已被注册")
             return 
         if 'last_sendmail_time' not in session.local or time.time() - session.local.last_sendmail_time > 60:
+            session.local.last_sendmail_time = time.time()
+
             success = send_verification_mail(target_address=target_address ,verif_code=verif_code)
             if success:
-                session.local.last_sendmail_time = time.time()
                 toast("验证码已发送，请查看邮箱")
             else:
                 toast("验证码发送失败，请联系管理员")
