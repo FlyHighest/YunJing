@@ -8,7 +8,7 @@ from pywebio.pin import *
 from pywebio_battery.web import *
 
 from data import RClient
-
+import time 
 from utils.constants import *
 from utils import task_post_upscale
 from utils import get_generation_id,get_username
@@ -131,7 +131,7 @@ def load_more_images_on_gallery(val=None):
 def page_gallery():
     session.set_env(title='云景 · 画廊', output_max_width='100%')
     session.local.rclient: RClient = RClient()
-
+    session.local.last_task_time = time.time() - 3
     # 检查登录情况
     username = get_username()
     if username:
