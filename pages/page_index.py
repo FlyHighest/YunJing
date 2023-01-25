@@ -16,7 +16,7 @@ def show_server_status():
 - 画廊图像数：{gallery_num}  \
     ") 
 
-@config(theme="minty", css_style=css)
+@config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_index():
     session.set_env(title='云景 · 首页', output_max_width='80%')
     session.local.rclient: RClient = RClient()
