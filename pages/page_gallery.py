@@ -48,10 +48,11 @@ def show_image_information_window(img_url, fuke_func=None):
                     put_scope("popup_user"),
                     put_scope("popup_likes")
                 ]).style("margin:2%")
-                put_column([
-                    put_button("复刻这张图", color="info", onclick=fuke_func),
-                    put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
-                ]).style("margin: 3%; text-align: center")
+                if not session.local.client_id.startswith("@"): 
+                    put_column([
+                        put_button("复刻这张图", color="info", onclick=fuke_func),
+                        put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
+                    ]).style("margin: 3%; text-align: center")
 
             with use_scope("popup_user"):
                 put_text("作者: @"+text2image_data["user"])

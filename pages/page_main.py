@@ -100,7 +100,7 @@ def page_main():
     session.local.last_task_time = time.time() - 3
     session.local.history_image_cnt = 0
     if not session.local.client_id.startswith("@"):
-        session.local.max_history_bonus = 90
+        session.local.max_history_bonus = 190
     else:
         session.local.max_history_bonus = 0
     put_html(header_html_main)

@@ -272,6 +272,18 @@ def page_account():
                 None,
                 put_button("没有账号，点击注册",outline=True,onclick=show_register),
             ])
+            put_markdown("""
+非注册用户仅可浏览画廊作品。**免费**注册，立享以下权益：
+
+### ✅ 不限次数文本生成图像；
+
+### ✅ 不限次数图像超分；
+
+### ✅ 保留200张历史记录，最长保留时间7天；
+
+### ✅ 发布作品到画廊时可以署名。
+
+            """)
     else:
         with use_scope("login"):
             put_text("您已成功登录，欢迎您，"+username)
