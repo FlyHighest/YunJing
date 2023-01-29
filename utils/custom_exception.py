@@ -11,3 +11,6 @@ class QueueTooLong(Exception):
 
 class TooFrequent(Exception):
     pass 
+
+class NotLoginError(Exception):
+    pass 

@@ -41,6 +41,7 @@ generation_outdated_error_text = "生成参数已过期"
 publish_success_text = "发布成功，通过安全检测后将显示在画廊"
 publish_fail_text = "发布失败，请稍后再试"
 too_frequent_error_text = "操作频率过于频繁，请三秒后再试"
+not_login_error_text = "请先在“账户”页面登录或注册"
 css = """
 #pywebio-scope-image_flow{
     text-align:center;

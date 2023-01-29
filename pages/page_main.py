@@ -98,7 +98,7 @@ def page_main():
         session.local.client_id = get_cookie("client_id")
         toast("请先登录，正在跳转到“账户”页面 ...")
         time.sleep(1.5)
-        session.run_js(f'window.open("/account");')
+        session.run_js(f'window.open("/account", "_blank");')
         
 
     session.local.last_task_time = time.time() - 3

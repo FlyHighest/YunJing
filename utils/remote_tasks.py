@@ -16,6 +16,8 @@ from secret import MODEL_URL
 from .constants import *
 
 def before_post():
+    if session.local.client_id.startswith("@"):
+        raise NotLoginError
     if time.time() - session.local.last_task_time < 3:
         raise TooFrequent
     else:
@@ -65,6 +67,8 @@ def task_publish_to_gallery(scope, img_url):
             toast(queue_too_long_text, duration=4,color="warn" )
         except TooFrequent as _:
             toast(too_frequent_error_text, duration=4,color="warn")
+        except NotLoginError as _:
+            toast(not_login_error_text, duration=4,color="warn")
         except Exception as _:
             toast(unknown_error_text , duration=4,color="warn")
 
@@ -148,6 +152,8 @@ def task_post_image_gen(callback):
         toast(queue_too_long_text, duration=4,color="warn" )
     except TooFrequent as _:
         toast(too_frequent_error_text, duration=4,color="warn")
+    except NotLoginError as _:
+        toast(not_login_error_text, duration=4,color="warn")
     except Exception as _:
         traceback.print_exc()
         toast(unknown_error_text,duration=4,color="warn")
@@ -181,6 +187,8 @@ def task_post_enhance_prompt():
         toast(queue_too_long_text, duration=4,color="warn" )
     except TooFrequent as _:
         toast(too_frequent_error_text, duration=4,color="warn")
+    except NotLoginError as _:
+        toast(not_login_error_text, duration=4,color="warn")
     except Exception as _:
         traceback.print_exc()
         toast(unknown_error_text,duration=4,color="warn")
@@ -223,6 +231,8 @@ def task_post_upscale(scope, img_url):
             toast(queue_too_long_text, duration=4,color="warn")
         except TooFrequent as _:
             toast(too_frequent_error_text, duration=4,color="warn")
+        except NotLoginError as _:
+            toast(not_login_error_text, duration=4,color="warn")
         except Exception as _:
             traceback.print_exc()
             toast(unknown_error_text , duration=4,color="warn")
