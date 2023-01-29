@@ -8,7 +8,7 @@ from pywebio.pin import *
 from pywebio_battery.web import *
 
 from data import RClient
-import time 
+import time ,random
 from utils.constants import *
 from utils import task_post_upscale
 from utils import get_generation_id,get_username
@@ -201,5 +201,5 @@ def page_gallery():
         ])
     session.local.col_height = [0,0,0,0,0,0]
     session.local.image_list = query_recent_images()
-    session.local.image_list.shuffle() 
+    random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)
