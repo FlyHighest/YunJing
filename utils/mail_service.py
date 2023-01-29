@@ -41,7 +41,7 @@ def send_verification_mail_tencent(target_address, verif_code):
 
         req = models.SendEmailRequest()
         verif_json = {
-            "verif_code": verif_code
+            "veri_code": verif_code
         }
         params = {
             "FromEmailAddress": "yunjing@dong-liu.com",
