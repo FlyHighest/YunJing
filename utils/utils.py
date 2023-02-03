@@ -1,9 +1,8 @@
 import os 
 from pywebio_battery import get_localstorage
-from tornado.web import create_signed_value, decode_signed_value
+from tornado.web import  decode_signed_value
 from secret import verif_secret
-def get_generation_id(img_url):
-    return os.path.basename(img_url).split(".")[0]
+
 
 def get_username(token_name="pywebio_auth_token",secret=verif_secret):
     token = get_localstorage(token_name)  # get token from user's web browser

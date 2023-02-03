@@ -5,16 +5,18 @@ import random ,hashlib
 import nanoid, traceback
 import redis
 import httpx,re,json
-from utils import get_generation_id
 from secret import *
-from qiniu import Auth as QiniuAuth
-from qiniu import BucketManager as QiniuBucketManager
+import os 
 from peewee import fn, IntegrityError
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
 EXP_7DAYS = 7*24*60*60
 
 from .data_models import mysql_db, User,Image,Likes,Histories
+
+def fix_url(url):
+    image = os.path.basename(url)
+    return os.path.join(public_url, image)
 
 class RClient:
 
@@ -81,15 +83,18 @@ class RClient:
         new_client_id = "@"+nanoid.generate(CLIENT_ID_ALPHABET, size=10)
         return new_client_id
 
-    def record_new_generated_image(self, client_id, img_url, text2image_data): 
+    def get_sharerate(self, userid):
+        num_generated = Image.select().where(Image.userid==userid).count()
+        num_published = Image.select().where((Image.published==1) & (Image.userid==userid))
+        return 100*num_published/num_generated
+
+    def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.add_generated_number()
-        gen_id = get_generation_id(img_url)
         try:
             if client_id.startswith("@"):
                 self.r.rpush("His:"+client_id, img_url)
                 self.r.expire("His:"+client_id, EXP_7DAYS)
-                text2image_data["img_url"] = img_url
                 
                 with self.mysql_db.atomic():
                     Image.create(
@@ -126,47 +131,19 @@ class RClient:
 
 
     def get_history(self, client_id):
-        if client_id.startswith("@"):
-            return self.r.lrange("His:"+client_id, 0, -1)
-        else:
-            images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc).limit(100)
-            img_urls = [image.imgurl for image in images]
-            return img_urls
+        if client_id.startswith("@"): return []
+        images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc).limit(100)
+        img_url_and_genid = [(image.imgurl,image.genid) for image in images]
+        return img_url_and_genid
 
     def check_genid_in_imagetable(self,genid):
         try:
-            return Image.get_by_id(genid).imgurl
+            return fix_url(Image.get_by_id(genid).imgurl)
         except:
             return None
 
-    def get_image_information_old(self, img_url=None, generation_id=None):
-        generation_id = generation_id or get_generation_id(img_url)
-        keys=[
-            "type",
-            "img_url",
-            "model_name",
-            "scheduler_name",
-            "prompt",
-            "negative_prompt",
-            "height",
-            "width",
-            "num_inference_steps",
-            "guidance_scale",
-            "seed"]
-        if self.r.exists("InfoHis:"+generation_id)>0:
-            text2image_data_values = self.r.hmget("InfoHis:"+generation_id, keys)
-        else:
-            text2image_data_values = self.r.hmget("InfoGal:"+generation_id, keys)
-        text2image_data = {k:v for k,v in zip(keys,text2image_data_values)}
-        text2image_data["user"]="匿名用户"
-        text2image_data["gentime"] ="2023-01-24 00:00:00"
-        if text2image_data['type'] is not None:
-            return text2image_data
-        else :
-            return None 
 
-    def get_image_information(self, img_url=None, generation_id=None):
-        generation_id = generation_id or get_generation_id(img_url)
+    def get_image_information(self, generation_id=None):
         try:
             image_record = Image.get_by_id(generation_id)
             ret = json.loads(image_record.params)
@@ -175,12 +152,11 @@ class RClient:
             return ret 
         except:
             traceback.print_exc()
-            return self.get_image_information_old(img_url,generation_id) 
+            return None
 
-    def record_publish(self,img_url):
+    def record_publish(self,genid):
         try:
-            self.update_lifecycle(img_url)
-            self.store_gallery_image_information(img_url)
+            self.store_gallery_image_information(genid)
             self.add_gallery_number()
             return True
         except Exception as _:
@@ -188,22 +164,10 @@ class RClient:
             return False
 
     def update_lifecycle(self,img_url):
-        #初始化Auth状态
-        q = QiniuAuth(qiniu_access_key_id, qiniu_access_key_secret)
-        #初始化BucketManager
-        bucket = QiniuBucketManager(q)
-        #你要测试的空间， 并且这个key在你空间中存在
-        bucket_name = 'imagedraw'
-        # img_url example: http://storage.dong-liu.com/2023-01-14/SFX2P6KALDRVI142ZOMFXCVS3.webp
-        key = "/".join(img_url.split("/")[-2:])
-        #您要更新的生命周期
-        days = '-1'
-        ret, info = bucket.delete_after_days(bucket_name, key, days)
-        assert info.status_code==200
+        pass 
 
-
-    def store_gallery_image_information(self, img_url):
-        generation_id = get_generation_id(img_url)
+    def store_gallery_image_information(self, genid):
+        generation_id = genid
         image = Image.get_by_id(generation_id)
         image.published = True
         image.save()
@@ -212,11 +176,11 @@ class RClient:
         images = Image.select().where(Image.published==True).order_by(fn.Rand()).limit(num)
         ret = []
         for img in images:
-            ret.append(img.imgurl)
+            ret.append(fix_url(img.imgurl))
         return ret 
 
-    def add_check_image(self, img_url):
-        self.r.rpush("Check",img_url)
+    def add_check_image(self, genid):
+        self.r.rpush("Check",genid)
         return True 
 
     def register_user(self,username,password,email):
@@ -273,9 +237,13 @@ class RClient:
         else:
             return False
 
+    def get_imgurl_by_id(self,genid):
+        try:
+            return Image.get_by_id(genid).imgurl
+        except:
+            return ""
 
-    def check_published(self,img_url):
-        genid = get_generation_id(img_url)
+    def check_published(self,genid):
         try:
             if Image.get_by_id(genid).published==True:
                 return True 
@@ -284,28 +252,6 @@ class RClient:
         except:
             return False 
 
-    def move_redis_gallery_to_mysql(self):
-        for i in range(1,1+self.r.llen("Gal")):
-            img_url = self.r.lindex("Gal",i)
-            print(img_url)
-
-            genid = get_generation_id(img_url)
-            text2image_data = self.get_image_information(img_url)
-            try:
-                Image.get_by_id(genid)
-            except:
-                with self.mysql_db.atomic():
-                    Image.create(
-                        genid=genid,
-                        imgurl=img_url,
-                        height=text2image_data['height'],
-                        width=text2image_data['width'],
-                        params=json.dumps(text2image_data),
-                        modelname=text2image_data['model_name'],
-                        prompt=text2image_data['prompt'],
-                        published=True,
-                        userid=1 # 匿名用户
-                    )
 
     # 点赞相关的功能
     

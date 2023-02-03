@@ -34,14 +34,16 @@ IMAGE_NUM_PER_LOAD = 20
 IMAGE_NUM_PER_ROW = 5
 image_gen_text = "正在生成，请稍后"
 server_error_text = "模型服务错误，请稍后再试"
-nsfw_warn_text = "检测到不适宜内容，请尝试更换提示词或随机种子"
+nsfw_warn_text_publish = "检测到不适宜内容，人工审核后发布"
+nsfw_warn_text_gen = "检测到不适宜内容，请更换提示词或随机种子"
 queue_too_long_text = "当前排队过长，请稍后再试"
 unknown_error_text = "未知错误"
 generation_outdated_error_text = "生成参数已过期"
-publish_success_text = "发布成功，通过安全检测后将显示在画廊"
+publish_success_text = "发布成功，稍后将显示在画廊"
 publish_fail_text = "发布失败，请稍后再试"
 too_frequent_error_text = "操作频率过于频繁，请三秒后再试"
 not_login_error_text = "请先在“账户”页面登录或注册"
+share_too_low="您的分享值过低，生成速度被限制，请多分享图像到画廊"
 css = """
 #pywebio-scope-image_flow{
     text-align:center;

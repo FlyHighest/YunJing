@@ -56,6 +56,7 @@ class Likes(BaseModel):
 
 class Histories(BaseModel):
     userid =  ForeignKeyField(model=User,backref="user_history")
+    genid = ForeignKeyField(model=Image, backref="history_img")
     imgurl = CharField()
     gentime = DateTimeField(default=datetime.datetime.now)
 

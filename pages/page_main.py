@@ -12,7 +12,7 @@ from data import RClient
 from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
                            task_post_upscale, task_publish_to_gallery)
-from utils import get_generation_id, get_username
+from utils import  get_username
 
 
 def set_generation_params(generation_id):
@@ -34,10 +34,10 @@ def close_popup_and_set_params(generation_id):
     close_popup()
     set_generation_params(generation_id)
 
-def show_image_information_window(img_url, fuke_func=None):
-    generation_id = get_generation_id(img_url)
+def show_image_information_window(img_url,genid, fuke_func=None):
+    generation_id = genid
     with popup("图像信息",size="large"):
-        text2image_data = session.local.rclient.get_image_information(img_url)
+        text2image_data = session.local.rclient.get_image_information(genid)
         if text2image_data is None:
             put_warning(generation_outdated_error_text)
         else:
@@ -51,7 +51,7 @@ def show_image_information_window(img_url, fuke_func=None):
                 if fuke_func is None:
                     put_column([
                         put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
-                        put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery, scope="popup_image_disp", img_url= img_url)),
+                        put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery, scope="popup_image_disp", genid= genid)),
                         put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
                     ]).style("margin: 3%; text-align: center")
                 else:
@@ -156,8 +156,8 @@ def page_main():
         put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)
     
     with use_scope('history_images'):
-        for img in session.local.rclient.get_history(session.local.client_id):
-            put_image(img).onclick(partial(show_image_information_window, img_url=img))
+        for img,genid in session.local.rclient.get_history(session.local.client_id):
+            put_image(img).onclick(partial(show_image_information_window,img_url=img, genid=genid))
             session.local.history_image_cnt += 1
     
     param_gen_id = get_query("gen")

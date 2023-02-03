@@ -3,7 +3,7 @@ import random
 import time
 import traceback
 from functools import partial
-
+import os 
 import hashlib,httpx
 from pywebio import session
 from pywebio.output import *
@@ -11,7 +11,7 @@ from pywebio.pin import *
 from pywebio_battery.web import *
 
 from .custom_exception import *
-from secret import MODEL_URL
+from secret import MODEL_URL, public_url
 
 from .constants import *
 
@@ -25,9 +25,9 @@ def before_post():
     if session.local.rclient.get_queue_size() > MAX_QUEUE:
         raise QueueTooLong
 
-def task_publish_to_gallery(scope, img_url):
+def task_publish_to_gallery(scope, genid):
     # check if has published 
-    if session.local.rclient.check_published(img_url):
+    if session.local.rclient.check_published(genid):
         toast("图像已发布在画廊，请勿重复发布")
         return
     with use_scope(scope):
@@ -36,7 +36,7 @@ def task_publish_to_gallery(scope, img_url):
             with put_loading():
                 data = {
                     "type":"safety_check",
-                    "img_url": img_url
+                    "img_url": session.local.rclient.get_imgurl_by_id(genid)
                 }
                 post_data = json.dumps(data)
                 prediction = httpx.post(
@@ -50,15 +50,17 @@ def task_publish_to_gallery(scope, img_url):
                         raise NSFWDetected
                 else:
                     raise ServerError
+                
 
-                ret = session.local.rclient.record_publish(img_url)
+                ret = session.local.rclient.record_publish(genid)
                 
                 if ret:
                     toast(publish_success_text, color="success")
                 else:
                     toast(publish_fail_text, color="warn")
         except NSFWDetected as _:
-            toast(nsfw_warn_text,duration=4,color="warn")
+            session.local.rclient.add_check_image(genid)
+            toast(nsfw_warn_text_publish,duration=4,color="warn")
         except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
             traceback.print_exc()
             toast(server_error_text,duration=4,color="warn")
@@ -86,6 +88,13 @@ def task_post_image_gen(callback):
         before_post()
         toast(image_gen_text)
         with put_loading(shape="border",color="primary"):
+            if session.local.rclient.get_sharerate(session.local.client_id) < 5:
+                toast(share_too_low, color="warn",duration=4)
+                time.sleep(10)
+            elif session.local.rclient.get_sharerate(session.local.client_id) < 10:
+                toast(share_too_low, color="warn",duration=4)
+                time.sleep(5)
+
             seed = convert_int(pin['seed'])
             
             seed = random.randint(-2**31,2**31-1) if seed==-1 else seed
@@ -122,6 +131,7 @@ def task_post_image_gen(callback):
                         raise NSFWDetected
                 else:
                     raise ServerError
+                output_img_url = os.path.join(public_url,output_img_url)
             
         put_image(output_img_url) # 大图output
 
@@ -129,21 +139,21 @@ def task_post_image_gen(callback):
         # 这里是正常处理
         put_row([
             put_button("获取高清图(x4)",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
-            put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", img_url=output_img_url))
+            put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
         ]).style("margin: 5%")
 
         # 历史记录相关
         with use_scope('history_images'):
             session.local.history_image_cnt += 1
-            session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,text2image_data)
+            session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data)
 
             if  session.local.history_image_cnt > MAX_HISTORY + session.local.max_history_bonus:
                 session.local.history_image_cnt -= 1
                 session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
-            put_image(output_img_url).onclick(partial(callback, img_url=output_img_url))
+            put_image(output_img_url).onclick(partial(callback, img_url=output_img_url,genid=image_gen_id))
         
     except NSFWDetected as _:
-        toast(nsfw_warn_text,duration=4,color="warn")
+        toast(nsfw_warn_text_gen,duration=4,color="warn")
     except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
         traceback.print_exc()
         toast(server_error_text,duration=4,color="warn")
@@ -219,10 +229,10 @@ def task_post_upscale(scope, img_url):
                     output_img_url = json.loads(prediction.content)['img_url']
                     if output_img_url =="Error":
                         raise ServerError
-
                 else:
                     raise ServerError
-                
+                output_img_url = os.path.join(public_url,output_img_url)
+
                 put_link('高清图片链接',url=output_img_url,new_window=True)
                 session.local.rclient.record_upscale_task()
         except ServerError as _:

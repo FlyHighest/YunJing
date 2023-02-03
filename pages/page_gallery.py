@@ -11,7 +11,7 @@ from data import RClient
 import time ,random
 from utils.constants import *
 from utils import task_post_upscale
-from utils import get_generation_id,get_username
+from utils import get_username
 
 from search import query_recent_images
 import numpy as np 
@@ -29,10 +29,10 @@ def popup_create_like(userid,genid):
     put_html(thumbup_true).onclick(partial(popup_cancel_like,userid=userid,genid=genid)),
     put_text(like_num)
 
-def show_image_information_window(img_url, fuke_func=None):
-    generation_id = get_generation_id(img_url)
+def show_image_information_window(img_url,genid, fuke_func=None):
+    generation_id = genid
     with popup("图像信息",size="large"):
-        text2image_data = session.local.rclient.get_image_information(img_url)
+        text2image_data = session.local.rclient.get_image_information(generation_id=genid)
         if text2image_data is None:
             put_warning(generation_outdated_error_text)
         else:
@@ -114,15 +114,16 @@ def load_more_images_on_gallery(val=None):
             height=img_info["height"]
             width = img_info['width']
             username=img_info['username']  
+            genid = img_info["genid"]
             # find col
             short_ind = np.argmin(session.local.col_height)
             session.local.col_height[short_ind] += height * (256 / width)
             with use_scope("img-col"+str(short_ind)):
-                put_image(img_url+"-q50").onclick(
+                put_image(img_url).onclick(
                     partial(
                         show_image_information_window, 
-                        img_url=img_url, 
-                        fuke_func=partial(open_main_page_with_generate_params, generate_url="/main?gen="+get_generation_id(img_url))
+                        img_url=img_url, genid=genid,
+                        fuke_func=partial(open_main_page_with_generate_params, generate_url="/main?gen="+genid)
                     )
                 )
             
