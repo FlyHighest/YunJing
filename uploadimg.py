@@ -1,5 +1,6 @@
 import requests,os,httpx,json
 from secret import chevereto_key
+from PIL import Image
 url = "https://storage.yunjing.gallery/api/1/upload"
 header = {
     "X-API-Key":chevereto_key
@@ -30,9 +31,11 @@ for image in file_list:
         'format': 'json',
         'title': os.path.basename(image)
     }
+    img = Image.open(image)
+    img.save(image+".jpeg",format="jpeg",quality=90)
     genid = os.path.basename(image).split(".")[0]
     files = [
-        ('source', open(image,'rb'))
+        ('source', open(image+".jpeg",'rb'))
     ]
     res = httpx.post(url,files=files, headers=header,json=payload)
     #response = requests.request("POST", url, data = payload, content = files)
@@ -42,6 +45,6 @@ for image in file_list:
     # update image and history
     sql1 = f'update image set imgurl="{img_url}" where genid="{genid}"'
     cursor.execute(sql1)
-    sql2 = f'update histories set genid="{genid}" where imgurl="{img_url}"'
-    cursor.execute(sql2)
+    # sql2 = f'update histories set genid="{genid}" where imgurl="{img_url}"'
+    # cursor.execute(sql2)
     break 
