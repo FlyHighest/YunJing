@@ -45,6 +45,6 @@ for image in file_list:
     # update image and history
     sql1 = f'update image set imgurl="{img_url}" where genid="{genid}"'
     cursor.execute(sql1)
-    # sql2 = f'update histories set genid="{genid}" where imgurl="{img_url}"'
-    # cursor.execute(sql2)
+    sql2 = f'update histories set imgurl="{img_url}" where genid="{genid}"'
+    cursor.execute(sql2)
     break 
