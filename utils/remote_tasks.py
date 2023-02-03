@@ -11,7 +11,7 @@ from pywebio.pin import *
 from pywebio_battery.web import *
 
 from .custom_exception import *
-from secret import MODEL_URL, public_url
+from secret import MODEL_URL
 
 from .constants import *
 
@@ -131,7 +131,7 @@ def task_post_image_gen(callback):
                         raise NSFWDetected
                 else:
                     raise ServerError
-                output_img_url = os.path.join(public_url,output_img_url)
+                output_img_url = output_img_url
             
         put_image(output_img_url) # 大图output
 
@@ -231,7 +231,7 @@ def task_post_upscale(scope, img_url):
                         raise ServerError
                 else:
                     raise ServerError
-                output_img_url = os.path.join(public_url,output_img_url)
+                output_img_url = output_img_url
 
                 put_link('高清图片链接',url=output_img_url,new_window=True)
                 session.local.rclient.record_upscale_task()

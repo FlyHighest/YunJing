@@ -14,9 +14,7 @@ EXP_7DAYS = 7*24*60*60
 
 from .data_models import mysql_db, User,Image,Likes,Histories
 
-def fix_url(url):
-    image = os.path.basename(url)
-    return os.path.join(public_url, image)
+
 
 class RClient:
 
@@ -138,7 +136,7 @@ class RClient:
 
     def check_genid_in_imagetable(self,genid):
         try:
-            return fix_url(Image.get_by_id(genid).imgurl)
+            return Image.get_by_id(genid).imgurl
         except:
             return None
 
@@ -176,7 +174,7 @@ class RClient:
         images = Image.select().where(Image.published==True).order_by(fn.Rand()).limit(num)
         ret = []
         for img in images:
-            ret.append(fix_url(img.imgurl))
+            ret.append(img.imgurl)
         return ret 
 
     def add_check_image(self, genid):
