@@ -83,7 +83,7 @@ class RClient:
 
     def get_sharerate(self, userid):
         num_generated = Image.select().where(Image.userid==userid).count()
-        num_published = Image.select().where((Image.published==1) & (Image.userid==userid))
+        num_published = Image.select().where((Image.published==1) & (Image.userid==userid)).count()
         return 100*num_published/num_generated
 
     def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data): 
