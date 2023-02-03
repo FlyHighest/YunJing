@@ -288,8 +288,9 @@ def page_account():
         with use_scope("login"):
             put_text("您已成功登录，欢迎您，"+username)
             put_text("注册用户的历史记录保留7天，数量提升至200张；发布作品时会关联到您的用户名")
-            put_text("您当前分享值为: {:.2f}%".format(session.local.rclient.get_sharerate(session.local.client_id)))
-            put_text("（分享值小于10%，生成速度将受限）")
+            sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
+            put_text("您当前分享值为: {:.2f}% (生成数{}|分享数{})".format(sharerate,num_gen,num_pub))
+            put_text("（分享值小于10%，生成速度将受限; 生成数量低于100时不计算分享值）")
             put_button("退出登录",onclick=revoke_auth)
         with use_scope("options"):
             clear()

@@ -84,7 +84,9 @@ class RClient:
     def get_sharerate(self, userid):
         num_generated = Image.select().where(Image.userid==userid).count()
         num_published = Image.select().where((Image.published==1) & (Image.userid==userid)).count()
-        return 100*num_published/num_generated
+        if num_generated < 100:
+            return 100,num_generated,num_published
+        return 100*num_published/num_generated,num_generated,num_published
 
     def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
