@@ -26,7 +26,8 @@ cursor = mysql_db.cursor()
 file_list = glob.glob("/root/images/*")
 file_list.sort()
 
-for image in file_list:
+for ind,image in enumerate(file_list):
+    print(ind,image)
     payload = {
         'format': 'json',
         'title': os.path.basename(image)
