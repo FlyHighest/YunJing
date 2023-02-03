@@ -88,10 +88,10 @@ def task_post_image_gen(callback):
         before_post()
         toast(image_gen_text)
         with put_loading(shape="border",color="primary"):
-            if session.local.rclient.get_sharerate(session.local.client_id) < 5:
+            if session.local.rclient.get_sharerate(session.local.client_id)[0] < 5:
                 toast(share_too_low, color="warn",duration=4)
                 time.sleep(10)
-            elif session.local.rclient.get_sharerate(session.local.client_id) < 10:
+            elif session.local.rclient.get_sharerate(session.local.client_id)[0] < 10:
                 toast(share_too_low, color="warn",duration=4)
                 time.sleep(5)
 
