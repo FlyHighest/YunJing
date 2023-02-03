@@ -24,5 +24,6 @@ sql = "select imgurl from histories"
 cursor.execute(sql)
 res = cursor.fetchall()
 for r in res:
-    print(r)
-    break
+    u = r[0]
+    genid = os.path.basename(u).split(".")[0]
+    cursor.execute(f'update histories set genid="{genid}" where imgurl="{u}"')
