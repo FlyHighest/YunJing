@@ -33,10 +33,10 @@ for ind,image in enumerate(file_list):
         'title': os.path.basename(image)
     }
     img = Image.open(image)
-    img.save(image+".jpeg",format="jpeg",quality=90)
+    img.save(image.replace(".webp",".jpeg"),format="jpeg",quality=90)
     genid = os.path.basename(image).split(".")[0]
     files = [
-        ('source', open(image+".jpeg",'rb'))
+        ('source', open(image.replace(".webp",".jpeg"),'rb'))
     ]
     res = httpx.post(url,files=files, headers=header,json=payload)
     #response = requests.request("POST", url, data = payload, content = files)
@@ -48,4 +48,3 @@ for ind,image in enumerate(file_list):
     cursor.execute(sql1)
     sql2 = f'update histories set imgurl="{img_url}" where genid="{genid}"'
     cursor.execute(sql2)
-    break 
