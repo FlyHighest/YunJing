@@ -2,8 +2,9 @@ MODELS = [
     "Stable-Diffusion-v1.5",
     "Protogen-x5.8",
     "OpenJourney",
+    "RealisticVision-V1.3",
     "ACertainThing",
-    "Anything-v3"
+    "Anything-v3",
 ]
 
 SCHEDULERS = [
