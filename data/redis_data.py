@@ -113,7 +113,8 @@ class RClient:
                 with self.mysql_db.atomic():
                     Histories.create(
                         userid=client_id,
-                        imgurl=img_url
+                        imgurl=img_url,
+                        genid=gen_id
                     )
                     Image.create(
                         genid=gen_id,
