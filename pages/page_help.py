@@ -25,6 +25,7 @@ def page_help():
 - 文本生成图像
 - 图像超分辨率
 - 提示词自动扩写
+- 提示词模板
 
 ### 1. 文本生成图像
 
@@ -81,6 +82,7 @@ Prompt Editing:
 - [OpenJourney](https://huggingface.co/prompthero/openjourney): prompthero基于著名的midjourney生成的图像训练stable diffusion获得的模型。系统会自动在提示词最前面加上'mdjrny-v4 style'。
 - [ACertainThing](https://huggingface.co/JosephusCheung/ACertainThing): Joseph Cheung训练的二次元风格的图像生成模型，同NovelAI一样，支持danbooru标签。
 - [Anything-v3](https://huggingface.co/Linaqruf/anything-v3.0): 另一个大家喜闻乐见的二次元风格图像生成模型，同NovelAI一样，支持danbooru标签。
+- [RealisticVision-v1.3](https://civitai.com/models/4201/realistic-vision-v13)：civitai上备受欢迎的模型，擅长绘制写实照片类图像。RealisticVision的模板是模型作者推荐的，建议配合模板使用。
 
 ### 2. 图像超分辨率
 
@@ -95,6 +97,14 @@ Prompt Editing:
 在提示词输入框右侧有“帮我写”按钮，点击后将对当前输入的内容自动扩写。扩写模型使用[MagicPrompt](https://huggingface.co/Gustavosta/MagicPrompt-Stable-Diffusion)，主要是为stable diffusion准备的，protogen和openjourney也可以参考。
 
 当前**仅支持英文**提示词扩写。虽然会拓展出来一些提高质量、风格或者艺术家的词汇，但仍无法百分之百保证生成图像的质量，还需手动调整，仅供参考。
+
+### 4. 提示词模板
+
+这个功能给用户提供了更加简便的提示词书写流程。这些模板能够提高出图良品率，提升图像质量，增加图像细节。
+
+当前所使用模板来源：
+- 网站[NovelAI tag生成器](https://wolfchen.top/tag/)
+- github项目[stable-diffusion-prompt-templates](https://github.com/Dalabad/stable-diffusion-prompt-templates)
 
 ## 二、云景·画廊
 
@@ -117,14 +127,8 @@ Prompt Editing:
 
 ### 2. 我的图像中不含🔞内容，为何提示“检测到不适宜内容”？
 
-为了平台的健康发展，内容安全检测器有时会表现的过于严格。如果您认为您生成的图像正常，请在下面提交图像的地址（在图像上右键，复制图像地址），我们会在人工核查后发布。
-""")
-    put_row([
-        put_input("img_url", placeholder="https://storage.yunjing.gallery/xxxxxxxx"),
-        None,
-        put_button("提交",onclick=submit_img_to_check)
-    ],size="85% 5% 10%")
-    put_markdown("""
+为了平台的健康发展，内容安全检测器有时会表现的过于严格。我们会在人工核查后发布。
+
 ### 3. 其他
 
 如有其他问题或者建议，可以联系我或加入我们的交流群(QQ群: 557228477)。

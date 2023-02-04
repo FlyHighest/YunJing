@@ -3,7 +3,7 @@ import tornado.web
 from pywebio.platform.tornado import webio_handler
 from search import SearchHandler
 from pages import page_gallery,page_help,page_index,page_main,page_account
-
+from secret import server_port
 if __name__ == '__main__':
     reconnect_timeout = 600
     application = tornado.web.Application([
@@ -14,5 +14,5 @@ if __name__ == '__main__':
         ('/account', webio_handler(page_account, cdn=True,reconnect_timeout=reconnect_timeout)),
        # ('/search',SearchHandler)
     ])
-    application.listen(port=5001, address='localhost')
+    application.listen(port=server_port, address='localhost')
     tornado.ioloop.IOLoop.current().start()

@@ -80,6 +80,11 @@ def show_image_information_window(img_url,genid, fuke_func=None):
 
 
 
+def fill_prompt_template():
+    template_key = pin['prompt_template']
+    fill_prompt, fill_neg_prompt = prompt_template[template_key]
+    pin['prompt'] = fill_prompt
+    pin['negative_prompt'] = fill_neg_prompt
 
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
@@ -119,6 +124,15 @@ def page_main():
     )
 
     with use_scope('input'):
+        prompt_templates = list(prompt_template.keys())
+        put_row(
+            [
+                put_select("prompt_template",label="提示词模板",options=prompt_templates,value=prompt_templates[0]),
+                None,
+                put_button("填入",color="info",onclick=fill_prompt_template)
+            ], size="77% 3% 20%"
+        )
+
         put_row([
             put_textarea('prompt',label="提示词",
                 placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
@@ -126,8 +140,9 @@ def page_main():
             ),
             None,
             put_scope("prompt_operator")
-        ],size="77% 3% 20%")
+            ],size="77% 3% 20%")
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
+        
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
             put_column(put_select("height",label="高度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
