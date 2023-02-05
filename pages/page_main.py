@@ -128,9 +128,9 @@ def page_main():
         put_row(
             [
                 put_select("prompt_template",label="提示词模板",options=prompt_templates,value=prompt_templates[0]),
-                None,
-                put_button("填入",color="info",onclick=fill_prompt_template)
-            ], size="77% 3% 20%"
+                
+                put_button("填入",color="info",onclick=fill_prompt_template).style("margin: 5%;height: 90%;width: 90%;")
+            ], size="75% 25%"
         )
 
         put_row([
