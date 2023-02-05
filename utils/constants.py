@@ -75,7 +75,7 @@ margin: 5%;height: 90%;width: 90%;
 #pywebio-scope-prompt_operator button {
 margin: 5%;height: 90%;width: 90%;
 }
-prompt_operator
+
 #pywebio-scope-history_images img {
     max-width: 45%;
     margin: 2%;
