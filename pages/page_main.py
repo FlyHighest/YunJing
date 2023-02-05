@@ -125,22 +125,16 @@ def page_main():
 
     with use_scope('input'):
         prompt_templates = list(prompt_template.keys())
-        put_row(
-            [
-                put_select("prompt_template",label="提示词模板",options=prompt_templates,value=prompt_templates[0]),
-                
-                put_button("填入",color="info",onclick=fill_prompt_template).style("margin: 5%;height: 90%;width: 90%;")
-            ], size="75% 25%"
-        )
+        put_scope("prompt_template")
+ 
 
         put_row([
             put_textarea('prompt',label="提示词",
                 placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
                 rows=5,
             ),
-            None,
             put_scope("prompt_operator")
-            ],size="77% 3% 20%")
+            ],size="75% 25%")
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         
         put_row([ 
@@ -155,15 +149,23 @@ def page_main():
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
         put_input("seed",label="随机种子",value="-1")
         put_scope("generate_button",put_button('开始绘制',onclick=partial(task_post_image_gen,callback=show_image_information_window))).style("text-align: center")
+    with use_scope("prompt_template"):
+        put_row(
+            [
+                put_select("prompt_template",label="提示词模板",options=prompt_templates,value=prompt_templates[0]),
+                
+                put_button("填入",color="info",onclick=fill_prompt_template)
+            ], size="75% 25%"
+        )
     with use_scope('prompt_operator'):
         def clear_prompt():
             pin['prompt']=""
         put_column([
             None,
             put_button("帮我写!",color="info",onclick=task_post_enhance_prompt), 
+            put_button("清空",color="info",onclick=clear_prompt ),
             None,
-            put_button("清空",color="info",onclick=clear_prompt )
-        ], size="25% 25% 25% 25%").style("text-align:center")
+        ], size="20% 40% 30% 10%").style("text-align:center;height:100%")
 
         #.style("position: relative;top: 50%;transform: translateY(-30%);")s
     with use_scope('history'):
