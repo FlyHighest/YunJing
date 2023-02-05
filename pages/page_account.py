@@ -264,7 +264,7 @@ def page_account():
     
     put_scope("login").style("text-align:center")
     put_scope("options").style("text-align:center")
-
+    put_scope("check").style("text-align:center")
     if not username:
         with use_scope("options"):
             put_row([
@@ -292,8 +292,24 @@ def page_account():
             put_text("您当前分享值为: {:.2f}% (生成数{} | 分享数{})".format(sharerate,num_gen,num_pub))
             put_text("（分享值小于10%，生成速度将受限; 生成数量低于100时不计算分享值）")
             put_button("退出登录",onclick=revoke_auth)
+
+
         with use_scope("options"):
             clear()
 
-
-
+        with use_scope("check"):
+            user_level = session.local.rclient.get_user_level(session.local.client_id)
+            if user_level==6:
+                
+                while True:
+                    genid = session.local.rclient.get_check_image()
+                    if genid is None:
+                        break 
+                    check_img = session.local.rclient.get_imgurl_by_id(genid)
+                    put_image(check_img)
+                    res_sfw = radio("Safe for work?",options=["SFW","NSFW"])
+                    if res_sfw=="SFW":
+                        session.local.rclient.record_publish(genid)
+                        toast("已发布")
+                    clear()
+            put_text("审核队列为空")

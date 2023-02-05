@@ -81,6 +81,12 @@ class RClient:
         new_client_id = "@"+nanoid.generate(CLIENT_ID_ALPHABET, size=10)
         return new_client_id
 
+    def get_user_level(self,userid):
+        try:
+            return User.get_by_id(userid).level
+        except:
+            return 0
+
     def get_sharerate(self, userid):
         '''
         return rate, num gen, num share
@@ -186,6 +192,12 @@ class RClient:
     def add_check_image(self, genid):
         self.r.rpush("Check",genid)
         return True 
+    def get_check_image(self):
+        if self.r.llen("Check")>0:
+            img = self.r.lpop("Check")
+            return img 
+        else:
+            return None
 
     def register_user(self,username,password,email):
         try:
