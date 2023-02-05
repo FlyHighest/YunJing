@@ -88,13 +88,11 @@ def task_post_image_gen(callback):
         before_post()
         toast(image_gen_text)
         with put_loading(shape="border",color="primary"):
-            if session.local.rclient.get_sharerate(session.local.client_id)[0] < 5:
+            sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
+            if sharerate < 10:
                 toast(share_too_low, color="warn",duration=4)
-                time.sleep(10)
-            elif session.local.rclient.get_sharerate(session.local.client_id)[0] < 10:
-                toast(share_too_low, color="warn",duration=4)
-                time.sleep(5)
-
+                time.sleep(8*(num_gen//50))
+            
             seed = convert_int(pin['seed'])
             
             seed = random.randint(-2**31,2**31-1) if seed==-1 else seed

@@ -82,6 +82,9 @@ class RClient:
         return new_client_id
 
     def get_sharerate(self, userid):
+        '''
+        return rate, num gen, num share
+        '''
         num_generated = Image.select().where(Image.userid==userid).count()
         num_published = Image.select().where((Image.published==1) & (Image.userid==userid)).count()
         if num_generated < 100:
