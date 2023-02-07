@@ -279,7 +279,7 @@ def show_forgetpasswd():
             input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code))),
             input("验证码", name='verif_answer',validate=check_verif),
             actions('', [
-                {'label': '注册', 'color': 'warning', 'value':'signup'},
+                {'label': '重置', 'color': 'warning', 'value':'signup'},
             ], name='action')
         ])
 
@@ -294,7 +294,9 @@ def show_forgetpasswd():
         if not ok:
             toast(f'重置失败，请稍后再试或联系管理员解决', color='error')
             continue
-
+        else:
+            break 
+    session.run_js("location.reload();")
 
 
     
