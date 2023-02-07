@@ -199,6 +199,16 @@ class RClient:
         else:
             return None
 
+    def reset_pass_and_email(self,username,password,email):
+        try:
+            user = User.get(User.username==username)
+            user.password = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
+            user.email = email 
+            user.save()
+            return True
+        except:
+            return False
+
     def register_user(self,username,password,email):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()

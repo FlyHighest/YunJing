@@ -97,33 +97,7 @@ def login_auth(verify_func: Callable[[str, str], bool], secret: Union[str, bytes
 
 def register_auth(register_func,verify_func: Callable[[str, str], bool], secret: Union[str, bytes],
                expire_days=7, token_name='pywebio_auth_token') -> str:
-    """Persistence authentication with username and password.
-
-    You need to provide a function to verify the current user based on username and password. The ``basic_auth()``
-    function will save the authentication state in the user's web browser, so that the authed user does not need
-    to log in again.
-
-    :param callable verify_func: User authentication function. It should receive two arguments: username and password.
-        If the authentication is successful, it should return ``True``, otherwise return ``False``.
-    :param str secret: HMAC secret for the signature. It should be a long, random str.
-    :param int expire_days: how many days the auth state can keep valid.
-       After this time, authed users need to log in again.
-    :param str token_name: the name of the token to store the auth state in user browser.
-    :return str: username of the current authed user
-
-    Example:
-
-    .. exportable-codeblock::
-        :name: basic_auth
-        :summary: Persistence authentication with username and password
-
-        user_name = basic_auth(lambda username, password: username == 'admin' and password == '123',
-                               secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__")
-        put_text("Hello, %s. You can refresh this page and see what happen" % user_name)
-
-
-    .. versionadded:: 0.4
-    """
+    
     user_input = {}
     def get_email(email):
         user_input["email"] = email
@@ -236,12 +210,94 @@ def revoke_auth(token_name='pywebio_auth_token'):
     session.run_js("location.reload();")
 
 def show_login():
-    username = login_auth(session.local.rclient.verif_user, secret=verif_secret )
+    login_auth(session.local.rclient.verif_user, secret=verif_secret )
     session.run_js("location.reload();")
 
 def show_register():
-    username = register_auth(session.local.rclient.register_user,session.local.rclient.verif_user, secret=verif_secret )
+    register_auth(session.local.rclient.register_user,session.local.rclient.verif_user, secret=verif_secret )
     session.run_js("location.reload();")
+
+def show_forgetpasswd():
+
+    user_input = {}
+    def get_email(email):
+        user_input["email"] = email
+
+    def check_username(username):
+        sub_str = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",username)
+        if username!=sub_str:
+            return "仅允许汉字、字母和数字"
+        if len(username)>20 or len(username)<1:
+            return "用户名长度不符合要求（1-20）"
+        if session.local.rclient.get_userid(username) is None:
+            return "用户名尚未注册"
+    
+    def get_firstpass(p):
+        user_input["first_p"] = p 
+
+    def check_pass(p):
+        if len(p)<6:
+            return "密码过短，长度至少大于6"
+
+    def check_secondpass(p):
+        if p!=user_input["first_p"]:
+            return "两次输入不一致"
+        
+    def check_email(inp):
+        if "@" not in inp:
+            return "请输入有效的电子邮箱地址"
+        
+
+    def check_verif(code):
+        if user_input["expected_code"]!=code:
+            return "验证码错误"
+
+    def send_mail(target_address, verif_code,times=1):
+        if check_email(target_address) is not None:
+            toast("地址错误或已被注册")
+            return 
+        if 'last_sendmail_time' not in session.local or time.time() - session.local.last_sendmail_time > 60:
+            session.local.last_sendmail_time = time.time()
+
+            success = send_verification_mail(target_address=target_address ,verif_code=verif_code,times=times)
+            if success:
+                toast("验证码已发送，请查看邮箱")
+            else:
+                toast("验证码发送失败，请联系管理员")
+        else:
+            toast("1分钟内只能发送一次",color="warn")
+    
+    wait_time = 1
+    while True:
+        random_code = generate_random_code()
+        user_input["expected_code"] = random_code
+        user_input["email"] = ""
+        info = input_group('重置密码', [
+            input("用户名", name='username', validate=check_username,help_text="您注册的用户名"),
+            input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
+            input("重复密码", type=PASSWORD,validate=check_secondpass, name='password2'),
+            input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code))),
+            input("验证码", name='verif_answer',validate=check_verif),
+            actions('', [
+                {'label': '注册', 'color': 'warning', 'value':'signup'},
+            ], name='action')
+        ])
+
+        if  info['verif_answer']!=random_code:
+            toast("验证码错误")
+            with put_loading():
+                time.sleep(wait_time)
+                wait_time *= 1.1
+            continue
+
+        ok = session.local.rclient.reset_pass_and_email(info['username'],info['password1'],info['email'])
+        if not ok:
+            toast(f'重置失败，请稍后再试或联系管理员解决', color='error')
+            continue
+
+
+
+    
 
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
@@ -272,6 +328,7 @@ def page_account():
                 None,
                 put_button("没有账号，点击注册",outline=True,onclick=show_register),
             ])
+            put_button("重置密码或更换邮箱",link_style=True,onclick=show_forgetpasswd)
             put_markdown("""
 非注册用户仅可浏览画廊作品。**免费**注册，立享以下权益：
 

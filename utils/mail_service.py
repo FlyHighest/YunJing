@@ -7,10 +7,15 @@ from secret import tencentcloud_secret_id,tencentcloud_secret_key,email_netease_
 import smtplib,ssl 
 from email.message import EmailMessage
 
-def send_verification_mail(target_address, verif_code):
-    success = send_verification_mail_tencent(target_address,verif_code)
-    if not success:
-        success = send_verification_mail_netease(target_address, verif_code)
+def send_verification_mail(target_address, verif_code,times):
+    if times%2==1:
+        success = send_verification_mail_tencent(target_address,verif_code)
+        if not success:
+            success = send_verification_mail_netease(target_address, verif_code)
+    else:
+        success = send_verification_mail_netease(target_address,verif_code)
+        if not success:
+            success = send_verification_mail_tencent(target_address, verif_code)
     return success 
 
 def send_verification_mail_netease(target_address, verif_code):
