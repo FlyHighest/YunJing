@@ -272,7 +272,7 @@ def show_forgetpasswd():
         random_code = generate_random_code()
         user_input["expected_code"] = random_code
         user_input["email"] = ""
-        info = input_group('重置密码', [
+        info = input_group('重置密码或邮箱', [
             input("用户名", name='username', validate=check_username,help_text="您注册的用户名"),
             input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
             input("重复密码", type=PASSWORD,validate=check_secondpass, name='password2'),
