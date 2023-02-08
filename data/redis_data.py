@@ -93,7 +93,7 @@ class RClient:
             return int(self.r.get(f"gentime:{userid}"))
         except:
             return -1
-            
+
     def set_lastgentime(self,userid):
         self.r.set(f"gentime:{userid}",int(time.time()))
 
@@ -239,9 +239,11 @@ class RClient:
             
             if user.email==email:
                 return True
-
+            else:
+                return False 
         except:
             return False
+            
     def verif_user(self,username,password):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
