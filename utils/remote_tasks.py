@@ -25,6 +25,7 @@ def before_post():
     if session.local.rclient.get_queue_size() > MAX_QUEUE:
         raise QueueTooLong
 
+
 def task_publish_to_gallery(scope, genid):
     # check if has published 
     if session.local.rclient.check_published(genid):
@@ -90,9 +91,14 @@ def task_post_image_gen(callback):
         with put_loading(shape="border",color="primary"):
             sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
             if sharerate < 10:
-                toast(share_too_low, color="warn",duration=4)
-                time.sleep(8*(num_gen//50))
-            
+                if time.time() - session.local.rclient.get_lastgentime(session.local.client_id) < 8*(num_gen//50):
+                    time.sleep(10)
+                    raise ShareTooLow
+            else:
+                if time.time() - session.local.rclient.get_lastgentime(session.local.client_id) < 10:
+                    raise TooFrequent
+            session.local.rclient.set_lastgentime(session.local.client_id)
+
             seed = convert_int(pin['seed'])
             
             seed = random.randint(-2**31,2**31-1) if seed==-1 else seed
@@ -136,7 +142,7 @@ def task_post_image_gen(callback):
 
         # 这里是正常处理
         put_row([
-            put_button("获取高清图(x4)",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
+            put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
             put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
         ]).style("margin: 5%")
 
@@ -162,6 +168,8 @@ def task_post_image_gen(callback):
         toast(too_frequent_error_text, duration=4,color="warn")
     except NotLoginError as _:
         toast(not_login_error_text, duration=4,color="warn")
+    except ShareTooLow as _:
+        toast(share_too_low, duration=4, color="warn")
     except Exception as _:
         traceback.print_exc()
         toast(unknown_error_text,duration=4,color="warn")

@@ -42,9 +42,10 @@ unknown_error_text = "未知错误"
 generation_outdated_error_text = "生成参数已过期"
 publish_success_text = "发布成功，稍后将显示在画廊"
 publish_fail_text = "发布失败，请稍后再试"
-too_frequent_error_text = "操作频率过于频繁，请三秒后再试"
+too_frequent_error_text = "操作频率过于频繁，请稍后再试"
 not_login_error_text = "请先在“账户”页面登录或注册"
-share_too_low="您的分享值过低，生成速度被限制，请多分享图像到画廊"
+share_too_low="您的分享值过低，生成频率被限制，本次任务提交失败"
+
 css = """
 #pywebio-scope-image_flow{
     text-align:center;

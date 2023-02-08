@@ -14,3 +14,6 @@ class TooFrequent(Exception):
 
 class NotLoginError(Exception):
     pass 
+
+class ShareTooLow(Exception):
+    pass 

@@ -132,14 +132,14 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
         if user_input["expected_code"]!=code:
             return "验证码错误"
 
-    def send_mail(target_address, verif_code):
+    def send_mail(target_address, verif_code,times):
         if check_email(target_address) is not None:
             toast("地址错误或已被注册")
             return 
         if 'last_sendmail_time' not in session.local or time.time() - session.local.last_sendmail_time > 60:
             session.local.last_sendmail_time = time.time()
 
-            success = send_verification_mail(target_address=target_address ,verif_code=verif_code)
+            success = send_verification_mail(target_address=target_address ,verif_code=verif_code, times=times)
             if success:
                 toast("验证码已发送，请查看邮箱")
             else:
@@ -155,7 +155,9 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
     
     if not token or not username:  # no token or token validation failed
         wait_time = 1
+        times=0
         while True:
+            times+=1
             random_code = generate_random_code()
             user_input["expected_code"] = random_code
             user_input["email"] = ""
@@ -163,7 +165,7 @@ def register_auth(register_func,verify_func: Callable[[str, str], bool], secret:
                 input("用户名", name='username', validate=check_username,help_text="用户名小于20个字，允许汉字、字母和数字"),
                 input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
                 input("重复密码", type=PASSWORD,validate=check_secondpass, name='password2'),
-                input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code))),
+                input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code,times=times))),
                 input("验证码", name='verif_answer',validate=check_verif),
                 actions('', [
                     {'label': '注册', 'color': 'warning', 'value':'signup'},
@@ -231,7 +233,9 @@ def show_forgetpasswd():
             return "用户名长度不符合要求（1-20）"
         if session.local.rclient.get_userid(username) is None:
             return "用户名尚未注册"
-    
+    def get_username(p):
+        user_input["username"]=p
+
     def get_firstpass(p):
         user_input["first_p"] = p 
 
@@ -246,6 +250,8 @@ def show_forgetpasswd():
     def check_email(inp):
         if "@" not in inp:
             return "请输入有效的电子邮箱地址"
+        if not session.local.rclient.check_user_email(user_input["username"],inp):
+            return "此邮箱和注册时填写的邮箱不一致"
         
 
     def check_verif(code):
@@ -272,8 +278,8 @@ def show_forgetpasswd():
         random_code = generate_random_code()
         user_input["expected_code"] = random_code
         user_input["email"] = ""
-        info = input_group('重置密码或邮箱', [
-            input("用户名", name='username', validate=check_username,help_text="您注册的用户名"),
+        info = input_group('重置密码', [
+            input("用户名", name='username', onchange=get_username,validate=check_username,help_text="您注册的用户名"),
             input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
             input("重复密码", type=PASSWORD,validate=check_secondpass, name='password2'),
             input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code))),
@@ -293,6 +299,98 @@ def show_forgetpasswd():
         ok = session.local.rclient.reset_pass_and_email(info['username'],info['password1'],info['email'])
         if not ok:
             toast(f'重置失败，请稍后再试或联系管理员解决', color='error')
+            continue
+        else:
+            break 
+    session.run_js("location.reload();")
+
+
+
+def show_resetemail():
+
+    user_input = {}
+    def get_email(email):
+        user_input["email"] = email
+
+    def check_username(username):
+        sub_str = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",username)
+        if username!=sub_str:
+            return "仅允许汉字、字母和数字"
+        if len(username)>20 or len(username)<1:
+            return "用户名长度不符合要求（1-20）"
+        if session.local.rclient.get_userid(username) is None:
+            return "用户名尚未注册"
+
+    def get_username(p):
+        user_input["username"]=p
+
+    def get_firstpass(p):
+        user_input["first_p"] = p 
+
+    def check_pass(p):
+        if len(p)<6:
+            return "密码过短，长度至少大于6"
+
+        
+    def check_email(inp):
+        if "@" not in inp:
+            return "请输入有效的电子邮箱地址"
+     
+        
+
+    def check_verif(code):
+        if user_input["expected_code"]!=code:
+            return "验证码错误"
+
+    def send_mail(target_address, verif_code,times=1):
+        if check_email(target_address) is not None:
+            toast("地址错误或已被注册")
+            return 
+        if 'last_sendmail_time' not in session.local or time.time() - session.local.last_sendmail_time > 60:
+            session.local.last_sendmail_time = time.time()
+
+            success = send_verification_mail(target_address=target_address ,verif_code=verif_code,times=times)
+            if success:
+                toast("验证码已发送，请查看邮箱")
+            else:
+                toast("验证码发送失败，请联系管理员")
+        else:
+            toast("1分钟内只能发送一次",color="warn")
+    
+    wait_time = 1
+    while True:
+        random_code = generate_random_code()
+        user_input["expected_code"] = random_code
+        user_input["email"] = ""
+        info = input_group('重置密码', [
+            input("用户名", name='username', onchange=get_username,validate=check_username,help_text="您注册的用户名"),
+            input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
+            input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code))),
+            input("验证码", name='verif_answer',validate=check_verif),
+            actions('', [
+                {'label': '重置', 'color': 'warning', 'value':'signup'},
+            ], name='action')
+        ])
+
+        if  info['verif_answer']!=random_code:
+            toast("验证码错误")
+            with put_loading():
+                time.sleep(wait_time)
+                wait_time *= 1.1
+            continue
+
+        username = info['username']
+        ok = session.local.rclient.verif_user(username, info['password1']) and username!="匿名用户"
+        if not ok:
+            toast('请输入正确的用户名和密码', color='error')
+            with put_loading():
+                time.sleep(wait_time)
+                wait_time *= 1.1
+            continue
+
+        ok = session.local.rclient.reset_pass_and_email(info['username'],info['password1'],info['email'])
+        if not ok:
+            toast('重置失败，请稍后再试或联系管理员解决', color='error')
             continue
         else:
             break 
@@ -330,7 +428,11 @@ def page_account():
                 None,
                 put_button("没有账号，点击注册",outline=True,onclick=show_register),
             ])
-            put_button("重置密码或更换邮箱",link_style=True,onclick=show_forgetpasswd)
+            put_row([
+                put_button("重置密码",link_style=True,onclick=show_forgetpasswd),
+                put_button("修改邮箱",link_style=True,onclick=show_resetemail)
+            ])
+            
             put_markdown("""
 非注册用户仅可浏览画廊作品。**免费**注册，立享以下权益：
 
@@ -371,4 +473,4 @@ def page_account():
                         session.local.rclient.record_publish(genid)
                         toast("已发布")
                     clear()
-            put_text("审核队列为空")
+                put_text("审核队列为空")

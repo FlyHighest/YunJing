@@ -7,6 +7,7 @@ import redis
 import httpx,re,json
 from secret import *
 import os 
+import time
 from peewee import fn, IntegrityError
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
@@ -86,6 +87,15 @@ class RClient:
             return User.get_by_id(userid).level
         except:
             return 0
+
+    def get_lastgentime(self,userid):
+        try:
+            return int(self.r.get(f"gentime:{userid}"))
+        except:
+            return -1
+            
+    def set_lastgentime(self,userid):
+        self.r.set(f"gentime:{userid}",int(time.time()))
 
     def get_sharerate(self, userid):
         '''
@@ -223,6 +233,15 @@ class RClient:
         except:
             return False
 
+    def check_user_email(self,username,email):
+        try:
+            user=User.get(User.username==username)
+            
+            if user.email==email:
+                return True
+
+        except:
+            return False
     def verif_user(self,username,password):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
