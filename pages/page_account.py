@@ -358,14 +358,16 @@ def show_resetemail():
             toast("1分钟内只能发送一次",color="warn")
     
     wait_time = 1
+    times = 0
     while True:
+        times += 1
         random_code = generate_random_code()
         user_input["expected_code"] = random_code
         user_input["email"] = ""
         info = input_group('重置密码', [
             input("用户名", name='username', onchange=get_username,validate=check_username,help_text="您注册的用户名"),
             input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
-            input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code))),
+            input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code,times=times))),
             input("验证码", name='verif_answer',validate=check_verif),
             actions('', [
                 {'label': '重置', 'color': 'warning', 'value':'signup'},
