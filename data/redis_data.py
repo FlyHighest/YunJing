@@ -236,14 +236,14 @@ class RClient:
     def check_user_email(self,username,email):
         try:
             user=User.get(User.username==username)
-            
+            print(username,email,user.email)
             if user.email==email:
                 return True
             else:
                 return False 
         except:
             return False
-            
+
     def verif_user(self,username,password):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
