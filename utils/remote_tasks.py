@@ -96,6 +96,7 @@ def task_post_image_gen(callback):
                     raise ShareTooLow
             else:
                 if time.time() - session.local.rclient.get_lastgentime(session.local.client_id) < 10:
+                    time.sleep(3)
                     raise TooFrequent
             session.local.rclient.set_lastgentime(session.local.client_id)
 
