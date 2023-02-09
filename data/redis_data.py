@@ -154,7 +154,7 @@ class RClient:
         if client_id.startswith("@"): return []
         images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc()).limit(200)
         img_url_and_genid = [(image.imgurl,image.genid) for image in images]
-        return img_url_and_genid
+        return img_url_and_genid[::-1]
 
     def check_genid_in_imagetable(self,genid):
         try:
