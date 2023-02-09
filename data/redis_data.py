@@ -103,7 +103,7 @@ class RClient:
         '''
         num_generated = Image.select().where(Image.userid==userid).count()
         num_published = Image.select().where((Image.published==1) & (Image.userid==userid)).count()
-        if num_generated < 100:
+        if num_generated <= 100:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published
 
