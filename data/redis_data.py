@@ -152,7 +152,7 @@ class RClient:
 
     def get_history(self, client_id):
         if client_id.startswith("@"): return []
-        images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc).limit(100)
+        images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc()).limit(200)
         img_url_and_genid = [(image.imgurl,image.genid) for image in images]
         return img_url_and_genid
 
