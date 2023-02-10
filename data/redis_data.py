@@ -150,7 +150,7 @@ class RClient:
             pass
         
     def del_history(self,userid,genid):
-        Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid))
+        Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
 
     def get_history(self, client_id):
         if client_id.startswith("@"): return []
