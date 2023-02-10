@@ -53,6 +53,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                         put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
                         put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery, scope="popup_image_disp", genid= genid)),
                         put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
+                        put_button("删除这张图",color="danger",onclick=partial(del_from_history,genid=genid))
                     ]).style("margin: 3%; text-align: center")
                 else:
                     put_column([
@@ -86,6 +87,16 @@ def fill_prompt_template():
     pin['prompt'] = fill_prompt
     pin['negative_prompt'] = fill_neg_prompt
 
+def del_from_history(genid):
+    session.local.rclient.del_history(session.local.client_id,genid)
+    load_history()
+
+@use_scope('history_images',clear=True)
+def load_history():
+    for img,genid in session.local.rclient.get_history(session.local.client_id):
+        put_image(img).onclick(partial(show_image_information_window,img_url=img, genid=genid))
+        session.local.history_image_cnt += 1
+    
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_main():
@@ -172,11 +183,8 @@ def page_main():
         put_text(f"历史记录 (保留{MAX_HISTORY+session.local.max_history_bonus}张，详细信息保留7天)")
         put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)
     
-    with use_scope('history_images'):
-        for img,genid in session.local.rclient.get_history(session.local.client_id):
-            put_image(img).onclick(partial(show_image_information_window,img_url=img, genid=genid))
-            session.local.history_image_cnt += 1
-    
+    load_history()
+        
     param_gen_id = get_query("gen")
     if param_gen_id is not None:
         set_generation_params(param_gen_id)
