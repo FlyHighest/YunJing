@@ -12,7 +12,7 @@ def query_recent_images(): # limit 1000
         user=mysql_db_user,
         password=mysql_db_password
     )
-    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt from image left outer join user on (image.userid_id=user.userid) where published=1 order by gentime desc limit 1000;"
+    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt from image left outer join user on (image.userid_id=user.userid) where image.published=1 order by image.score desc limit 1000;"
     cursor = mysql_db.cursor()
     cursor.execute(sql)
     query_result = cursor.fetchall()
