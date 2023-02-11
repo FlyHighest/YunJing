@@ -90,9 +90,11 @@ def fill_prompt_template():
 def del_from_history(genid):
     session.local.rclient.del_history(session.local.client_id,genid)
     load_history()
+    close_popup()
 
 @use_scope('history_images',clear=True)
 def load_history():
+    session.local.history_image_cnt = 0
     for img,genid in session.local.rclient.get_history(session.local.client_id):
         put_image(img).onclick(partial(show_image_information_window,img_url=img, genid=genid))
         session.local.history_image_cnt += 1
@@ -118,7 +120,7 @@ def page_main():
         
 
     session.local.last_task_time = time.time() - 3
-    session.local.history_image_cnt = 0
+    
     if not session.local.client_id.startswith("@"):
         session.local.max_history_bonus = 190
     else:

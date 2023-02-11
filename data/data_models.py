@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..")
-from peewee import Model,CharField, MySQLDatabase,DateTimeField,IntegerField,AutoField,ForeignKeyField,BooleanField,TextField
+from peewee import Model,CharField, MySQLDatabase,DateTimeField,IntegerField,AutoField,ForeignKeyField,BooleanField,TextField,FloatField
 from secret import mysql_db_database,mysql_db_host,mysql_db_password,mysql_db_user
 import datetime
 
@@ -40,6 +40,8 @@ class Image(BaseModel):
     userid = ForeignKeyField(model=User,backref="images")
     height = IntegerField()
     width  = IntegerField()
+    nsfw = BooleanField()
+    score = FloatField()
 
 class Likes(BaseModel):
     userid = ForeignKeyField(model=User,backref="user_likes")

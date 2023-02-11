@@ -107,45 +107,29 @@ class RClient:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published
 
-    def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data): 
+    def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data,nsfw,score): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.add_generated_number()
         try:
-            if client_id.startswith("@"):
-                self.r.rpush("His:"+client_id, img_url)
-                self.r.expire("His:"+client_id, EXP_7DAYS)
-                
-                with self.mysql_db.atomic():
-                    Image.create(
-                        genid=gen_id,
-                        imgurl=img_url,
-                        height=text2image_data['height'],
-                        width=text2image_data['width'],
-                        params=json.dumps(text2image_data),
-                        modelname=text2image_data['model_name'],
-                        prompt=text2image_data['prompt'],
-                        published=False,
-                        userid=1 # 匿名用户
-                    )
-            else:
-                
-                with self.mysql_db.atomic():
-                    Histories.create(
-                        userid=client_id,
-                        imgurl=img_url,
-                        genid=gen_id
-                    )
-                    Image.create(
-                        genid=gen_id,
-                        imgurl=img_url,
-                        height=text2image_data['height'],
-                        width=text2image_data['width'],
-                        params=json.dumps(text2image_data),
-                        modelname=text2image_data['model_name'],
-                        prompt=text2image_data['prompt'],
-                        published=False,
-                        userid=client_id
-                    )
+            with self.mysql_db.atomic():
+                Histories.create(
+                    userid=client_id,
+                    imgurl=img_url,
+                    genid=gen_id
+                )
+                Image.create(
+                    genid=gen_id,
+                    imgurl=img_url,
+                    height=text2image_data['height'],
+                    width=text2image_data['width'],
+                    params=json.dumps(text2image_data),
+                    modelname=text2image_data['model_name'],
+                    prompt=text2image_data['prompt'],
+                    published=False,
+                    userid=client_id,
+                    nsfw=nsfw,
+                    score=score
+                )
         except IntegrityError:
             pass
         

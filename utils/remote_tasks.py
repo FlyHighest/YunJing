@@ -128,12 +128,14 @@ def task_post_image_gen(callback):
                     timeout=180000
                 )
                 if prediction.status_code == 200:
-                    output_img_url = json.loads(prediction.content)['img_url']
+                    output = json.loads(prediction.content)
+                    output_img_url = output['img_url']
+                    nsfw = output['nsfw']
+                    score = output['score']
                     session.local.current_img = output_img_url
                     if output_img_url =="Error":
                         raise ServerError
-                    elif output_img_url =="NSFW":
-                        raise NSFWDetected
+                    
                 else:
                     raise ServerError
                 output_img_url = output_img_url
@@ -142,21 +144,24 @@ def task_post_image_gen(callback):
 
 
         # 这里是正常处理
-        put_row([
-            put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
-            put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
-        ]).style("margin: 5%")
-
-        # 历史记录相关
-        with use_scope('history_images'):
-            session.local.history_image_cnt += 1
-            session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data)
-
-            if  session.local.history_image_cnt > MAX_HISTORY + session.local.max_history_bonus:
-                session.local.history_image_cnt -= 1
-                session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
-            put_image(output_img_url).onclick(partial(callback, img_url=output_img_url,genid=image_gen_id))
+        if not nsfw:
+            put_row([
+                put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
+                put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
+            ]).style("margin: 5%")
         
+            # 历史记录相关
+            with use_scope('history_images'):
+                session.local.history_image_cnt += 1
+                session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data,nsfw,score)
+
+                if  session.local.history_image_cnt > MAX_HISTORY + session.local.max_history_bonus:
+                    session.local.history_image_cnt -= 1
+                    session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
+                put_image(output_img_url).onclick(partial(callback, img_url=output_img_url,genid=image_gen_id))
+        else:
+            
+            toast(nsfw_warn_text_gen,color="warn",duration=3)
     except NSFWDetected as _:
         toast(nsfw_warn_text_gen,duration=4,color="warn")
     except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
