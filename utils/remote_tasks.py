@@ -160,7 +160,7 @@ def task_post_image_gen(callback):
                     session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
                 put_image(output_img_url).onclick(partial(callback, img_url=output_img_url,genid=image_gen_id))
         else:
-            
+            put_text("该图像可能含有不适宜工作场所观看的内容，本网站将不会留存该图像")
             toast(nsfw_warn_text_gen,color="warn",duration=3)
     except NSFWDetected as _:
         toast(nsfw_warn_text_gen,duration=4,color="warn")
