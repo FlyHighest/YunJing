@@ -202,5 +202,5 @@ def page_gallery():
         ])
     session.local.col_height = [0,0,0,0,0,0]
     session.local.image_list = query_recent_images()
-    random.shuffle(session.local.image_list) 
+    # random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)

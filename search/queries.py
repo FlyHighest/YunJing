@@ -12,7 +12,7 @@ def query_recent_images(): # limit 1000
         user=mysql_db_user,
         password=mysql_db_password
     )
-    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt from image left outer join user on (image.userid_id=user.userid) where image.published=1 order by image.score desc limit 1000;"
+    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt from image left outer join user on (image.userid_id=user.userid) where image.published=1 order by image.score desc limit 500;"
     cursor = mysql_db.cursor()
     cursor.execute(sql)
     query_result = cursor.fetchall()
@@ -22,10 +22,10 @@ def query_recent_images(): # limit 1000
     results = []
     for i in range(total):
         image, height,width,username,genid,prompt = query_result[i]
-        if "little girl" in prompt and random.randint(1,10)!=5:
-            continue 
-        if "girl" in prompt and random.randint(1,10)<5:
-            continue
+        # if "little girl" in prompt and random.randint(1,10)!=5:
+        #     continue 
+        # if "girl" in prompt and random.randint(1,10)<5:
+        #     continue
         results.append({
             "image": image,
             "height": height,
