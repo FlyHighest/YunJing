@@ -18,6 +18,7 @@ MODEL_NAME_MAPPING = {
     "国风GuoFeng-v3":"GuoFeng3_Fix"
 }
 
+MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
 SCHEDULERS = [
     "Euler a",
     "Euler",
