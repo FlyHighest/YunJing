@@ -20,7 +20,7 @@ def set_generation_params(generation_id):
     if text2image_data is None:
         toast(generation_outdated_error_text,color="warn",duration=4)
     else:
-        pin.model_name = text2image_data['model_name']
+        pin.model_name = MODEL_NAME_MAPPING[text2image_data['model_name']]
         pin.scheduler_name = text2image_data["scheduler_name"]
         pin.prompt= text2image_data["prompt"] 
         pin.negative_prompt = text2image_data["negative_prompt"]
