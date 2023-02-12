@@ -22,10 +22,10 @@ def query_recent_images(): # limit 1000
     results = []
     for i in range(total):
         image, height,width,username,genid,prompt = query_result[i]
-        # if "little girl" in prompt and random.randint(1,10)!=5:
-        #     continue 
-        # if "girl" in prompt and random.randint(1,10)<5:
-        #     continue
+        if "little girl" in prompt and random.randint(1,10)!=5:
+            continue 
+        if "girl" in prompt and random.randint(1,10)<5:
+            continue
         results.append({
             "image": image,
             "height": height,
@@ -33,4 +33,5 @@ def query_recent_images(): # limit 1000
             "username": username,
             "genid": genid
         })
+    random.shuffle(results)
     return results
