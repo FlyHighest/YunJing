@@ -5,7 +5,18 @@ MODELS = [
     "RealisticVision-V1.3",
     "ACertainThing",
     "Anything-v3",
+    "国风GuoFeng-v3"
 ]
+
+MODEL_NAME_MAPPING = {
+    "Stable-Diffusion-v1.5":"Stable-Diffusion-v1.5",
+    "Protogen-x5.8":"Protogen-x5.8",
+    "OpenJourney":"OpenJourney",
+    "RealisticVision-V1.3":"RealisticVision-V1.3",
+    "ACertainThing":"ACertainThing",
+    "Anything-v3":"Anything-v3.2",
+    "国风GuoFeng-v3":"GuoFeng3_Fix"
+}
 
 SCHEDULERS = [
     "Euler a",
