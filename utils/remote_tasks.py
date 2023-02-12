@@ -141,6 +141,7 @@ def task_post_image_gen(callback):
                 output_img_url = output_img_url
             else:
                 nsfw = False 
+                score = None
         put_image(output_img_url) # 大图output
 
 
@@ -154,7 +155,8 @@ def task_post_image_gen(callback):
             # 历史记录相关
             with use_scope('history_images'):
                 session.local.history_image_cnt += 1
-                session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data,nsfw,score)
+                if score is not None: # new generated image
+                    session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data,nsfw,score)
 
                 if  session.local.history_image_cnt > MAX_HISTORY + session.local.max_history_bonus:
                     session.local.history_image_cnt -= 1
