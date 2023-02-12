@@ -106,7 +106,7 @@ def task_post_image_gen(callback):
         
             text2image_data = {
                 "type":"text2image",
-                "model_name":          pin['model_name'],
+                "model_name":          MODEL_NAME_MAPPING[pin['model_name']],
                 "scheduler_name":      pin['scheduler_name'],
                 "prompt":              pin['prompt'],
                 "negative_prompt":     pin['negative_prompt'],
@@ -139,7 +139,8 @@ def task_post_image_gen(callback):
                 else:
                     raise ServerError
                 output_img_url = output_img_url
-            
+            else:
+                nsfw = False 
         put_image(output_img_url) # 大图output
 
 
