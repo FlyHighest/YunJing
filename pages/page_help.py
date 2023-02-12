@@ -75,14 +75,15 @@ Prompt Editing:
 
 #### (3) 模型介绍
 
-当前后台集成了5个模型，可在“模型”选项自由切换。
+当前后台集成了7个模型，可在“模型”选项自由切换。
 
 - [Stable-Diffusion-v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5): 原版的stable diffusion 1.5，许多微调模型的基础，比较全能，写实、动漫，人物、风景，包括背景图、头像风格都都能生成，但非常依赖提示词。
 - [Protogen-x5.8](https://huggingface.co/darkstorm2150/Protogen_x5.8_Official_Release): AI模型分享网站civitai上最火的模型之一，比较擅长画人物，有时候提示词没有人物相关的也会画个人出来。
 - [OpenJourney](https://huggingface.co/prompthero/openjourney): prompthero基于著名的midjourney生成的图像训练stable diffusion获得的模型。系统会自动在提示词最前面加上'mdjrny-v4 style'。
 - [ACertainThing](https://huggingface.co/JosephusCheung/ACertainThing): Joseph Cheung训练的二次元风格的图像生成模型，同NovelAI一样，支持danbooru标签。
-- [Anything-v3](https://huggingface.co/Linaqruf/anything-v3.0): 另一个大家喜闻乐见的二次元风格图像生成模型，同NovelAI一样，支持danbooru标签。
-- [RealisticVision-v1.3](https://civitai.com/models/4201/realistic-vision-v13)：civitai上备受欢迎的模型，擅长绘制写实照片类图像。RealisticVision的模板是模型作者推荐的，建议配合模板使用。
+- [Anything-v3](https://huggingface.co/cag/anything-v3-1): 另一个大家喜闻乐见的二次元风格图像生成模型，同NovelAI一样，支持danbooru标签。
+- [RealisticVision-v1.3](https://civitai.com/models/4201/realistic-vision-v13): civitai上备受欢迎的模型，擅长绘制写实照片类图像。RealisticVision的模板是模型作者推荐的，建议配合模板使用。
+- [国风GuoFeng-v3](https://huggingface.co/xiaolxl/GuoFeng3): B站up[@小李xiaolxl](https://space.bilibili.com/34590220)发布的中国华丽古风风格模型，也可以说是一个古风游戏角色模型，具有2.5D的质感。
 
 ### 2. 图像超分辨率
 
