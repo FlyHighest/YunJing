@@ -155,12 +155,14 @@ def page_main():
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
             put_column(put_select("height",label="高度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
-            put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="30")),
 
         ])
-        
-        put_row([ 
+        put_row([            
+            put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="30")),
             put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="Euler_A")),
+        ])
+        put_row([ 
+           
             put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=1),
             put_input("seed",label="随机种子",value="-1")
         ])
@@ -175,7 +177,6 @@ def page_main():
         put_column([
             None,
             put_button("帮我写!",color="info",onclick=task_post_enhance_prompt),
-
             None
         ],size="3fr 4fr 3fr")
         

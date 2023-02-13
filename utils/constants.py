@@ -83,12 +83,10 @@ css = """
 }
 
 
-#pywebio-scope-prompt_operator button {
-margin: 5%; height:90%;width: 90%;
-}
+
 
 #pywebio-scope-history_images img {
-    max-width: 29%;
+    max-width: 47%;
     margin: 2%;
     border-radius: 0.6vw ;
     transition: all 0.2s;
@@ -99,11 +97,11 @@ margin: 5%; height:90%;width: 90%;
     transform: scale(1.05);
 }
 #pywebio-scope-images {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 0px);
     overflow-y: scroll;
 }
 #pywebio-scope-history {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 50px);
     overflow-y: scroll;
 }
 #pywebio-scope-history:hover {
@@ -113,7 +111,7 @@ margin: 5%; height:90%;width: 90%;
     overflow-y: scroll;
 }
 #pywebio-scope-input {
-    height: calc(100vh - 150px);
+    height: calc(100vh - 50px);
     overflow-y: scroll;
 }
 #pywebio-scope-input:hover {
