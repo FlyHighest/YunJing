@@ -132,7 +132,7 @@ def page_main():
             None, 
             put_scope('history'), 
         ],
-        size="6fr 1fr 3fr",
+        size="67% 3% 30%",
     )
     put_html("<hr />")
     put_scope('images').style("text-align: center")
