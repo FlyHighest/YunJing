@@ -82,15 +82,13 @@ css = """
     transform: scale(1.1);
 }
 
-#pywebio-scope-prompt_template button {
-margin: 5%;height: 90%;width: 90%;
-}
+
 #pywebio-scope-prompt_operator button {
-margin: 5%;height: 90%;width: 90%;
+margin: 5%; height:90%;width: 90%;
 }
 
 #pywebio-scope-history_images img {
-    max-width: 45%;
+    max-width: 30%;
     margin: 2%;
     border-radius: 0.6vw ;
     transition: all 0.2s;
@@ -255,6 +253,7 @@ thumbup_false="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 10
 thumbup_true="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7654" width="200" height="200"><path d="M896.537737 872.991991c-90.117275 98.293062-222.585219 150.43597-383.111736 150.941794l-2.329113 0c-309.520102 0-510.060666-200.378099-510.957633-510.41563C-0.703785 202.514712 199.65247 0.986392 510.570586 0.066215l2.285425 0c309.550138 0 510.158281 200.38356 511.004734 510.434743C1024.268271 656.398162 980.213091 781.749752 896.537737 872.991991zM369.797157 440.889704l-23.977164 0c-33.877258 0-61.3399 27.296081-61.3399 61.404067l0 161.215284c0 34.118907 27.462642 61.776097 61.3399 61.776097l23.977164-0.046418L369.797157 440.889704zM753.732819 475.095987c0-34.598109-26.060532-62.643712-58.203243-62.643712l-126.654036 0 0-60.307773c0-37.594145-10.930174-67.671919-49.392617-67.671919-42.874241 0-60.399927 43.223745-64.367337 71.095961 0 0-1.063528 47.667626-30.155593 72.928806 0 0-4.857552-3.074538-12.503622 5.888314l0 290.769106 7.311584-0.014335c10.033206 8.843392 22.689053 14.365137 36.669873 14.365137l239.091748 0c32.142028 0 58.203243-28.045602 58.203243-62.651903L753.732819 475.095987 753.732819 475.095987z" p-id="7655" fill="#d81e06"></path></svg>"""
 
 prompt_template = {
+  "清空(提示词+反向提示词)":("",""),
   "GuoFeng3模板":(
     "best quality, masterpiece, highres, 1girl,china dress,Beautiful face",
     "(((simple background))),monochrome ,lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, lowres, bad anatomy, bad hands, text, error, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, ugly,pregnant,vore,duplicate,morbid,mut ilated,tran nsexual, hermaphrodite,long neck,mutated hands,poorly drawn hands,poorly drawn face,mutation,deformed,blurry,bad anatomy,bad proportions,malformed limbs,extra limbs,cloned face,disfigured,gross proportions, (((missing arms))),(((missing legs))), (((extra arms))),(((extra legs))),pubic hair, plump,bad legs,error legs,username,blurry,bad feet"),

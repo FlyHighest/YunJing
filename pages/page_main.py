@@ -81,8 +81,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
 
 
 
-def fill_prompt_template():
-    template_key = pin['prompt_template']
+def fill_prompt_template(template_key):
     fill_prompt, fill_neg_prompt = prompt_template[template_key]
     pin['prompt'] = fill_prompt
     pin['negative_prompt'] = fill_neg_prompt
@@ -129,18 +128,21 @@ def page_main():
 
     put_row(
         [
-            put_scope('input'),   
-            put_scope('images').style("text-align: center"),
+            put_scope('input'),  
+            None, 
             put_scope('history'), 
         ],
-        size="3fr 4fr 3fr",
+        size="6fr 1fr 3fr",
     )
+    put_html("<hr />")
+    put_scope('images').style("text-align: center")
 
     with use_scope('input'):
+        put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
+
         prompt_templates = list(prompt_template.keys())
         put_scope("prompt_template")
  
-
         put_row([
             put_textarea('prompt',label="提示词",
                 placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
@@ -153,32 +155,30 @@ def page_main():
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
             put_column(put_select("height",label="高度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
-        ])
-        put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=1)
-        put_row([ 
             put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="30")),
+
+        ])
+        
+        put_row([ 
             put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="Euler_A")),
-        ]),
-        put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
-        put_input("seed",label="随机种子",value="-1")
-        put_scope("generate_button",put_button('开始绘制',onclick=partial(task_post_image_gen,callback=show_image_information_window))).style("text-align: center")
+            put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=1),
+            put_input("seed",label="随机种子",value="-1")
+        ])
+
+        put_scope("generate_button",put_button('   开始绘制   ',onclick=partial(task_post_image_gen,callback=show_image_information_window))).style("text-align: center")
+    
     with use_scope("prompt_template"):
-        put_row(
-            [
-                put_select("prompt_template",label="提示词模板",options=prompt_templates,value=prompt_templates[0]),
-                
-                put_button("填入",color="info",onclick=fill_prompt_template)
-            ], size="75% 25%"
-        )
+        put_select("prompt_template",label="提示词模板",options=prompt_templates,value="清空(提示词+反向提示词)"),
+        pin_on_change("prompt_template",onchange=fill_prompt_template)
+
     with use_scope('prompt_operator'):
-        def clear_prompt():
-            pin['prompt']=""
         put_column([
             None,
-            put_button("帮我写!",color="info",onclick=task_post_enhance_prompt), 
-            put_button("清空",color="info",onclick=clear_prompt ),
-            None,
-        ], size="20% 40% 30% 10%").style("text-align:center;height:100%")
+            put_button("帮我写!",color="info",onclick=task_post_enhance_prompt),
+
+            None
+        ],size="3fr 4fr 3fr")
+        
 
         #.style("position: relative;top: 50%;transform: translateY(-30%);")s
     with use_scope('history'):
