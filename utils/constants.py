@@ -88,8 +88,8 @@ margin: 5%; height:90%;width: 90%;
 }
 
 #pywebio-scope-history_images img {
-    max-width: 27%;
-    margin: 0.5%;
+    max-width: 29%;
+    margin: 2%;
     border-radius: 0.6vw ;
     transition: all 0.2s;
 }
