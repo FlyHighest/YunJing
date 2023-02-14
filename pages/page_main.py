@@ -101,7 +101,7 @@ def load_history():
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_main():
-    session.set_env(title='云景 · 绘图', output_max_width='100%')
+    session.set_env(title='云景 · 绘图', output_max_width='80%')
     session.local.rclient: RClient = RClient()
     # 检查有没有登陆
     username = get_username()
@@ -126,16 +126,16 @@ def page_main():
         session.local.max_history_bonus = 0
     put_html(header_html_main)
 
-    put_row(
+    put_column(
         [
-            put_scope('input'),  
-            None, 
+            put_scope('input'), 
+            put_markdown("----"),
             put_scope('history'), 
-        ],
-        size="67% 3% 30%",
+            put_markdown("----"),
+            put_scope('images').style("text-align: center"),
+        ]
     )
-    put_html("<hr />")
-    put_scope('images').style("text-align: center")
+    
 
     with use_scope('input'):
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),

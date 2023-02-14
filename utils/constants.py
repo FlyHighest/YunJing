@@ -86,7 +86,7 @@ css = """
 
 
 #pywebio-scope-history_images img {
-    max-width: 47%;
+    max-height: 97%;
     margin: 2%;
     border-radius: 0.6vw ;
     transition: all 0.2s;
@@ -96,24 +96,12 @@ css = """
 
     transform: scale(1.05);
 }
-#pywebio-scope-images {
-    height: calc(100vh - 0px);
-    overflow-y: scroll;
-}
-#pywebio-scope-history {
-    height: calc(100vh - 50px);
-    overflow-y: scroll;
-}
+
 #pywebio-scope-history:hover {
-    overflow-y: scroll;
+    overflow-x: scroll;
 }
-#pywebio-scope-images:hover {
-    overflow-y: scroll;
-}
-#pywebio-scope-input {
-    height: calc(100vh - 50px);
-    overflow-y: scroll;
-}
+
+
 #pywebio-scope-input:hover {
     overflow-y: scroll;
 }
