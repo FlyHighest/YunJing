@@ -12,7 +12,7 @@ from data import RClient
 from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
                            task_post_upscale, task_publish_to_gallery)
-from utils import  get_username
+from utils import  get_username,put_column_autosize
 
 
 def set_generation_params(generation_id):
@@ -101,7 +101,7 @@ def load_history():
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_main():
-    session.set_env(title='云景 · 绘图', output_max_width='80%')
+    session.set_env(title='云景 · 绘图', output_max_width='90%')
     session.local.rclient: RClient = RClient()
     # 检查有没有登陆
     username = get_username()
@@ -126,14 +126,14 @@ def page_main():
         session.local.max_history_bonus = 0
     put_html(header_html_main)
 
-    put_column(
+    put_column_autosize(
         [
             put_scope('input'), 
             put_markdown("----"),
             put_scope('history'), 
             put_markdown("----"),
             put_scope('images').style("text-align: center"),
-        ],size="1fr 50px 230px 50px 1fr"
+        ]
     )
     
 
@@ -141,15 +141,15 @@ def page_main():
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
 
         prompt_templates = list(prompt_template.keys())
-        put_scope("prompt_template")
+        put_select("prompt_template",label="提示词模板",options=prompt_templates,value="清空(提示词+反向提示词)"),
+        pin_on_change("prompt_template",onchange=fill_prompt_template)
  
-        put_row([
-            put_textarea('prompt',label="提示词",
+        
+        put_textarea('prompt',label="提示词",
                 placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
-                rows=5,
-            ),
-            put_scope("prompt_operator")
-            ],size="75% 25%")
+                rows=2,
+            )
+        put_button("帮我写!",color="info",onclick=task_post_enhance_prompt)
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         
         put_row([ 
@@ -169,22 +169,15 @@ def page_main():
 
         put_scope("generate_button",put_button('   开始绘制   ',onclick=partial(task_post_image_gen,callback=show_image_information_window))).style("text-align: center")
     
-    with use_scope("prompt_template"):
-        put_select("prompt_template",label="提示词模板",options=prompt_templates,value="清空(提示词+反向提示词)"),
-        pin_on_change("prompt_template",onchange=fill_prompt_template)
 
-    with use_scope('prompt_operator'):
-        put_column([
-            None,
-            put_button("帮我写!",color="info",onclick=task_post_enhance_prompt),
-            None
-        ],size="3fr 4fr 3fr")
         
 
         #.style("position: relative;top: 50%;transform: translateY(-30%);")s
     with use_scope('history'):
-        put_text(f"历史记录 (保留{MAX_HISTORY+session.local.max_history_bonus}张，详细信息保留7天)")
-        put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)
+        put_collapse(f"历史记录 (保留{MAX_HISTORY+session.local.max_history_bonus}张，详细信息保留7天)", [
+
+            put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)],
+        open=True)
     
     load_history()
         

@@ -5,7 +5,8 @@ MODELS = [
     "RealisticVision-V1.3",
     "ACertainThing",
     "Anything-v3",
-    "国风GuoFeng-v3"
+    "国风GuoFeng-v3",
+    "Counterfeit-V2.5"
 ]
 
 MODEL_NAME_MAPPING = {
@@ -15,7 +16,8 @@ MODEL_NAME_MAPPING = {
     "RealisticVision-V1.3":"RealisticVision-V1.3",
     "ACertainThing":"ACertainThing",
     "Anything-v3":"Anything-v3.2",
-    "国风GuoFeng-v3":"GuoFeng3_Fix"
+    "国风GuoFeng-v3":"GuoFeng3_Fix",
+    "Counterfeit-V2.5":"Counterfeit-V2.5"
 }
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
@@ -90,14 +92,6 @@ css = """
     transition: all 0.2s;
 }
 
-@media screen and (max-width: 500px) {
-  #pywebio-scope-history_images img {
-      max-width: 44%;
-      margin: 1%;
-      border-radius: 0.6vw ;
-      transition: all 0.2s;
-  }
-}
 
 #pywebio-scope-history_images img:hover {
 
@@ -109,9 +103,7 @@ css = """
 }
 
 
-#pywebio-scope-input:hover {
-    overflow-y: scroll;
-}
+
 /* Works on Firefox */
 * {
   scrollbar-width: thin;
