@@ -133,7 +133,7 @@ def page_main():
             put_scope('history'), 
             put_markdown("----"),
             put_scope('images').style("text-align: center"),
-        ]
+        ],size="1fr 50px 230px 50px 1fr"
     )
     
 

@@ -86,8 +86,8 @@ css = """
 
 
 #pywebio-scope-history_images img {
-    max-height: 97%;
-    margin: 2%;
+    max-height: 44%;
+    margin: 1%;
     border-radius: 0.6vw ;
     transition: all 0.2s;
 }
@@ -96,11 +96,8 @@ css = """
 
     transform: scale(1.05);
 }
-#pywebio-scope-history {
-  height:150px;
-    overflow-x: scroll;
-}
-#pywebio-scope-history:hover {
+#pywebio-scope-history_images {
+  height:200px;
     overflow-x: scroll;
 }
 
