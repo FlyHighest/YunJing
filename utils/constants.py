@@ -96,7 +96,10 @@ css = """
 
     transform: scale(1.05);
 }
-
+#pywebio-scope-history {
+  height:150px;
+    overflow-x: scroll;
+}
 #pywebio-scope-history:hover {
     overflow-x: scroll;
 }
