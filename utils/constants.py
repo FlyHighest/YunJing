@@ -83,13 +83,20 @@ css = """
 }
 
 
-
-
 #pywebio-scope-history_images img {
     max-height: 44%;
     margin: 1%;
     border-radius: 0.6vw ;
     transition: all 0.2s;
+}
+
+@media screen and (max-width: 500px) {
+  #pywebio-scope-history_images img {
+      max-width: 44%;
+      margin: 1%;
+      border-radius: 0.6vw ;
+      transition: all 0.2s;
+  }
 }
 
 #pywebio-scope-history_images img:hover {
