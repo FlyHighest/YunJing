@@ -6,7 +6,9 @@ MODELS = [
     "ACertainThing",
     "Anything-v3",
     "国风GuoFeng-v3",
-    "Counterfeit-V2.5"
+    "国风GuoFeng-v2+v3",
+    "Counterfeit-V2.5",
+    "MyneFactoryBase-v1.0"
 ]
 
 MODEL_NAME_MAPPING = {
@@ -17,7 +19,9 @@ MODEL_NAME_MAPPING = {
     "ACertainThing":"ACertainThing",
     "Anything-v3":"Anything-v3.2",
     "国风GuoFeng-v3":"GuoFeng3_Fix",
-    "Counterfeit-V2.5":"Counterfeit-V2.5"
+    "国风GuoFeng-v2+v3":"GF2+3",
+    "Counterfeit-V2.5":"Counterfeit-V2.5",
+    "MyneFactoryBase-v1.0":"MyneFactoryBase v1.0"
 }
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
