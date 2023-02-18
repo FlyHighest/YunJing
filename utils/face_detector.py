@@ -3,6 +3,7 @@ import sys
 import os.path
 from io import BytesIO
 import httpx
+from PIL import Image 
 def detect_pil(gray, cascade):
 
     faces = cascade.detectMultiScale(gray,
