@@ -263,6 +263,8 @@ thumbup_true="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 102
 prompt_template = {
   "请选择模版...":None,
   "清空(提示词+反向提示词)":("",""),
+  "AsiaFacemix模版":("solo, full bdoy illustration of a Chinese girl,skirt,girlface,gorgeous,pure,beautyfull detailed face and eyes,jewelry,hair ribbon,hair flower,soft smile,hair ornament,colorful,clear sharp focus,instagram most viewed,official wallpaper, official art,volumetric lighting,cinematic effects,ray tracing wallpaper,Megapixel,highres,Intricate details,ultra detailed,8k",
+      "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad feet, "),
   "KoreanDollLikeness模版":("best quality, ultra high res, (photorealistic:1.4), 1woman, sleeveless white button shirt, black skirt, black choker, cute, (Kpop idol), (aegyo sal:1), (platinum blonde hair:1), ((puffy eyes)), looking at viewer, full body, facing front",
       "paintings, sketches, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, glans, nsfw, nipples"),
   "GuoFeng3模板":(
