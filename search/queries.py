@@ -33,6 +33,9 @@ def query_recent_images(): # limit 1000
             except:
                 traceback.print_exc()
                 print(image,"error")
+        if face==1:
+            if random.randint(1,20)!=1:
+                continue 
         results.append({
             "image": image,
             "height": height,
