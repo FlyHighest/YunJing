@@ -16,6 +16,62 @@ import re
 import random 
 from secret import verif_secret
 
+def show_useragreement():
+    with popup("用户协议和隐私政策"):
+        put_markdown("""
+## 用户协议
+
+欢迎使用我们的图像生成网站。在使用本网站之前，请仔细阅读以下协议。使用本网站即表示您同意以下条款和条件。
+
+### 1. 使用限制
+您不得将本网站用于任何非法目的。您不得以任何方式损害本网站的运作或影响其他用户的使用。您不得尝试未经授权地访问本网站的任何部分或功能。
+
+### 2. 知识产权
+您可以任意复制、分发、传播、修改、发布您使用本网站生成的图像。同时，我们拥有本网站中的您发布到画廊的材料和内容的知识产权。
+
+### 3. 免责声明
+本网站仅供娱乐和教育目的使用。我们不对任何结果的准确性、完整性、及时性、可靠性、适用性或合法性做出任何保证。我们不对您使用本网站的任何后果负责，包括任何直接或间接的损失或损害。
+
+### 4. 隐私政策
+我们尊重您的隐私，并且会根据我们的隐私政策保护您的个人信息。请在使用本网站之前仔细阅读我们的隐私政策。
+
+### 5. 修改协议
+我们保留随时修改本协议的权利。我们会在本网站上发布更新的协议。继续使用本网站即表示您同意新协议的条款。
+
+### 6. 管辖法律
+本协议受中华人民共和国法律管辖。
+
+如果您有任何问题或疑问，请联系我们。
+
+谢谢您使用我们的图像生成网站！
+
+## 隐私政策
+
+本隐私政策解释了我们如何收集、使用、处理和保护您的个人信息。在使用本网站之前，请仔细阅读以下政策。如果您有任何问题或疑虑，请联系我们。
+
+### 1. 收集信息
+当您使用本网站时，我们可能会收集您的个人信息。这些信息包括但不限于您的姓名、电子邮件地址、IP地址、浏览器类型、设备类型、操作系统、访问日期和时间、页面浏览量和其他与您相关的信息。
+
+### 2. 使用信息
+我们会使用您的个人信息来改进本网站的功能和性能，以及为您提供更好的用户体验。我们可能会使用您的信息来跟踪和分析流量、识别您的兴趣和偏好、与您联系、处理您的请求和订单，以及满足法律要求。
+
+### 3. 信息保护
+我们采取适当的措施来保护您的个人信息。我们会使用安全协议和加密技术来保护您的信息免遭未经授权的访问、使用或泄漏。我们只允许授权人员访问您的信息，并会尽一切努力保护您的信息的机密性和完整性。
+
+### 4. 信息分享
+我们不会将您的个人信息出售、出租或出借给第三方。但在某些情况下，我们可能会与第三方分享您的信息，例如：为了执行法律要求、防止欺诈或安全问题、改善本网站的性能或满足您的请求。我们会确保您的信息仅限于必要的范围内共享，并会采取适当的措施确保您的信息的安全和保密。
+
+### 5. 未成年人保护
+我们不会故意收集未满18岁的儿童的个人信息。如果您是未成年人，请不要使用本网站或向我们提供您的个人信息。
+
+### 6. 修改政策
+我们保留随时修改本政策的权利。我们会在本网站上发布更新的政策。继续使用本网站即表示您同意新政策的条款。
+
+如果您有任何问题、疑虑或建议，请随时联系我们。我们将尽力解答您的问题并解决您的问题。
+
+谢谢您使用我们的图像生成网站！
+        
+""")
 
 def generate_random_code():
     num = [1,2,3,4,5,6,7,8,9]
@@ -71,11 +127,14 @@ def login_auth(verify_func: Callable[[str, str], bool], secret: Union[str, bytes
             def check_answer(inp):
                 if not str(inp)==str(answer):
                     return "回答错误"
-
+            def check_checkbox(val):
+                if not val:
+                    return "请勾选后继续"
             info = input_group('登录', [
                 input("用户名", name='username', help_text=""),
                 input("密码", type=PASSWORD, name='password'),
                 input("验证问题", validate=check_answer, name='verif_answer',help_text="请输入"+random_cal+"的答案"),
+                
                 actions('', [
                     {'label': '登录', 'value': 'signin'}], name='action')
             ])
@@ -212,6 +271,7 @@ def revoke_auth(token_name='pywebio_auth_token'):
     session.run_js("location.reload();")
 
 def show_login():
+        
     login_auth(session.local.rclient.verif_user, secret=verif_secret )
     session.run_js("location.reload();")
 
@@ -366,7 +426,7 @@ def show_resetemail():
         random_code = generate_random_code()
         user_input["expected_code"] = random_code
         user_input["email"] = ""
-        info = input_group('重置密码', [
+        info = input_group('修改邮箱', [
             input("用户名", name='username', onchange=get_username,validate=check_username,help_text="您注册的用户名"),
             input("密码", type=PASSWORD,onchange=get_firstpass, validate=check_pass,name='password1'),
             input("邮箱", name='email',validate=check_email,onchange=get_email,action=("发送验证码",lambda x: send_mail(target_address=user_input["email"] ,verif_code=random_code,times=times))),
@@ -427,32 +487,25 @@ def page_account():
     put_scope("check").style("text-align:center")
     if not username:
         with use_scope("options"):
+            put_button("已有账号，点击登录",outline=True,onclick=show_login)
+            put_button("没有账号，点击注册",outline=True,onclick=show_register)
+            
             put_row([
-                put_button("已有账号，点击登录",outline=True,onclick=show_login),
                 None,
-                put_button("没有账号，点击注册",outline=True,onclick=show_register),
-            ])
-            put_row([
                 put_button("重置密码",link_style=True,onclick=show_forgetpasswd),
-                put_button("修改邮箱",link_style=True,onclick=show_resetemail)
-            ])
+                put_button("修改邮箱",link_style=True,onclick=show_resetemail),
+                None
+            ],size="1fr 100px 100px 1fr")
             
             put_markdown("""
-非注册用户仅可浏览画廊作品。**免费**注册，立享以下权益：
-
-### ✅ 不限次数文本生成图像；
-
-### ✅ 不限次数图像超分；
-
-### ✅ 保留200张历史记录，最长保留时间7天；
-
-### ✅ 发布作品到画廊时可以署名。
-
+**注册**或**登录**代表您**同意**我们的用户协议和隐私政策：
             """)
+            put_button("用户协议和隐私政策",color="primary",onclick=show_useragreement)
+           
     else:
         with use_scope("login"):
             put_text("您已成功登录，欢迎您，"+username)
-            put_text("注册用户的历史记录保留7天，数量提升至200张；发布作品时会关联到您的用户名")
+            # put_text("注册用户的历史记录保留7天，数量提升至200张；发布作品时会关联到您的用户名")
             sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
             put_text("您当前分享值为: {:.2f}% (生成数{} | 分享数{})".format(sharerate,num_gen,num_pub))
             put_text("（分享值小于10%，生成速度将受限; 生成数量低于100时不计算分享值）")

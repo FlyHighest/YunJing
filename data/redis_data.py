@@ -107,7 +107,7 @@ class RClient:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published
 
-    def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data,nsfw,score): 
+    def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data,nsfw,score,face): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.add_generated_number()
         try:
@@ -128,7 +128,8 @@ class RClient:
                     published=False,
                     userid=client_id,
                     nsfw=nsfw,
-                    score=score
+                    score=score,
+                    face=face
                 )
         except IntegrityError:
             pass

@@ -42,6 +42,7 @@ class Image(BaseModel):
     width  = IntegerField()
     nsfw = BooleanField()
     score = FloatField()
+    face = BooleanField()
 
 class Likes(BaseModel):
     userid = ForeignKeyField(model=User,backref="user_likes")

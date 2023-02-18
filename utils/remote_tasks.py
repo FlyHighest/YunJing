@@ -132,6 +132,7 @@ def task_post_image_gen(callback):
                     output_img_url = output['img_url']
                     nsfw = output['nsfw']
                     score = output['score']
+                    face = output['face']
                     session.local.current_img = output_img_url
                     if output_img_url =="Error":
                         raise ServerError
@@ -142,6 +143,7 @@ def task_post_image_gen(callback):
             else:
                 nsfw = False 
                 score = None
+                face = None
         put_image(output_img_url) # 大图output
 
 
@@ -156,7 +158,7 @@ def task_post_image_gen(callback):
             with use_scope('history_images'):
                 session.local.history_image_cnt += 1
                 if score is not None: # new generated image
-                    session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data,nsfw,score)
+                    session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data,nsfw,score,face)
 
                 if  session.local.history_image_cnt > MAX_HISTORY + session.local.max_history_bonus:
                     session.local.history_image_cnt -= 1
@@ -165,7 +167,6 @@ def task_post_image_gen(callback):
         else:
             put_text("该图像可能含有不适宜工作场所观看的内容，本网站将不会留存该图像")
             toast(nsfw_warn_text_gen,color="warn",duration=3)
-            session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data,nsfw,score)
 
     except NSFWDetected as _:
         toast(nsfw_warn_text_gen,duration=4,color="warn")
