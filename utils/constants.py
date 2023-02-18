@@ -28,6 +28,18 @@ MODEL_NAME_MAPPING = {
     "AsiaFacemix":"AsiaFacemix"
 }
 
+EXTRA_MODEL = {
+  "LORA-KoreanDollLikeness":" <lora:koreanDollLikeness_v10:1.0>",
+}
+EXTRA_MODEL_LIST = list(EXTRA_MODEL.keys())
+SPECIAL_WORD = {
+  "Stable-Diffusion-v1.5":["- \_shuimo\_: 水墨画风，添加art by _shuimo_可触发"],
+  "Counterfeit-V2.5":["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
+  "ACertainThing":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
+  "Anything-v3":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
+  "LORA-KoreanDollLikeness": ["附加模型: 使用**ChilloutMixNi**模型获得最佳效果","- girl或者woman: 触发词","- Kpop idol: lora作者推荐的关键词","- aegyo sal: lora作者推荐的关键词"],
+}
+
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
 SCHEDULERS = [
     "Euler a",

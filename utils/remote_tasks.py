@@ -103,10 +103,14 @@ def task_post_image_gen(callback):
             seed = convert_int(pin['seed'])
             
             seed = random.randint(-2**31,2**31-1) if seed==-1 else seed
-        
+
+            # add lora
+            prompt = pin['prompt']
+            
             text2image_data = {
                 "type":"text2image",
                 "model_name":          MODEL_NAME_MAPPING[pin['model_name']],
+                "extra_model_name":    pin["extra_model"],
                 "scheduler_name":      pin['scheduler_name'],
                 "prompt":              pin['prompt'],
                 "negative_prompt":     pin['negative_prompt'],

@@ -29,6 +29,8 @@ def set_generation_params(generation_id):
         pin.num_inference_steps = str(text2image_data["num_inference_steps"])
         pin.guidance_scale = text2image_data["guidance_scale"]
         pin.seed = text2image_data["seed"]
+        if 'extra_model_name' in text2image_data:
+            pin.extra_model = text2image_data['extra_model_name']
 
 def close_popup_and_set_params(generation_id):
     close_popup()
@@ -76,6 +78,10 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
                 ]),
                 put_select("model_name_info",label="模型",options=[MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]],value=MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]),
+                if 'extra_model_name' not in text2image_data:
+                    text2image_data['extra_model_name'] = "无"
+                put_select("extra_model_info",label="附加模型",options=[text2image_data['extra_model_name']],value=text2image_data['extra_model_name']),
+
                 put_input("seed_info",label="随机种子",value=text2image_data["seed"])
   
 
@@ -100,7 +106,22 @@ def load_history():
     for img,genid in session.local.rclient.get_history(session.local.client_id):
         put_image(img).onclick(partial(show_image_information_window,img_url=img, genid=genid))
         session.local.history_image_cnt += 1
-    
+
+def change_prompt_word_sheet(val):
+    model_select = pin['model_name']
+    extra_model_select = pin['extra_model']
+    with use_scope("word_sheet",clear=True):
+        content = []
+        if model_select in SPECIAL_WORD:
+            for text in SPECIAL_WORD[model_select]:
+                content.append(put_markdown(text))
+        content.append(put_markdown("----"))
+        if extra_model_select in SPECIAL_WORD:
+            for text in SPECIAL_WORD[extra_model_select]:
+                content.append(put_markdown(text))
+        put_collapse("特殊提示词表",content,open=True)
+        
+        
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_main():
@@ -141,9 +162,15 @@ def page_main():
     
 
     with use_scope('input'):
-        put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
+        put_select("model_name",label="模型",options=MODELS,value=MODELS[0])
+        pin_on_change("model_name",onchange=change_prompt_word_sheet)
+        put_select("extra_model",label="附加模型",options=["请选择附加模型..."]+EXTRA_MODEL_LIST,value="请选择附加模型...")
+        pin_on_change("extra_model",onchange=change_prompt_word_sheet)
 
         prompt_templates = list(prompt_template.keys())
+        put_scope("word_sheet")
+
+
         put_select("prompt_template",label="提示词模板",options=prompt_templates,value="请选择模版..."),
         pin_on_change("prompt_template",onchange=fill_prompt_template)
  
@@ -177,7 +204,7 @@ def page_main():
 
         #.style("position: relative;top: 50%;transform: translateY(-30%);")s
     with use_scope('history'):
-        put_collapse(f"历史记录 (保留{MAX_HISTORY+session.local.max_history_bonus}张，详细信息保留7天)", [
+        put_collapse(f"历史记录(保留{MAX_HISTORY+session.local.max_history_bonus}张)", [
 
             put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)],
         open=True)
