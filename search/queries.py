@@ -18,8 +18,7 @@ def query_recent_images(): # limit 1000
     cursor = mysql_db.cursor()
     cursor.execute(sql)
     query_result = cursor.fetchall()
-    cursor.close()
-    mysql_db.close()
+
     total = len(query_result)
     results = []
     for i in range(total):
@@ -38,4 +37,6 @@ def query_recent_images(): # limit 1000
             "genid": genid
         })
     random.shuffle(results)
+    cursor.close()
+    mysql_db.close()
     return results
