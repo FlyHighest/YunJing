@@ -3,7 +3,7 @@ import pymysql,json
 from secret import mysql_db_database,mysql_db_host,mysql_db_password,mysql_db_user
 import random 
 from utils import FaceDetector
-
+import traceback
 # 画廊中默认显示的图
 def query_recent_images(): # limit 1000
     face_detector = FaceDetector()
@@ -24,11 +24,15 @@ def query_recent_images(): # limit 1000
     for i in range(total):
         image, height,width,username,genid,prompt,face = query_result[i]
         if face is None:
-            face = face_detector.detect(image)
-            face_int = 1 if face else 0 
-            sql = f"update image set face={face_int} where genid=\"{genid}\""
-            cursor.execute(sql)
-            print(image, face_int)
+            try:
+                face = face_detector.detect(image)
+                face_int = 1 if face else 0 
+                sql = f"update image set face={face_int} where genid=\"{genid}\""
+                cursor.execute(sql)
+                print(image, face_int)
+            except:
+                traceback.print_exc()
+                print(image,"error")
         results.append({
             "image": image,
             "height": height,
