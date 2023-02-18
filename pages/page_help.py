@@ -75,7 +75,7 @@ Prompt Editing:
 
 #### (3) 模型介绍
 
-当前后台集成10个模型，可在“模型”选项自由切换。
+当前后台集成12个模型，可在“模型”选项自由切换。
 
 - [Stable-Diffusion-v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5): 原版的stable diffusion 1.5，许多微调模型的基础，比较全能，写实、动漫，人物、风景，包括背景图、头像风格都都能生成，但非常依赖提示词。
 - [Protogen-x5.8](https://huggingface.co/darkstorm2150/Protogen_x5.8_Official_Release): AI模型分享网站civitai上最火的模型之一，比较擅长画人物，有时候提示词没有人物相关的也会画个人出来。
@@ -87,6 +87,14 @@ Prompt Editing:
 - [国风GuoFeng-v2+v3]: 国风模型v2和v3融合，来自云景热心用户的建议，看起来效果不错。
 - [Counterfeit-V2.5](https://huggingface.co/gsdf/Counterfeit-V2.5): 又一个二次元模型，作者提供了一个反向提示词embedding，在反向提示词输入_easy_negative_可有效提高画面效果，降低手部崩坏概率。
 - [MyneFactoryBase-v1.0](https://huggingface.co/MyneFactory/MF-Base): 另一个动漫风格模型。
+- [ChilloutMixNi](https://civitai.com/models/6424/chilloutmix): 写实风格，能生成好看的人脸。
+- [AsiafaceMix](https://huggingface.co/dcy/AsiaFacemix/tree/main): 擅长绘制亚洲人脸、中国元素内容，得到更接近tags的绘制内容。
+
+附加模型：
+
+- [LORA-KoreanDollLikeness](https://civitai.com/models/7448/korean-doll-likeness): 云景热心用户强烈推荐的模型，擅长绘制韩国明星风格的人像。
+- [LORA-国风汉服少女](https://www.bilibili.com/read/cv21493779): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女模型。
+- [LORA-国风汉服少女仿明风格](https://www.bilibili.com/read/cv21681512): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿明风格模型。
 
 ### 2. 图像超分辨率
 
