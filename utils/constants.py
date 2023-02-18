@@ -28,16 +28,19 @@ MODEL_NAME_MAPPING = {
     "AsiaFacemix":"AsiaFacemix"
 }
 
-EXTRA_MODEL = {
-  "LORA-KoreanDollLikeness":" <lora:koreanDollLikeness_v10:1.0>",
-}
-EXTRA_MODEL_LIST = list(EXTRA_MODEL.keys())
+EXTRA_MODEL_LIST = [
+  "LORA-KoreanDollLikeness",
+  "LORA-国风汉服少女",
+  "LORA-国风汉服少女仿明风格",
+]
 SPECIAL_WORD = {
   "Stable-Diffusion-v1.5":["- \_shuimo\_: 水墨画风，添加art by _shuimo_可触发"],
   "Counterfeit-V2.5":["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
   "ACertainThing":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
   "Anything-v3":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
   "LORA-KoreanDollLikeness": ["附加模型: 使用**ChilloutMixNi**模型获得最佳效果","- girl或者woman: 触发词","- Kpop idol: lora作者推荐的关键词","- aegyo sal: lora作者推荐的关键词"],
+  "LORA-国风汉服少女": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- hanfugirl,hanfu: 触发词"],
+  "LORA-国风汉服少女仿明风格": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- duijin: 触发词","- ouqun: 触发词","- yunjian: 触发词","- girlface: 面部增强"],
 }
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
@@ -260,6 +263,8 @@ thumbup_true="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 102
 prompt_template = {
   "请选择模版...":None,
   "清空(提示词+反向提示词)":("",""),
+  "KoreanDollLikeness模版":("best quality, ultra high res, (photorealistic:1.4), 1woman, sleeveless white button shirt, black skirt, black choker, cute, (Kpop idol), (aegyo sal:1), (platinum blonde hair:1), ((puffy eyes)), looking at viewer, full body, facing front",
+      "paintings, sketches, (worst quality:2), (low quality:2), (normal quality:2), lowres, normal quality, ((monochrome)), ((grayscale)), skin spots, acnes, skin blemishes, age spot, glans, nsfw, nipples"),
   "GuoFeng3模板":(
     "best quality, masterpiece, highres, 1girl,china dress,Beautiful face",
     "(((simple background))),monochrome ,lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, lowres, bad anatomy, bad hands, text, error, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, ugly,pregnant,vore,duplicate,morbid,mut ilated,tran nsexual, hermaphrodite,long neck,mutated hands,poorly drawn hands,poorly drawn face,mutation,deformed,blurry,bad anatomy,bad proportions,malformed limbs,extra limbs,cloned face,disfigured,gross proportions, (((missing arms))),(((missing legs))), (((extra arms))),(((extra legs))),pubic hair, plump,bad legs,error legs,username,blurry,bad feet"),
