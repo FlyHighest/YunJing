@@ -8,7 +8,9 @@ MODELS = [
     "国风GuoFeng-v3",
     "国风GuoFeng-v2+v3",
     "Counterfeit-V2.5",
-    "MyneFactoryBase-v1.0"
+    "MyneFactoryBase-v1.0",
+    "ChilloutMixNi",
+    "AsiaFacemix"
 ]
 
 MODEL_NAME_MAPPING = {
@@ -21,7 +23,9 @@ MODEL_NAME_MAPPING = {
     "国风GuoFeng-v3":"GuoFeng3_Fix",
     "国风GuoFeng-v2+v3":"GF2+3",
     "Counterfeit-V2.5":"Counterfeit-V2.5",
-    "MyneFactoryBase-v1.0":"MyneFactoryBase v1.0"
+    "MyneFactoryBase-v1.0":"MyneFactoryBase v1.0",
+    "ChilloutMixNi":"ChilloutMixNi",
+    "AsiaFacemix":"AsiaFacemix"
 }
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
@@ -274,18 +278,12 @@ prompt_template = {
   "SD概念艺术、设计":
     ("? , character sheet, concept design, contrast, style by kim jung gi, zabrocki, karlkka, jayison devadas, trending on artstation, 8k, ultra wide angle, pincushion lens effect",
     ""),
-  "SD赛博朋克":
-    ("? , cyberpunk, in heavy raining futuristic tokyo rooftop cyberpunk night, sci-fi, fantasy, intricate, very very beautiful, elegant, neon light, highly detailed, digital painting, artstation, concept art, soft light, hdri, smooth, sharp focus, illustration, art by tian zi and craig mullins and wlop and alphonse much	",
-    ""),
   "SD数字艺术":
     ("? , ultra realistic, concept art, intricate details, highly detailed, photorealistic, octane render, 8k, unreal engine, sharp focus, volumetric lighting unreal engine. art by artgerm and alphonse mucha",
     ""),
   "SD数字艺术(场景)":
     ("?, epic concept art by barlowe wayne, ruan jia, light effect, volumetric light, 3d, ultra clear detailed, octane render, 8k, [颜色] colour scheme	",
         ""),
-  "SD绘画":
-    ("?, cute, funny, centered, award winning watercolor pen illustration, detailed, disney, isometric illustration, drawing, by Stephen Hillenburg, Matt Groening, Albert Uderzo",
-          ""),
   "SD时尚模特":
     ("photograph of a Fashion model, ?, full body, highly detailed and intricate, golden ratio, vibrant colors, hyper maximalist, futuristic, city background, luxury, elite, cinematic, fashion, depth of field, colorful, glow, trending on artstation, ultra high detail, ultra realistic, cinematic lighting, focused, 8k,	",
     ""),
@@ -295,12 +293,6 @@ prompt_template = {
   "SD特写":
     ("?, depth of field. bokeh. soft light. by Yasmin Albatoul, Harry Fayt. centered. extremely detailed. Nikon D850, (35mm|50mm|85mm). award winning photography.	",
     ""),
-  "SD肖像":
-    ("portrait photo of ?, photograph, highly detailed face, depth of field, moody light, golden hour, style by Dan Winters, Russell James, Steve McCurry, centered, extremely detailed, Nikon D850, award winning photography	",
-    ""),
-  "SD后末日艺术":
-    ("? , fog, animals, birds, deer, bunny, postapocalyptic, overgrown with plant life and ivy, artgerm, yoshitaka amano, gothic interior, 8k, octane render, unreal engine	",
-    ""), 
   "SD结构图/原理图":
     ("23rd century scientific schematics for ?, blueprint, hyperdetailed vector technical documents, callouts, legend, patent registry	",
     ""),
@@ -315,8 +307,5 @@ prompt_template = {
     ""),
   "SD蒸汽朋克":
     ("? , steampunk cybernetic biomechanical, 3d model, very coherent symmetrical artwork, unreal engine realistic render, 8k, micro detail, intricate, elegant, highly detailed, centered, digital painting, artstation, smooth, sharp focus, illustration, artgerm, Caio Fantini, wlop",
-    ""), 
-  "SD车辆":
-    ("photograph of ?, photorealistic, vivid, sharp focus, reflection, refraction, sunrays, very detailed, intricate, intense cinematic composition",
-    ""),
+    "")
 }

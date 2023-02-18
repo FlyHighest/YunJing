@@ -144,7 +144,7 @@ def page_main():
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0]),
 
         prompt_templates = list(prompt_template.keys())
-        put_select("prompt_template",label="提示词模板",options=prompt_templates,value="清空(提示词+反向提示词)"),
+        put_select("prompt_template",label="提示词模板",options=prompt_templates,value="请选择模版..."),
         pin_on_change("prompt_template",onchange=fill_prompt_template)
  
         
