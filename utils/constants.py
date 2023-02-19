@@ -44,6 +44,8 @@ SPECIAL_WORD = {
 }
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
+MODEL_NAME_MAPPING_REVERSE["Anything-v3"]="Anything-v3"
+
 SCHEDULERS = [
     "Euler a",
     "Euler",
