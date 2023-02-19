@@ -13,7 +13,7 @@ from utils.constants import *
 from utils import task_post_upscale
 from utils import get_username
 
-from search import query_recent_images
+from search import query_recent_images,query_by_input
 import numpy as np 
 @use_scope("popup_likes",clear=True)
 def popup_cancel_like(userid, genid):
@@ -131,6 +131,10 @@ def load_more_images_on_gallery(val=None):
                     )
                 )
             
+@use_scope("image_flow",clear=True)
+def get_search_images_on_gallery():
+    session.local.image_list = query_by_input(pin['search_prompt'],pin['search_model'],pin['search_user'])
+    load_more_images_on_gallery(0)
     
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
@@ -189,6 +193,23 @@ def page_gallery():
     # put_row([ 
     #         put_column(put_markdown('## 云景 · 画廊')),
     #     ])
+    put_scope("search_scope")
+    with use_scope("search_scope"):
+        put_row([
+            None,
+            put_column([
+                put_textarea("search_prompt",label="",placeholder="请输入关键词",rows=1),
+                put_row([
+                    put_select("search_model",label="",options=["模型: 任意"]+MODELS,value="模型: 任意"),
+                    None,
+                    put_textarea("search_user",label="",placeholder="（可选）请输入作者名",rows=1),
+                    None,
+                    put_button(label="搜索",onclick=get_search_images_on_gallery)
+                ])
+            ]),
+            None
+        ],size="5% 90% 5%")
+
     put_scope("image_flow")
     with use_scope("image_flow"):
         put_row([

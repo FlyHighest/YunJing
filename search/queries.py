@@ -4,7 +4,49 @@ from secret import mysql_db_database,mysql_db_host,mysql_db_password,mysql_db_us
 import random 
 from utils import FaceDetector
 import traceback
+from utils.constants import MODEL_NAME_MAPPING
 # 画廊中默认显示的图
+
+def query_by_input(keyword,model,username):
+    mysql_db = pymysql.connect(
+        host=mysql_db_host,
+        database=mysql_db_database,
+        user=mysql_db_user,
+        password=mysql_db_password,
+    )
+    #select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 and user.username='TerryZhang' and image.modelname='GF2+3' and match(image.prompt) against('girl' in boolean mode) order by image.score desc;
+    if keyword!="":
+        keyword = f"and match(image.prompt) against('{keyword}' in boolean mode) "
+    if model in MODEL_NAME_MAPPING:
+        model = f"and image.modelname='{MODEL_NAME_MAPPING[model]}' "
+    else:
+        model = ""
+    if username!="":
+        username = f"and user.username='{username}'"
+    
+    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 {username} {model} {keyword} order by image.score desc;"
+
+    cursor = mysql_db.cursor()
+    cursor.execute(sql)
+    query_result = cursor.fetchall()
+
+    total = len(query_result)
+    results = []
+    for i in range(total):
+        image, height,width,username,genid,prompt,face = query_result[i]
+       
+        results.append({
+            "image": image,
+            "height": height,
+            "width": width,
+            "username": username,
+            "genid": genid
+        })
+
+    cursor.close()
+    mysql_db.close()
+    return results
+
 def query_recent_images(): # limit 1000
     face_detector = FaceDetector()
     mysql_db = pymysql.connect(
@@ -14,7 +56,7 @@ def query_recent_images(): # limit 1000
         password=mysql_db_password,
         autocommit=True
     )
-    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 order by image.score desc;"
+    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 order by image.score desc limit 500;"
     cursor = mysql_db.cursor()
     cursor.execute(sql)
     query_result = cursor.fetchall()
