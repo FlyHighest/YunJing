@@ -133,7 +133,21 @@ def load_more_images_on_gallery(val=None):
             
 @use_scope("image_flow",clear=True)
 def get_search_images_on_gallery():
+    session.local.col_height = [0,0,0,0,0,0]
     session.local.image_list = query_by_input(pin['search_prompt'],pin['search_model'],pin['search_user'])
+    put_row([
+            put_scope("img-col0"),
+            None,
+            put_scope("img-col1"),
+            None,
+            put_scope("img-col2"),
+            None,
+            put_scope("img-col3"),
+            None,
+            put_scope("img-col4"),
+            None,
+            put_scope("img-col5"),
+    ])
     load_more_images_on_gallery(0)
     
 
