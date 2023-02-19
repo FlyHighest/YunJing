@@ -24,7 +24,7 @@ def query_by_input(keyword,model,username):
     if username!="":
         username = f"and user.username='{username}'"
     
-    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 {username} {model} {keyword} order by image.score desc;"
+    sql = f"select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 {username} {model} {keyword} order by image.score desc;"
 
     cursor = mysql_db.cursor()
     cursor.execute(sql)
