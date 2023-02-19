@@ -135,6 +135,7 @@ def load_more_images_on_gallery(val=None):
 def get_search_images_on_gallery():
     session.local.col_height = [0,0,0,0,0,0]
     session.local.image_list = query_by_input(pin['search_prompt'],pin['search_model'],pin['search_user'])
+    toast(f"搜索到{len(session.local.image_list)}张图像",duration=2)
     put_row([
             put_scope("img-col0"),
             None,
