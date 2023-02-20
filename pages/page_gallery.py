@@ -154,7 +154,7 @@ def get_search_images_on_gallery():
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_gallery():
-    session.set_env(title='云景 · 画廊', output_max_width='100%')
+    session.set_env(title='云景 · 画廊', output_max_width='90%')
     session.local.rclient: RClient = RClient()
     session.local.last_task_time = time.time() - 3
     # 检查登录情况
@@ -211,19 +211,15 @@ def page_gallery():
     put_scope("search_scope")
     with use_scope("search_scope"):
         put_row([
-            None,
-            put_column([
+            put_column(
                 put_textarea("search_prompt",label="",placeholder="请输入关键词",rows=1),
-                put_row([
-                    put_select("search_model",label="",options=["模型: 任意"]+MODELS,value="模型: 任意"),
-                    None,
-                    put_textarea("search_user",label="",placeholder="（可选）请输入作者名",rows=1),
-                    None,
-                    put_button(label="搜索",onclick=get_search_images_on_gallery)
-                ])
-            ]),
-            None
-        ],size="5% 90% 5%")
+            ),
+        ])
+        put_row([
+            put_column(put_select("search_model",label="",options=["模型: 任意"]+MODELS,value="模型: 任意")),
+            put_column(put_textarea("search_user",label="",placeholder="作者",rows=1)),
+            put_column(put_button(label="搜索",onclick=get_search_images_on_gallery))
+        ])
 
     put_scope("image_flow")
     with use_scope("image_flow"):
