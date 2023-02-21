@@ -10,7 +10,8 @@ MODELS = [
     "Counterfeit-V2.5",
     "MyneFactoryBase-v1.0",
     "ChilloutMixNi",
-    "AsiaFacemix"
+    "AsiaFacemix",
+    "云景Anime-v1"
 ]
 
 MODEL_NAME_MAPPING = {
@@ -25,7 +26,8 @@ MODEL_NAME_MAPPING = {
     "Counterfeit-V2.5":"Counterfeit-V2.5",
     "MyneFactoryBase-v1.0":"MyneFactoryBase v1.0",
     "ChilloutMixNi":"ChilloutMixNi",
-    "AsiaFacemix":"AsiaFacemix"
+    "AsiaFacemix":"AsiaFacemix",
+    "云景Anime-v1":"YunJingAnime-v1"
 }
 
 EXTRA_MODEL_LIST = [
@@ -34,6 +36,7 @@ EXTRA_MODEL_LIST = [
   "LORA-国风汉服少女仿明风格",
 ]
 SPECIAL_WORD = {
+  "YunJingAnime-v1": ["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
   "Stable-Diffusion-v1.5":["- \_shuimo\_: 水墨画风，添加art by _shuimo_可触发"],
   "Counterfeit-V2.5":["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
   "ACertainThing":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
@@ -268,6 +271,7 @@ thumbup_true="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 102
 prompt_template = {
   "请选择模版...":None,
   "清空(提示词+反向提示词)":("",""),
+  "云景Anime模板":("(((masterpiece))),best quality, illustration,(beautiful detailed girl),beautiful detailed glow","(((_easy_negative_))),monochrome ,lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, lowres, bad anatomy, bad hands, text, error, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, ugly,pregnant,vore,duplicate,morbid,mut ilated,tran nsexual, hermaphrodite,long neck,mutated hands,poorly drawn hands,poorly drawn face,mutation,deformed,blurry,bad anatomy,bad proportions,malformed limbs,extra limbs,cloned face,disfigured,gross proportions, (((missing arms))),(((missing legs))), (((extra arms))),(((extra legs))),pubic hair, plump,bad legs,error legs,username,blurry,bad feet"),
   "AsiaFacemix模版":("solo, full bdoy illustration of a Chinese girl,skirt,girlface,gorgeous,pure,beautyfull detailed face and eyes,jewelry,hair ribbon,hair flower,soft smile,hair ornament,colorful,clear sharp focus,instagram most viewed,official wallpaper, official art,volumetric lighting,cinematic effects,ray tracing wallpaper,Megapixel,highres,Intricate details,ultra detailed,8k",
       "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad feet, "),
   "KoreanDollLikeness模版":("best quality, ultra high res, (photorealistic:1.4), 1woman, sleeveless white button shirt, black skirt, black choker, cute, (Kpop idol), (aegyo sal:1), (platinum blonde hair:1), ((puffy eyes)), looking at viewer, full body, facing front",
