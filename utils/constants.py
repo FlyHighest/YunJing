@@ -36,7 +36,7 @@ EXTRA_MODEL_LIST = [
   "LORA-国风汉服少女仿明风格",
 ]
 SPECIAL_WORD = {
-  "YunJingAnime-v1": ["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
+  "云景Anime-v1": ["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
   "Stable-Diffusion-v1.5":["- \_shuimo\_: 水墨画风，添加art by _shuimo_可触发"],
   "Counterfeit-V2.5":["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
   "ACertainThing":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
