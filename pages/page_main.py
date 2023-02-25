@@ -164,29 +164,29 @@ def show_img2img_options(val):
                         label="预处理方式",
                         options=
                             ["原图",
-                             "Canny边缘",
-                             "M-LSD线段",
-                             "HED边缘",
-                             "草图",
-                             "人体姿态",
+                             "边缘提取(Canny)",
+                             "边缘提取(HED)",
+                             "线段提取",
+                             "草图提取",
+                             "人体姿态估计",
                              "语义分割",
-                             "深度图",
-                             "法线贴图"
+                             "深度估计",
+                             "法线贴图估计"
                              
                              ]),
                     put_select("i2i-model",label="引导模型",
                         options=
                             ["原模型",
                              "ControlNet-Canny",
-                             "ControlNet-MLSD",
                              "ControlNet-HED",
+                             "ControlNet-线段",
                              "ControlNet-草图",
                              "ControlNet-人体姿态",
                              "ControlNet-语义分割",
                              "ControlNet-深度图",
                              "ControlNet-法线贴图"
                              ]),
-                    put_input("i2i-strength",label="降噪力度",value="0.5",help_text="填入0-1之间的数字")
+                    put_input("i2i-strength",label="图像引导力度",value="0.5",help_text="范围0-1,越大越像引导图")
                ])
             ],size="1fr 10px 1fr")
 

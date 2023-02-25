@@ -139,14 +139,14 @@ def task_post_image_gen(callback):
                 i2i_url = pin["img2img-url"]
                 i2i_preprocess = pin["i2i-preprocess"]
                 i2i_model = pin["i2i-model"]
-                i2i_denoising_strength = pin['i2i-strength']
-                if not check_i2i_param(i2i_denoising_strength, i2i_url):
+                i2i_guidance_strength = pin['i2i-strength']
+                if not check_i2i_param(i2i_guidance_strength, i2i_url):
                     raise Img2imgParamError
 
                 image_generation_data['i2i_url']=i2i_url
                 image_generation_data['i2i_preprocess']=i2i_preprocess
                 image_generation_data['i2i_model']=i2i_model
-                image_generation_data['i2i_denoising_strength']=i2i_denoising_strength
+                image_generation_data['i2i_guidance_strength']=i2i_guidance_strength
                 image_generation_data['type']="image2image"
 
 
