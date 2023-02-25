@@ -81,8 +81,11 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                 if 'extra_model_name' not in text2image_data:
                     text2image_data['extra_model_name'] = "无"
                 put_select("extra_model_info",label="附加模型",options=[text2image_data['extra_model_name']],value=text2image_data['extra_model_name']),
-
-                put_input("seed_info",label="随机种子",value=text2image_data["seed"])
+                img_guide_opt = "启用" if text2image_data['type']=="image2image" else "未使用"
+                put_row([
+                    put_column(put_input("seed_info",label="随机种子",value=text2image_data["seed"])),
+                    put_column(put_select("imgguide_info",label="图像引导",options=["启用","未使用"],value=img_guide_opt))
+                ])
   
 
 
@@ -152,7 +155,7 @@ def show_img2img_options(val):
             put_row([
                 put_column_autosize([
                     put_html(
-                        f'<img style="align-self: center;" id="img2img-img" src="{upload_img_placeholder}" />'
+                        f'<img style="height:200px;align-self: center;" id="img2img-img" src="{upload_img_placeholder}" />'
                     ).onclick(popup_img_upload),
                     put_input("img2img-url",placeholder="输入图像链接或上传图像")
                     
