@@ -23,6 +23,7 @@ def page_help():
 
 当前支持以下功能：
 - 文本生成图像
+- 图像引导生成
 - 图像超分辨率
 - 提示词自动扩写
 - 提示词模板
@@ -84,19 +85,26 @@ Prompt Editing:
 - [Anything-v3](https://huggingface.co/cag/anything-v3-1): 另一个大家喜闻乐见的二次元风格图像生成模型，同NovelAI一样，支持danbooru标签。
 - [RealisticVision-v1.3](https://civitai.com/models/4201/realistic-vision-v13): civitai上备受欢迎的模型，擅长绘制写实照片类图像。RealisticVision的模板是模型作者推荐的，建议配合模板使用。
 - [国风GuoFeng-v3](https://huggingface.co/xiaolxl/GuoFeng3): B站up[@小李xiaolxl](https://space.bilibili.com/34590220)发布的中国华丽古风风格模型，也可以说是一个古风游戏角色模型，具有2.5D的质感。
-- [国风GuoFeng-v2+v3]: 国风模型v2和v3融合，来自云景热心用户的建议，看起来效果不错。
+- [国风GuoFeng-v2](https://huggingface.co/xiaolxl/GuoFeng3): 国风模型v2。
 - [Counterfeit-V2.5](https://huggingface.co/gsdf/Counterfeit-V2.5): 又一个二次元模型，作者提供了一个反向提示词embedding，在反向提示词输入_easy_negative_可有效提高画面效果，降低手部崩坏概率。
 - [MyneFactoryBase-v1.0](https://huggingface.co/MyneFactory/MF-Base): 另一个动漫风格模型。
 - [ChilloutMixNi](https://civitai.com/models/6424/chilloutmix): 写实风格，能生成好看的人脸。
 - [AsiafaceMix](https://huggingface.co/dcy/AsiaFacemix/tree/main): 擅长绘制亚洲人脸、中国元素内容，得到更接近tags的绘制内容。
+- [云景Anime-v1]: 融合了多个动漫风格模型，色彩明艳，肢体崩坏概率低，推荐配合云景Anime模版使用。
 
 附加模型：
 
 - [LORA-KoreanDollLikeness](https://civitai.com/models/7448/korean-doll-likeness): 云景热心用户强烈推荐的模型，擅长绘制韩国明星风格的人像。
 - [LORA-国风汉服少女](https://www.bilibili.com/read/cv21493779): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女模型。
 - [LORA-国风汉服少女仿明风格](https://www.bilibili.com/read/cv21681512): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿明风格模型。
+- [LORA-国风汉服少女仿宋风格](https://www.bilibili.com/read/cv21926093): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿宋风格模型。
 
-### 2. 图像超分辨率
+### 2. 图像引导生成
+
+TODO: finish this part. 
+
+
+### 3. 图像超分辨率
 
 在点击“开始生成”按钮后，稍等片刻，图像预览区会显示图像，同时下方出现“获取高清图”按钮，点击按钮即可获得高清图下载链接。
 
@@ -104,13 +112,16 @@ Prompt Editing:
 
 服务器使用[RealESRGAN](https://github.com/xinntao/Real-ESRGAN)模型进行图像超分。
 
-### 3. 提示词自动扩写
+### 4. 提示词增强
 
+#### 帮我写
 在提示词输入框右侧有“帮我写”按钮，点击后将对当前输入的内容自动扩写。扩写模型使用[MagicPrompt](https://huggingface.co/Gustavosta/MagicPrompt-Stable-Diffusion)，主要是为stable diffusion准备的，protogen和openjourney也可以参考。
 
-当前**仅支持英文**提示词扩写。虽然会拓展出来一些提高质量、风格或者艺术家的词汇，但仍无法百分之百保证生成图像的质量，还需手动调整，仅供参考。
+虽然会拓展出来一些提高质量、风格或者艺术家的词汇，但仍无法百分之百保证生成图像的质量，还需手动调整，仅供参考。
 
-### 4. 提示词模板
+输入中文后点击帮我写，原本输入的文字会被翻译成英文后扩写，返回结果将覆盖原有中文文本。
+
+#### 提示词模板
 
 这个功能给用户提供了更加简便的提示词书写流程。这些模板能够提高出图良品率，提升图像质量，增加图像细节。
 

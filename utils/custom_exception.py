@@ -17,3 +17,6 @@ class NotLoginError(Exception):
 
 class ShareTooLow(Exception):
     pass 
+
+class Img2imgParamError(Exception):
+    pass 

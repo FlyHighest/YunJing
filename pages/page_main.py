@@ -5,14 +5,14 @@ from pywebio import config, session
 from pywebio.output import *
 from pywebio.pin import *
 from pywebio_battery.web import *
-
+from pywebio.input import file_upload,actions,input_group
 from utils.custom_exception import *
 from data import RClient
 
 from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
                            task_post_upscale, task_publish_to_gallery)
-from utils import  get_username,put_column_autosize
+from utils import  get_username,put_column_autosize,upload_to_storage
 
 
 def set_generation_params(generation_id):
@@ -72,7 +72,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_column(put_select("width_info",label="宽度",options=[text2image_data["width"]],value=text2image_data["width"])),
                     put_column(put_select("height_info",label="高度",options=[text2image_data["height"]],value=text2image_data["height"])),
                 ])
-                put_slider('guidance_scale_info',label="引导程度",min_value=0,max_value=30,value=text2image_data["guidance_scale"])
+                put_slider('guidance_scale_info',label="引导程度",min_value=0.0,max_value=30.0,value=text2image_data["guidance_scale"])
                 put_row([ 
                     put_column(put_select("num_inference_steps_info",label="推理步骤",options=[text2image_data["num_inference_steps"]],value=text2image_data["num_inference_steps"])),
                     put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
@@ -120,8 +120,78 @@ def change_prompt_word_sheet(val):
             for text in SPECIAL_WORD[extra_model_select]:
                 content.append(put_markdown(text))
         put_collapse("特殊提示词表",content,open=True)
-        
-        
+
+
+def popup_img_upload():
+    info = input_group('添加引导图', [
+        file_upload("",name="file",accept=[".jpg",".jpeg",".png"],placeholder="请选择图像文件",max_size="2M"),
+        actions('', [
+                {'label': '上传', 'type':'submit','value':'submit'},
+                {'label': '重选', 'type': 'reset', 'color': 'warning'},
+                {'label': '取消', 'type': 'cancel', 'color': 'danger'},
+                ], name='actions'),
+            ]
+    )
+    
+    if info is not None:
+        f = info["file"]
+        toast(upload_img_submit,duration=1)
+        upload_data = f['content']
+        upload_url = upload_to_storage(img_bytes=upload_data,expire="PT12H")
+        if upload_url=="":
+            toast(upload_img_fail,color="error",duration=2)
+            return
+        session.run_js(f"$('#img2img-img').attr('src','{upload_url}')")
+        pin["img2img-url"] = upload_url
+
+def show_img2img_options(val):
+    # print(val,pin["enable_img2img"])
+    if len(val)>0:
+        # show 
+        with use_scope("img2img-options",clear=True):
+            put_row([
+                put_column_autosize([
+                    put_html(
+                        f'<img style="align-self: center;" id="img2img-img" src="{upload_img_placeholder}" />'
+                    ).onclick(popup_img_upload),
+                    put_input("img2img-url",placeholder="输入图像链接或上传图像")
+                    
+                    ]
+                ),
+                None,
+                put_column([
+                    put_select("i2i-preprocess",
+                        label="预处理方式",
+                        options=
+                            ["原图",
+                             "Canny边缘",
+                             "M-LSD线段",
+                             "HED边缘",
+                             "草图",
+                             "人体姿态",
+                             "语义分割",
+                             "深度图",
+                             "法线贴图"
+                             
+                             ]),
+                    put_select("i2i-model",label="引导模型",
+                        options=
+                            ["原模型",
+                             "ControlNet-Canny",
+                             "ControlNet-MLSD",
+                             "ControlNet-HED",
+                             "ControlNet-草图",
+                             "ControlNet-人体姿态",
+                             "ControlNet-语义分割",
+                             "ControlNet-深度图",
+                             "ControlNet-法线贴图"
+                             ]),
+                    put_input("i2i-strength",label="降噪力度",value="0.5",help_text="填入0-1之间的数字")
+               ])
+            ],size="1fr 10px 1fr")
+
+    else:
+        clear("img2img-options")
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_main():
@@ -182,22 +252,26 @@ def page_main():
         put_button("帮我写!",color="info",onclick=task_post_enhance_prompt)
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         
+        put_checkbox("enable_img2img",options=["开启图片引导模式"])
+        pin_on_change("enable_img2img",onchange=show_img2img_options)
+        put_scope("img2img-options")
+
         put_row([ 
             put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
             put_column(put_select("height",label="高度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
 
         ])
         put_row([            
-            put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="30")),
+            put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="20")),
             put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="Euler_A")),
         ])
         put_row([ 
-           
-            put_slider('guidance_scale',label="引导程度",min_value=0,max_value=30,value=7,step=1),
+            put_input("guidance_scale",label="引导程度",value="7.0"),
+            #put_slider('guidance_scale',label="引导程度",min_value=0.0,max_value=30.0,value=7,step=0.1),
             put_input("seed",label="随机种子",value="-1")
         ])
 
-        put_scope("generate_button",put_button('   开始绘制   ',onclick=partial(task_post_image_gen,callback=show_image_information_window))).style("text-align: center")
+        put_scope("generate_button",put_button(' - 开始绘制 -  ',onclick=partial(task_post_image_gen,callback=show_image_information_window))).style("text-align: center")
     
 
         

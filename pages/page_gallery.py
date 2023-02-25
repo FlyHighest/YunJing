@@ -87,7 +87,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_column(put_select("width_info",label="宽度",options=[text2image_data["width"]],value=text2image_data["width"])),
                     put_column(put_select("height_info",label="高度",options=[text2image_data["height"]],value=text2image_data["height"])),
                 ])
-                put_slider('guidance_scale_info',label="引导程度",min_value=0,max_value=30,value=text2image_data["guidance_scale"])
+                put_slider('guidance_scale_info',label="引导程度",min_value=0.0,max_value=30.0,value=text2image_data["guidance_scale"])
                 put_row([ 
                     put_column(put_select("num_inference_steps_info",label="推理步骤",options=[text2image_data["num_inference_steps"]],value=text2image_data["num_inference_steps"])),
                     put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),

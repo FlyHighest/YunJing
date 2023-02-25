@@ -81,6 +81,14 @@ def convert_int(s):
     except:
         return -1
 
+def check_i2i_param(denoising_strength, img_url):
+    try:
+        assert 0<=float(denoising_strength)<=1
+        assert len(img_url)>8
+        return True 
+    except:
+        return False 
+
 @use_scope('images', clear=False)
 def task_post_image_gen(callback):
     clear()
@@ -106,8 +114,13 @@ def task_post_image_gen(callback):
 
             # add lora
             prompt = pin['prompt']
-            
-            text2image_data = {
+            try:
+                assert 0<=float(pin['guidance_scale'])<=50
+            except:
+                pin['guidance_scale'] = 7.0
+
+
+            image_generation_data = {
                 "type":"text2image",
                 "model_name":          MODEL_NAME_MAPPING[pin['model_name']],
                 "extra_model_name":    pin["extra_model"],
@@ -117,15 +130,32 @@ def task_post_image_gen(callback):
                 "height":              int(pin['height']),
                 "width":               int(pin['width']),
                 "num_inference_steps": int(pin['num_inference_steps']),
-                "guidance_scale":      int(pin['guidance_scale']),
+                "guidance_scale":      float(pin['guidance_scale']),
                 "seed":                seed
             }
-            image_gen_id = hashlib.sha1(json.dumps(text2image_data).encode('utf-8')).hexdigest()
+
+            # add img2img params
+            if len(pin["enable_img2img"])>0:
+                i2i_url = pin["img2img-url"]
+                i2i_preprocess = pin["i2i-preprocess"]
+                i2i_model = pin["i2i-model"]
+                i2i_denoising_strength = pin['i2i-strength']
+                if not check_i2i_param(i2i_denoising_strength, i2i_url):
+                    raise Img2imgParamError
+
+                image_generation_data['i2i_url']=i2i_url
+                image_generation_data['i2i_preprocess']=i2i_preprocess
+                image_generation_data['i2i_model']=i2i_model
+                image_generation_data['i2i_denoising_strength']=i2i_denoising_strength
+                image_generation_data['type']="image2image"
+
+
+            image_gen_id = hashlib.sha1(json.dumps(image_generation_data).encode('utf-8')).hexdigest()
             output_img_url = session.local.rclient.check_genid_in_imagetable(image_gen_id)
 
             if output_img_url is None:
-                text2image_data['gen_id'] = image_gen_id
-                post_data = json.dumps(text2image_data)
+                image_generation_data['gen_id'] = image_gen_id
+                post_data = json.dumps(image_generation_data)
                 prediction = httpx.post(
                     MODEL_URL,
                     data=post_data,
@@ -162,7 +192,7 @@ def task_post_image_gen(callback):
             with use_scope('history_images'):
                 session.local.history_image_cnt += 1
                 if score is not None: # new generated image
-                    session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,text2image_data,nsfw,score,face)
+                    session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,image_generation_data,nsfw,score,face)
 
                 if  session.local.history_image_cnt > MAX_HISTORY + session.local.max_history_bonus:
                     session.local.history_image_cnt -= 1
@@ -186,6 +216,8 @@ def task_post_image_gen(callback):
         toast(not_login_error_text, duration=4,color="warn")
     except ShareTooLow as _:
         toast(share_too_low, duration=4, color="warn")
+    except Img2imgParamError as _:
+        toast(img2img_param_error, duration=4,color="warn")
     except Exception as _:
         traceback.print_exc()
         toast(unknown_error_text,duration=4,color="warn")

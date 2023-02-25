@@ -6,7 +6,7 @@ MODELS = [
     "ACertainThing",
     "Anything-v3",
     "国风GuoFeng-v3",
-    "国风GuoFeng-v2+v3",
+    "国风GuoFeng-v2",
     "Counterfeit-V2.5",
     "MyneFactoryBase-v1.0",
     "ChilloutMixNi",
@@ -22,7 +22,7 @@ MODEL_NAME_MAPPING = {
     "ACertainThing":"ACertainThing",
     "Anything-v3":"Anything-v3.2",
     "国风GuoFeng-v3":"GuoFeng3_Fix",
-    "国风GuoFeng-v2+v3":"GF2+3",
+    "国风GuoFeng-v2":"GF2",
     "Counterfeit-V2.5":"Counterfeit-V2.5",
     "MyneFactoryBase-v1.0":"MyneFactoryBase v1.0",
     "ChilloutMixNi":"ChilloutMixNi",
@@ -50,6 +50,7 @@ SPECIAL_WORD = {
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
 MODEL_NAME_MAPPING_REVERSE["Anything-v3"]="Anything-v3"
+MODEL_NAME_MAPPING_REVERSE["GF2+3"]="国风GuoFeng-v2"
 
 SCHEDULERS = [
     "Euler a",
@@ -89,6 +90,9 @@ publish_fail_text = "发布失败，请稍后再试"
 too_frequent_error_text = "操作频率过于频繁，请稍后再试"
 not_login_error_text = "请先在“账户”页面登录或注册"
 share_too_low="您的分享值过低，生成频率被限制，本次任务提交失败"
+upload_img_fail="上传图像失败，请稍后再试"
+upload_img_submit="正在上传，请稍候……"
+img2img_param_error = "图像引导参数错误，请修改后重试"
 
 css = """
 #pywebio-scope-image_flow{
@@ -339,3 +343,5 @@ prompt_template = {
     ("? , steampunk cybernetic biomechanical, 3d model, very coherent symmetrical artwork, unreal engine realistic render, 8k, micro detail, intricate, elegant, highly detailed, centered, digital painting, artstation, smooth, sharp focus, illustration, artgerm, Caio Fantini, wlop",
     "")
 }
+
+upload_img_placeholder = "https://storage.yunjing.gallery/images/2023/02/25/7a4eb5d12f560704cf4a7363517f0521.md.png"
