@@ -95,6 +95,15 @@ upload_img_submit="正在上传，请稍候……"
 img2img_param_error = "图像引导参数错误，请修改后重试"
 
 css = """
+.footer {
+    height: 100%;
+    text-align: center;
+    color: gray;
+    background-color: #efefef;
+    line-height: 40px;
+    margin: 0 auto;
+}
+
 #pywebio-scope-image_flow{
     text-align:center;
 }
