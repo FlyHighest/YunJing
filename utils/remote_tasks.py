@@ -164,8 +164,7 @@ def task_post_image_gen(callback):
 
         # 这里是正常处理
         if not nsfw:
-            if session.local.rclient.get_user_config(session.local.client_id)["autopub"]==True:
-                task_publish_to_gallery(scope="images",genid=image_gen_id)
+ 
             put_row([
                 put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
                 put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
@@ -181,6 +180,9 @@ def task_post_image_gen(callback):
                     session.local.history_image_cnt -= 1
                     session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
                 put_image(output_img_url).onclick(partial(callback, img_url=output_img_url,genid=image_gen_id))
+            # 自动发布
+            if session.local.rclient.get_user_config(session.local.client_id)["autopub"]==True:
+                task_publish_to_gallery(scope="images",genid=image_gen_id)
         else:
             put_text("该图像可能含有不适宜工作场所观看的内容，本网站将不会留存该图像")
             toast(nsfw_warn_text_gen,color="warn",duration=3)
