@@ -531,9 +531,16 @@ def page_account():
             else:
                 colnum_val = "6"
             put_markdown("-----")
-            put_radio("config_autopub",label="自动发布图像到画廊",options=["开启","关闭"],value=autopub_val)
-            put_select("config_colnum", label="画廊显示列数", options=["2","3","4","5","6","7","8"], value=colnum_val)
+            put_row([
+                None,
+                put_column([
+                    put_radio("config_autopub",label="自动发布图像到画廊",options=["开启","关闭"],value=autopub_val),
+                    put_select("config_colnum", label="画廊显示列数", options=["2","3","4","5","6","7","8"], value=colnum_val)
 
+                ]),
+                None
+            ],size="20% 60% 20%")
+           
             put_button("保存用户配置",onclick=update_user_config)
 
         with use_scope("options"):
