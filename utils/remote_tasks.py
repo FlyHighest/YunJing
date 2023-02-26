@@ -19,7 +19,7 @@ def before_gen_post():
     if session.local.client_id.startswith("@"):
         raise NotLoginError
     if 'last_gen_task_time' not in session.local:
-        session.local.last_gen_task_time = time.time()
+        session.local.last_gen_task_time = time.time() -10
     if time.time() - session.local.last_gen_task_time < 10:
         raise TooFrequent
     else:
