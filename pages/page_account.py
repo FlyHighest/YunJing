@@ -469,9 +469,9 @@ def update_user_config():
     config["colnum"] = int(pin['config_colnum'])
     config["hisnum"] = int(pin['config_hisnum'])
     if session.local.rclient.update_user_config(session.local.client_id, config):
-        toast("保存配置成功")
+        toast("保存配置成功",duration=1)
     else:
-        toast("保存配置失败",color="warn")
+        toast("保存配置失败",color="warn",duration=1)
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_account():
