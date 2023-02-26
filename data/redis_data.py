@@ -157,9 +157,9 @@ class RClient:
     def del_history(self,userid,genid):
         Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
 
-    def get_history(self, client_id):
+    def get_history(self, client_id, limit=200):
         if client_id.startswith("@"): return []
-        images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc()).limit(200)
+        images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc()).limit(limit)
         img_url_and_genid = [(image.imgurl,image.genid) for image in images]
         return img_url_and_genid[::-1]
 
