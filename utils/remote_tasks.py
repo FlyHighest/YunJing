@@ -15,6 +15,19 @@ from secret import MODEL_URL
 
 from .constants import *
 
+def before_gen_post():
+    if session.local.client_id.startswith("@"):
+        raise NotLoginError
+    if 'last_gen_task_time' not in session.local:
+        session.local.last_gen_task_time = time.time()
+    if time.time() - session.local.last_gen_task_time < 10:
+        raise TooFrequent
+    else:
+        session.local.last_gen_task_time = time.time()
+    if session.local.rclient.get_queue_size() > MAX_QUEUE:
+        raise QueueTooLong
+
+
 def before_post():
     if session.local.client_id.startswith("@"):
         raise NotLoginError
@@ -75,7 +88,7 @@ def task_post_image_gen(callback):
     clear()
     session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",true)''')
     try:
-        before_post()
+        before_gen_post()
         toast(image_gen_text)
         with put_loading(shape="border",color="primary"):
             sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
