@@ -217,9 +217,9 @@ def page_main():
         
     # 设置footer
     sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
-    footer_html = "您好，{}！您的分享值为{:2f}%，生成数为{}，分享数为{}。".format(username,sharerate,num_gen,num_pub)
+    footer_html = "您好，{}！您的分享值为{:.2f}%，生成数为{}，分享数为{}。".format(username,sharerate,num_gen,num_pub)
     session.run_js(f'$("footer").html("{footer_html}")')
-    
+
     session.local.last_task_time = time.time() - 3
     
     if not session.local.client_id.startswith("@"):
