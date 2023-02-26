@@ -540,10 +540,8 @@ def page_account():
                 None
             ],size="20% 60% 20%")
             put_row([
-                None,
                 put_button("保存用户配置",onclick=update_user_config),
-                None,
-            ])
+            ]).style("text-align:center")
            
             
 
