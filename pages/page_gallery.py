@@ -157,7 +157,6 @@ def page_gallery():
     username = get_username()
     if username:
         session.local.client_id = session.local.rclient.get_userid(username)
-        print(session.local.client_id)
     else:
     # 检查本地有没有cookie client id，如果没有，让服务器赋予一个。
         if get_cookie("client_id") is None or not get_cookie("client_id").startswith("@"):
