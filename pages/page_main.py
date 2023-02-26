@@ -203,6 +203,7 @@ def page_main():
     # 检查有没有登陆
     username = get_username()
     if username:
+        session.local.username = username
         session.local.client_id = session.local.rclient.get_userid(username)
     else:
     # 检查本地有没有cookie client id，如果没有，让服务器赋予一个。
@@ -212,15 +213,18 @@ def page_main():
         session.local.client_id = get_cookie("client_id")
         toast("请先登录，正在跳转到“账户”页面 ...")
         time.sleep(1.5)
-        session.run_js(f'window.open("/account", "_blank");')
+        session.run_js(f'window.open("/account");')
         
-
+    # 设置footer
+    sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
+    footer_html = "您好，{}！您的分享值为{:2f}%，生成数为{}，分享数为{}。".format(username,sharerate,num_gen,num_pub)
+    session.run_js(f'$("footer").html("{footer_html}")')
+    
     session.local.last_task_time = time.time() - 3
     
     if not session.local.client_id.startswith("@"):
-        config = session.local.rclient.get_user_config()
+        config = session.local.rclient.get_user_config(session.local.client_id)
         if "hisnum" in config:
-
             session.local.max_history_bonus = config['hisnum']
         else:
             session.local.max_history_bonus = 200
