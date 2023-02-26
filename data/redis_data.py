@@ -132,11 +132,12 @@ class RClient:
         self.add_generated_number()
         try:
             with self.mysql_db.atomic():
-                Histories.create(
-                    userid=client_id,
-                    imgurl=img_url,
-                    genid=gen_id
-                )
+                if not nsfw:
+                    Histories.create(
+                        userid=client_id,
+                        imgurl=img_url,
+                        genid=gen_id
+                    )
                 Image.create(
                     genid=gen_id,
                     imgurl=img_url,
