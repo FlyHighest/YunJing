@@ -218,7 +218,12 @@ def page_main():
     session.local.last_task_time = time.time() - 3
     
     if not session.local.client_id.startswith("@"):
-        session.local.max_history_bonus = 190
+        config = session.local.rclient.get_user_config()
+        if "hisnum" in config:
+
+            session.local.max_history_bonus = config['hisnum']
+        else:
+            session.local.max_history_bonus = 200
     else:
         session.local.max_history_bonus = 0
     put_html(header_html_main)
@@ -281,7 +286,7 @@ def page_main():
 
         #.style("position: relative;top: 50%;transform: translateY(-30%);")s
     with use_scope('history'):
-        put_collapse(f"历史记录(保留{MAX_HISTORY+session.local.max_history_bonus}张)", [
+        put_collapse(f"历史记录(保留{session.local.max_history_bonus}张)", [
 
             put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)],
         open=True)

@@ -467,6 +467,7 @@ def update_user_config():
     config = {} 
     config["autopub"] = True if pin['config_autopub']=="开启" else False 
     config["colnum"] = int(pin['config_colnum'])
+    config["hisnum"] = int(pin['config_hisnum'])
     if session.local.rclient.update_user_config(session.local.client_id, config):
         toast("保存配置成功")
     else:
@@ -529,12 +530,17 @@ def page_account():
                 colnum_val = str(config["colnum"])
             else:
                 colnum_val = "6"
+            if "hisnum" in config:
+                hisnum_val = str(config['hisnum'])
+            else:
+                hisnum_val = "200"
             put_markdown("-----")
             put_row([
                 None,
                 put_column([
-                    put_radio("config_autopub",label="- 自动发布图像到画廊",options=["开启","关闭"],value=autopub_val),
-                    put_select("config_colnum", label="- 画廊显示列数", options=["2","3","4","5","6","7","8"], value=colnum_val),                    
+                    put_radio("config_autopub", label="- 自动发布图像到画廊",options=["开启","关闭"],value=autopub_val),
+                    put_select("config_colnum", label="- 画廊显示列数", options=["2","3","4","5","6","7","8"], value=colnum_val),   
+                    put_select("config_hisnum", label="- 历史记录图像数", options=["10","20","50","80","110","140","170","200"],value=hisnum_val)                 
                 ]),
                 None
             ],size="20% 60% 20%")

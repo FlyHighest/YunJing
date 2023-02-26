@@ -88,7 +88,8 @@ class RClient:
         except:
             return {
                 "autopub":False,
-                "colnum":6
+                "colnum":6,
+                "hisnum": 200
             }
 
     def update_user_config(self,userid,config):
