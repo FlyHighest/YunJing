@@ -82,6 +82,25 @@ class RClient:
         new_client_id = "@"+nanoid.generate(CLIENT_ID_ALPHABET, size=10)
         return new_client_id
 
+    def get_user_config(self,userid):
+        try:
+            return json.loads(User.get_by_id(userid).config)
+        except:
+            return {
+                "autopub":False,
+                "colnum":6
+            }
+
+    def update_user_config(self,userid,config):
+        try:
+            user = User.get_by_id(userid)
+            user.config = json.dumps(config)
+            user.save()
+            return True
+        except:
+            return False 
+
+
     def get_user_level(self,userid):
         try:
             return User.get_by_id(userid).level

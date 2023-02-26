@@ -4,6 +4,7 @@ from functools import partial
 from pywebio import config, session
 from pywebio.input import *
 from pywebio.output import *
+from pywebio.pin import *
 from pywebio.session import *
 from pywebio_battery.web import *
 from tornado.web import create_signed_value, decode_signed_value
@@ -462,7 +463,14 @@ def show_resetemail():
 
 
     
-
+def update_user_config():
+    config = {} 
+    config["autopub"] = True if pin['config_autopub']=="开启" else False 
+    config["colnum"] = int(pin['config_colnum'])
+    if session.local.rclient.update_user_config(session.local.client_id, config):
+        toast("保存配置成功")
+    else:
+        toast("保存配置失败",color="warn")
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_account():
@@ -484,6 +492,7 @@ def page_account():
     
     put_scope("login").style("text-align:center")
     put_scope("options").style("text-align:center")
+    put_scope("userconfig")
     put_scope("check").style("text-align:center")
     if not username:
         with use_scope("options"):
@@ -511,6 +520,21 @@ def page_account():
             put_text("（分享值小于10%，生成速度将受限; 生成数量低于100时不计算分享值）")
             put_button("退出登录",onclick=revoke_auth)
 
+        with use_scope("userconfig"):
+            config = session.local.rclient.get_user_config(session.local.client_id)
+            if "autopub" in config and config["autopub"]==True:
+                autopub_val = "开启"
+            else:
+                autopub_val = "关闭"
+            if "colnum" in config:
+                colnum_val = str(config["colnum"])
+            else:
+                colnum_val = "6"
+            put_markdown("-----")
+            put_radio("config_autopub",label="自动发布图像到画廊",options=["开启","关闭"],value=autopub_val)
+            put_select("config_colnum", label="画廊显示列数", options=["2","3","4","5","6","7","8"], value=colnum_val)
+
+            put_button("保存用户配置",onclick=update_user_config)
 
         with use_scope("options"):
             clear()

@@ -27,38 +27,19 @@ def before_post():
 
 
 def task_publish_to_gallery(scope, genid):
+    # why use scope here? 
     # check if has published 
     if session.local.rclient.check_published(genid):
         toast("图像已发布在画廊，请勿重复发布")
         return
     with use_scope(scope):
         try:
-            before_post()
-            with put_loading():
-                data = {
-                    "type":"safety_check",
-                    "img_url": session.local.rclient.get_imgurl_by_id(genid)
-                }
-                post_data = json.dumps(data)
-                prediction = httpx.post(
-                    MODEL_URL,
-                    data=post_data,
-                    timeout=180000
-                )
-                if prediction.status_code == 200:
-                    output_img_url = json.loads(prediction.content)['result']
-                    if output_img_url =="NSFW":
-                        raise NSFWDetected
-                else:
-                    raise ServerError
+            ret = session.local.rclient.record_publish(genid)
                 
-
-                ret = session.local.rclient.record_publish(genid)
-                
-                if ret:
-                    toast(publish_success_text, color="success")
-                else:
-                    toast(publish_fail_text, color="warn")
+            if ret:
+                toast(publish_success_text, color="success")
+            else:
+                toast(publish_fail_text, color="warn")
         except NSFWDetected as _:
             session.local.rclient.add_check_image(genid)
             toast(nsfw_warn_text_publish,duration=4,color="warn")
@@ -183,6 +164,8 @@ def task_post_image_gen(callback):
 
         # 这里是正常处理
         if not nsfw:
+            if session.local.rclient.get_user_config(session.local.client_id)["autopub"]==True:
+                task_publish_to_gallery(scope="images",genid=image_gen_id)
             put_row([
                 put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
                 put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))

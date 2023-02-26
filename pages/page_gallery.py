@@ -133,25 +133,18 @@ def load_more_images_on_gallery(val=None):
                         fuke_func=partial(open_main_page_with_generate_params, generate_url="/main?gen="+genid)
                     )
                 )
-            
-@use_scope("image_flow",clear=True)
+
+def reset_flow():
+    with use_scope("image_flow",clear=True):
+        colnum = int(session.local.rclient.get_user_config(session.local.client_id)["colnum"])
+        session.local.col_height = [0]*colnum
+        put_row([put_scope(f"img-col{i}") for i in range(0,colnum)])
+
 def get_search_images_on_gallery():
-    session.local.col_height = [0,0,0,0,0,0]
+    reset_flow()
     session.local.image_list = query_by_input(pin['search_prompt'],pin['search_model'],pin['search_user'])
     toast(f"搜索到{len(session.local.image_list)}张图像",duration=2)
-    put_row([
-            put_scope("img-col0"),
-            None,
-            put_scope("img-col1"),
-            None,
-            put_scope("img-col2"),
-            None,
-            put_scope("img-col3"),
-            None,
-            put_scope("img-col4"),
-            None,
-            put_scope("img-col5"),
-    ])
+    
     load_more_images_on_gallery(0)
     
 
@@ -225,21 +218,7 @@ def page_gallery():
         ])
 
     put_scope("image_flow")
-    with use_scope("image_flow"):
-        put_row([
-            put_scope("img-col0"),
-            None,
-            put_scope("img-col1"),
-            None,
-            put_scope("img-col2"),
-            None,
-            put_scope("img-col3"),
-            None,
-            put_scope("img-col4"),
-            None,
-            put_scope("img-col5"),
-        ])
-    session.local.col_height = [0,0,0,0,0,0]
+    reset_flow()
     session.local.image_list = query_recent_images()
     # random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)

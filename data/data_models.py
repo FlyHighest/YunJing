@@ -25,7 +25,7 @@ class User(BaseModel):
     email = CharField()
     phone = CharField()
     level = IntegerField() 
-
+    config = TextField()
 
 
 class Image(BaseModel):

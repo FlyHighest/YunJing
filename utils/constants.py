@@ -98,6 +98,9 @@ css = """
 #pywebio-scope-image_flow{
     text-align:center;
 }
+#pywebio-scope-image_flow div{
+    margin:1%;
+}
 #pywebio-scope-search_scope button{
   width:100%;
 }
