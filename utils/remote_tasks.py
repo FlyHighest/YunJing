@@ -199,6 +199,7 @@ def task_post_image_gen(callback):
         else:
             put_text("该图像可能含有不适宜工作场所观看的内容，本网站将不会留存该图像")
             toast(nsfw_warn_text_gen,color="warn",duration=3)
+            session.local.rclient.add_generated_number()
 
     except NSFWDetected as _:
         toast(nsfw_warn_text_gen,duration=4,color="warn")
