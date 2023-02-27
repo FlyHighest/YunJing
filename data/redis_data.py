@@ -159,6 +159,7 @@ class RClient:
         Histories.delete().where(Histories.genid==genid).execute()
         img = Image.get_by_id(genid)
         img.nsfw=True
+        img.published=False
         img.save()
 
     def del_history(self,userid,genid):
