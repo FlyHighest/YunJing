@@ -60,10 +60,9 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                         put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
                     ])
                 user_level = session.local.rclient.get_user_level(session.local.client_id)
-                print(user_level)
                 if user_level==6:
                     buttons.append( 
-                        put_button("标记为NSFW",color="warn",onclick=partial(mark_as_nsfw,genid=genid))
+                        put_button("标记为NSFW",color="danger",onclick=partial(mark_as_nsfw,genid=genid))
                     )
 
                 if len(buttons)>0:
