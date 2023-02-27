@@ -22,6 +22,11 @@ def popup_cancel_like(userid, genid):
     put_html(thumbup_false).onclick(partial(popup_create_like,userid=userid,genid=genid)),
     put_text(like_num)
 
+def mark_as_nsfw(genid):
+    session.local.rclient.mark_as_nsfw(genid)
+    toast("成功删除")
+
+
 @use_scope("popup_likes",clear=True)
 def popup_create_like(userid,genid):
     session.local.rclient.set_likes(userid,genid)
@@ -48,11 +53,20 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_scope("popup_user"),
                     put_scope("popup_likes")
                 ]).style("margin:2%")
+                buttons = []
                 if not session.local.client_id.startswith("@"): 
-                    put_column([
+                    buttons.extend( [
                         put_button("复刻这张图", color="info", onclick=fuke_func),
                         put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
-                    ]).style("margin: 3%; text-align: center")
+                    ])
+                user_level = session.local.rclient.get_user_level(session.local.client_id)
+                if user_level==6:
+                    buttons.append( 
+                        put_button("标记为NSFW",color="warn",onclick=partial(mark_as_nsfw,genid=genid))
+                    )
+
+                if len(buttons)>0:
+                    put_column(buttons).style("margin: 3%; text-align: center")
 
             with use_scope("popup_user"):
                 put_text("作者: @"+text2image_data["user"])

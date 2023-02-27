@@ -155,6 +155,12 @@ class RClient:
         except IntegrityError:
             pass
         
+    def mark_as_nsfw(self,genid):
+        Histories.delete().where(Histories.genid==genid).execute()
+        img = Image.get_by_id(genid)
+        img.nsfw=True
+        img.save()
+
     def del_history(self,userid,genid):
         Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
 
