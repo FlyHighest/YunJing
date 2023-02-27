@@ -24,7 +24,9 @@ def popup_cancel_like(userid, genid):
 
 def mark_as_nsfw(genid):
     session.local.rclient.mark_as_nsfw(genid)
+
     toast("成功删除")
+    close_popup()
 
 
 @use_scope("popup_likes",clear=True)
