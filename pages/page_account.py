@@ -538,7 +538,7 @@ def page_account():
             put_row([
                 None,
                 put_column([
-                    put_radio("config_autopub", label="- 自动发布图像到画廊",options=["开启","关闭"],value=autopub_val),
+                    put_radio("config_autopub", label="- 自动发布图像到画廊",options=["开启","关闭"],value=autopub_val,help_text="如果您经常生成不适宜公开发布的内容，请不要开启此选项，以免自动分享不适宜内容影响账号健康度"),
                     put_select("config_colnum", label="- 画廊显示列数", options=["2","3","4","5","6","7","8"], value=colnum_val),   
                     put_select("config_hisnum", label="- 历史记录图像数", options=["10","20","50","80","110","140","170","200"],value=hisnum_val)                 
                 ]),
