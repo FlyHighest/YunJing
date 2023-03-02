@@ -202,8 +202,9 @@ def set_prompt_pin_and_closepopup(val):
     close_popup()
 
 def set_gpt_output():
-    
+    session.run_js('$(".modal-dialog .btn").prop("disabled",true);')
     res = gpt_image_describe(pin['gpt_input'])
+    session.run_js('$(".modal-dialog .btn").prop("disabled",false);')
     if res=="Error":
         toast(server_error_text)
     else:
@@ -211,10 +212,12 @@ def set_gpt_output():
         with use_scope("gpt_output",clear=True):
             put_markdown(res)
             eng,_, cn = res.split("\n")
+            eng =eng[6:]
+            cn=cn[5:]
             put_row(
                 [
-                    put_button("填入提示词(英文)",onclick=partial(set_prompt_pin_and_closepopup,val=eng)),
-                    put_button("填入提示词(中文)",onclick=partial(set_prompt_pin_and_closepopup,val=cn))
+                    put_button("填入提示词(英文)",color="info",onclick=partial(set_prompt_pin_and_closepopup,val=eng)),
+                    put_button("填入提示词(中文)",color="info",onclick=partial(set_prompt_pin_and_closepopup,val=cn))
                 ]
             )
 
@@ -225,7 +228,7 @@ def show_chatgpt_window():
         put_column([
             put_input("gpt_input",placeholder="例如：月亮上的树",help_text="简单描述您想生成的图像中的内容"),
             None,
-            put_button("生成图像描述",onclick=set_gpt_output)
+            put_button("生成图像描述",color="info",onclick=set_gpt_output)
         ]).style("text-align:center")
         put_scope("gpt_output")
 
@@ -298,7 +301,7 @@ def page_main():
             )
         put_row([
             put_button("帮我写",color="info",onclick=task_post_enhance_prompt),
-            put_button("帮我写(ChatGPT版)",onclick=show_chatgpt_window),
+            put_button("帮我写(ChatGPT版)",color="info",onclick=show_chatgpt_window),
         ])
         
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
