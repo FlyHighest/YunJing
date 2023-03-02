@@ -202,10 +202,12 @@ def set_prompt_pin_and_closepopup(val):
     close_popup()
 
 def set_gpt_output():
+    
     res = gpt_image_describe(pin['gpt_input'])
     if res=="Error":
         toast(server_error_text)
     else:
+        session.local.rclient.record_chatgpt(pin['gpt_input'],res)
         with use_scope("gpt_output",clear=True):
             put_markdown(res)
             eng,_, cn = res.split("\n")

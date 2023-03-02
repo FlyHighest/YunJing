@@ -314,6 +314,8 @@ class RClient:
         except:
             return False 
 
+    def record_chatgpt(self,input,output):
+        self.r.rpush("chatgptrecord",input+"|"+output)
 
     # 点赞相关的功能
     
