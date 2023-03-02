@@ -211,7 +211,7 @@ def set_gpt_output():
         session.local.rclient.record_chatgpt(pin['gpt_input'],res)
         with use_scope("gpt_output",clear=True):
             put_markdown(res)
-            eng = res.split("(中文)")
+            eng, cn = res.split("(中文)")
             eng =eng[6:].replace("\n","").strip()
             cn=cn[1:].replace("\n","").strip()
             put_row(
