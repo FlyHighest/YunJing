@@ -212,6 +212,7 @@ def set_gpt_output():
         with use_scope("gpt_output",clear=True):
             put_markdown(res)
             eng, cn = res.split("(中文)")
+            print(eng,cn)
             eng =eng[6:].replace("\n","").strip()
             cn=cn[1:].replace("\n","").strip()
             put_row(
