@@ -12,6 +12,7 @@ from data import RClient
 from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
                            task_post_upscale, task_publish_to_gallery)
+from utils import gpt_image_describe
 from utils import  get_username,put_column_autosize,upload_to_storage
 
 
@@ -196,6 +197,38 @@ def show_img2img_options(val):
     else:
         clear("img2img-options")
 
+def set_prompt_pin_and_closepopup(val):
+    pin["prompt"]=val
+    close_popup()
+
+def set_gpt_output():
+    res = gpt_image_describe(pin['gpt_input'])
+    if res=="Error":
+        toast(server_error_text)
+    else:
+        with use_scope("gpt_output",clear=True):
+            put_markdown(res)
+            eng,_, cn = res.split("\n")
+            put_row(
+                [
+                    put_button("填入提示词(英文)",onclick=partial(set_prompt_pin_and_closepopup,val=eng)),
+                    put_button("填入提示词(中文)",onclick=partial(set_prompt_pin_and_closepopup,val=cn))
+                ]
+            )
+
+def show_chatgpt_window():
+    session.local.gpt_output = {"eng":None,"cn":None}
+        
+    with popup("帮我写(ChatGPT版)"):
+        put_column([
+            put_input("gpt_input",placeholder="例如：月亮上的树",help_text="简单描述您想生成的图像中的内容"),
+            None,
+            put_button("生成图像描述",onclick=set_gpt_output)
+        ]).style("text-align:center")
+        put_scope("gpt_output")
+
+
+
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_main():
     session.set_env(title='云景 · 绘图', output_max_width='90%')
@@ -261,7 +294,11 @@ def page_main():
                 placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
                 rows=2,
             )
-        put_button("帮我写!",color="info",onclick=task_post_enhance_prompt)
+        put_row([
+            put_button("帮我写",color="info",onclick=task_post_enhance_prompt),
+            put_button("帮我写(ChatGPT版)",onclick=show_chatgpt_window),
+        ])
+        
         put_textarea('negative_prompt',label="反向提示词", placeholder="例如：NSFW, bad quality", rows=2)
         
         put_checkbox("enable_img2img",options=["开启图片引导模式"])
