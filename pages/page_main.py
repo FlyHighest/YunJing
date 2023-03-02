@@ -211,9 +211,9 @@ def set_gpt_output():
         session.local.rclient.record_chatgpt(pin['gpt_input'],res)
         with use_scope("gpt_output",clear=True):
             put_markdown(res)
-            eng,_, cn = res.split("\n")
-            eng =eng[6:]
-            cn=cn[5:]
+            eng = res.split("(中文)")
+            eng =eng[6:].replace("\n","").strip()
+            cn=cn[1:].replace("\n","").strip()
             put_row(
                 [
                     put_button("填入提示词(英文)",color="info",onclick=partial(set_prompt_pin_and_closepopup,val=eng)),
