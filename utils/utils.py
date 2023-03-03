@@ -27,6 +27,19 @@ def put_file_upload(name, *, label='',accept=None, placeholder="选择文件",ma
 
 
 @safely_destruct_output_when_exp('content')
+def put_row_autosize(content=[], scope=None, position=-1):
+    """Use column layout to output content. The content is arranged vertically
+
+    :param list content: Content list, the item is ``put_xxx()`` call or ``None``. ``None`` represents the space between the output
+    :param str size: Used to indicate the width of the items, is a list of width values separated by space.
+        The format is the same as the ``size`` parameter of the `put_row()` function.
+    :param int scope, position: Those arguments have the same meaning as for `put_text()`
+    """
+
+    return _row_column_layout_autosize(content, flow='column', scope=scope, position=position).enable_context_manager()
+
+
+@safely_destruct_output_when_exp('content')
 def put_column_autosize(content=[], scope=None, position=-1):
     """Use column layout to output content. The content is arranged vertically
 

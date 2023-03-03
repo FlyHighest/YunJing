@@ -13,7 +13,7 @@ from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
                            task_post_upscale, task_publish_to_gallery)
 from utils import gpt_image_describe
-from utils import  get_username,put_column_autosize,upload_to_storage
+from utils import  get_username,put_column_autosize,upload_to_storage,put_row_autosize
 
 
 def set_generation_params(generation_id):
@@ -202,29 +202,24 @@ def set_prompt_pin_and_closepopup(val):
     close_popup()
 
 def set_gpt_output():
-    session.run_js('$(".modal-dialog .btn").prop("disabled",true);')
-    res = gpt_image_describe(pin['gpt_input'])
-    session.run_js('$(".modal-dialog .btn").prop("disabled",false);')
-    if res=="Error":
-        toast(server_error_text)
-    else:
-        session.local.rclient.record_chatgpt(pin['gpt_input'],res)
-        with use_scope("gpt_output",clear=True):
-            put_markdown(res)
-            eng, cn = res.split("(中文)")
-            print(eng,cn)
-            eng =eng[6:].replace("\n","").strip()
-            cn=cn[1:].replace("\n","").strip()
+    with use_scope("gpt_output",clear=True):
+        session.run_js('$(".modal-dialog .btn").prop("disabled",true);')
+        with put_loading():
+            eng,cn,content = gpt_image_describe(pin['gpt_input'])
+        session.run_js('$(".modal-dialog .btn").prop("disabled",false);')
+        if eng=="Error":
+            put_markdown("请输入文本描述，")
+        else:
+            put_markdown(eng)
+            put_markdown(cn)
             put_row(
                 [
                     put_button("填入提示词(英文)",color="info",onclick=partial(set_prompt_pin_and_closepopup,val=eng)),
                     put_button("填入提示词(中文)",color="info",onclick=partial(set_prompt_pin_and_closepopup,val=cn))
                 ]
-            )
+            ).style("text-align:center")
 
-def show_chatgpt_window():
-    session.local.gpt_output = {"eng":None,"cn":None}
-        
+def show_chatgpt_window():        
     with popup("帮我写(ChatGPT版)"):
         put_column([
             put_input("gpt_input",placeholder="例如：月亮上的树",help_text="简单描述您想生成的图像中的内容"),
@@ -300,7 +295,7 @@ def page_main():
                 placeholder='例如：A car on the road, masterpiece, 8k wallpaper',
                 rows=2,
             )
-        put_row([
+        put_row_autosize([
             put_button("帮我写",color="info",onclick=task_post_enhance_prompt),
             put_button("帮我写(ChatGPT版)",color="info",onclick=show_chatgpt_window),
         ])
