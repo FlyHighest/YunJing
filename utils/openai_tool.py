@@ -21,7 +21,7 @@ def gpt_image_describe(user_input):
                     {"role": "system",  "content":system_content_image_describe },
                     {"role": "user", "content": user_input},
                 ],
-            temperature=0.2,
+            temperature=0.5,
             n=1,
             max_tokens=600,
             user="1"
