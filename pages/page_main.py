@@ -208,7 +208,7 @@ def set_gpt_output():
             eng,cn,content = gpt_image_describe(pin['gpt_input'])
         session.run_js('$(".modal-dialog .btn").prop("disabled",false);')
         if eng=="Error":
-            put_markdown("请输入文本描述，")
+            put_markdown(content)
         else:
             put_markdown(eng)
             put_markdown(cn)
