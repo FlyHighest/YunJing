@@ -226,8 +226,7 @@ def show_chatgpt_window():
             None,
             put_button("生成图像描述",color="info",onclick=set_gpt_output)
         ]).style("text-align:center")
-        put_scope("gpt_output")
-
+        put_scope("gpt_output").style("text-align:center")
 
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
