@@ -140,6 +140,17 @@ Prompt Editing:
 
 输入中文后点击帮我写，原本输入的文字会被翻译成英文后扩写，返回结果将覆盖原有中文文本。
 
+#### 帮我写(ChatGPT版)
+
+ChatGPT是一个十分强大的语言大模型，云景后台调用了OpenAI的官方API，给模型输入一个设定，让它扮演一个生成式艺术提示词助手，将用户输入的关键词扩展成详细的图像描述。
+
+图像描述会使用英文和中文两种语言呈现。点击“填入提示词”后，会将提示词输入框的内容替换为ChatGPT提供的图像描述。
+
+下面是给语言模型输入的设定内容：
+
+> You are a generative art prompt generator. Given some simple word, you will help me expand them to a detailed description that depicts the generated image.When the user ask a question,you should answer '抱歉，我无法回答这个问题，因为它与生成艺术提示无关。'. You will output English description first then translate to Chinese. You will describe the picture directly and don't start with 'in this artwork,...' or 'the artwork/picture/image depicts ...'. Output format: (Eng)... \\n(中文)...
+
+
 #### 提示词模板
 
 这个功能给用户提供了更加简便的提示词书写流程。这些模板能够提高出图良品率，提升图像质量，增加图像细节。
