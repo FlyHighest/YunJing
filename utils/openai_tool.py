@@ -14,6 +14,7 @@ system_content_formatted_prompt = \
 "Here is a prompt formula for AI generated art image: "
 
 def gpt_image_describe(user_input):
+    content = None
     try:
         res = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -27,13 +28,17 @@ def gpt_image_describe(user_input):
             user="1"
         )
         content = res['choices'][0]['message']['content']
-        eng, cn = content.split("(中文)")
+        tmp = content.split("\n")
+        eng = tmp[0]
+        cn = tmp[-1]
             
-        eng =eng[6:].replace("\n","").strip()
-        cn=cn[1:].replace("\n","").strip()
+        eng =eng.replace("\n","").replace("(Eng)","").strip()
+        cn=cn.replace("\n","").replace("(中文)","").strip()
         return eng, cn, content
     except:
         traceback.print_exc()
+        if content is None:
+            content = "(请求过于频繁，请稍后再试)"
         return "Error","错误",content
 
 def gpt_format_prompt(user_input):

@@ -103,7 +103,9 @@ css = """
     line-height: 40px;
     margin: 0 auto;
 }
-
+#pywebio-scope-images img{
+    max-width: 600px; 
+}
 #pywebio-scope-image_flow{
     text-align:center;
 }
