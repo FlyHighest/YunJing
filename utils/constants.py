@@ -1,19 +1,3 @@
-MODELS = [
-    "Stable-Diffusion-v1.5",
-    "Protogen-x5.8",
-    "OpenJourney",
-    "RealisticVision-V1.3",
-    "ACertainThing",
-    "Anything-v3",
-    "国风GuoFeng-v3",
-    "国风GuoFeng-v2",
-    "Counterfeit-V2.5",
-    "MyneFactoryBase-v1.0",
-    "ChilloutMixNi",
-    "AsiaFacemix",
-    "云景Anime-v1"
-]
-
 MODEL_NAME_MAPPING = {
     "Stable-Diffusion-v1.5":"Stable-Diffusion-v1.5",
     "Protogen-x5.8":"Protogen-x5.8",
@@ -32,6 +16,9 @@ MODEL_NAME_MAPPING = {
     "FlexibleDiffusion":"FlexibleDiffusion",
     "PixelModel":"Public-Prompts-Pixel-Model"
 }
+
+MODELS = list(MODEL_NAME_MAPPING.keys())
+MODELS.sort()
 
 EXTRA_MODEL_LIST = [
   "LORA-KoreanDollLikeness",
