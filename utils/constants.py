@@ -27,7 +27,10 @@ MODEL_NAME_MAPPING = {
     "MyneFactoryBase-v1.0":"MyneFactoryBase v1.0",
     "ChilloutMixNi":"ChilloutMixNi",
     "AsiaFacemix":"AsiaFacemix",
-    "云景Anime-v1":"YunJingAnime-v1"
+    "云景Anime-v1":"YunJingAnime-v1",
+    "VintedoisDiffusion-v0.2":"vintedois-diffusion-v0-2",
+    "FlexibleDiffusion":"FlexibleDiffusion",
+    "PixelModel":"Public-Prompts-Pixel-Model"
 }
 
 EXTRA_MODEL_LIST = [
@@ -104,7 +107,7 @@ css = """
     margin: 0 auto;
 }
 #pywebio-scope-images img{
-    max-width: 600px; 
+    max-width: 70%; 
 }
 #pywebio-scope-image_flow{
     text-align:center;
