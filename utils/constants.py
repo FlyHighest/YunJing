@@ -14,7 +14,10 @@ MODEL_NAME_MAPPING = {
     "云景Anime-v1":"YunJingAnime-v1",
     "VintedoisDiffusion-v0.2":"vintedois-diffusion-v0-2",
     "FlexibleDiffusion":"FlexibleDiffusion",
-    "PixelModel":"Public-Prompts-Pixel-Model"
+    "PixelModel":"Public-Prompts-Pixel-Model",
+    "Dreamlike-Photoreal":"dreamlike-photoreal-2.0",
+    "Dreamlike-Diffusion":"dreamlike-diffusion-1.0",
+    "Stable-Diffusion-v2.1":"v2-1_768-ema-pruned-fp16"
 }
 
 MODELS = list(MODEL_NAME_MAPPING.keys())
@@ -32,6 +35,8 @@ SPECIAL_WORD = {
   "Counterfeit-V2.5":["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
   "ACertainThing":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
   "Anything-v3":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
+  "VintedoisDiffusion-v0.2":["在提示词最前面添加 estilovintedois 获得更好效果"],
+  "PixelModel":["- pixelsprite: 像素风格触发词，绘制物体","- 16bitscene:  像素风格触发词，绘制场景"],
   "LORA-KoreanDollLikeness": ["附加模型: 使用**ChilloutMixNi**模型获得最佳效果","- girl或者woman: 触发词","- Kpop idol: lora作者推荐的关键词","- aegyo sal: lora作者推荐的关键词"],
   "LORA-国风汉服少女": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- hanfugirl,hanfu: 触发词"],
   "LORA-国风汉服少女仿明风格": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- duijin: 触发词","- ouqun: 触发词","- yunjian: 触发词","- girlface: 面部增强"],
