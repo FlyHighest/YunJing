@@ -222,6 +222,11 @@ class RClient:
         image.published = True
         image.save()
 
+    def cancel_publish(self,genid):
+        image = Image.get_by_id(genid)
+        image.published = False
+        image.save()
+
     def get_random_samples_from_gallery(self, num):
         images = Image.select().where(Image.published==True).order_by(fn.Rand()).limit(num)
         ret = []
