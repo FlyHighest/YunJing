@@ -477,6 +477,7 @@ def update_user_config():
 def page_account():
     session.set_env(title='云景 · 个人中心', output_max_width='80%')
     session.local.rclient: RClient = RClient()
+    session.run_js("$('head link[rel=icon]').attr('href', image_url)", image_url="/statics/favicon.ico")
 
     username = get_username()
     if username:
