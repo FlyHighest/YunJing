@@ -73,8 +73,8 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     buttons.append( 
                         put_button("标记为NSFW",color="danger",onclick=partial(mark_as_nsfw,genid=genid))
                     )
-                print(session.local.client_id,text2image_data['userid'])
-                if session.local.client_id==text2image_data["userid"]:
+                # print(session.local.client_id,text2image_data['userid'])
+                if str(session.local.client_id)==str(text2image_data["userid"]):
                     buttons.append(
                         put_button("取消分享",color="danger",onclick=partial(cancel_publish,genid=genid))
                     )
