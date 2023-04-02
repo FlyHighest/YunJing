@@ -188,7 +188,8 @@ def task_post_image_gen(callback):
                 session.local.history_image_cnt += 1
                 if score is not None: # new generated image
                     session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,image_generation_data,nsfw,score,face)
-
+                else:
+                    session.local.rclient.record_new_but_history_only(session.local.client_id, output_img_url,image_gen_id,nsfw)
                 if  session.local.history_image_cnt > session.local.max_history_bonus:
                     session.local.history_image_cnt -= 1
                     session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')

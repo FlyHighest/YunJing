@@ -127,6 +127,18 @@ class RClient:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published
 
+    def record_new_but_history_only(self, client_id, img_url, gen_id,nsfw):
+        try:
+            with self.mysql_db.atomic():
+                if not nsfw:
+                    Histories.create(
+                        userid=client_id,
+                        imgurl=img_url,
+                        genid=gen_id
+                    )
+        except:
+            pass 
+
     def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data,nsfw,score,face): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.add_generated_number()
