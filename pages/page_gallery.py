@@ -25,7 +25,12 @@ def popup_cancel_like(userid, genid):
 def mark_as_nsfw(genid):
     session.local.rclient.mark_as_nsfw(genid)
 
-    toast("成功删除")
+    toast("成功删除",duration=1)
+    close_popup()
+
+def cancel_publish(genid):
+    session.local.rclient.cancel_publish(genid)
+    toast("已取消分享",duration=1)
     close_popup()
 
 
@@ -42,6 +47,8 @@ def show_image_information_window(img_url,genid, fuke_func=None):
         text2image_data = session.local.rclient.get_image_information(generation_id=genid)
         if text2image_data is None:
             put_warning(generation_outdated_error_text)
+        elif text2image_data['published']==False:
+            put_warning("该图像已被取消分享")
         else:
             put_row([ 
                 put_scope("popup_image_disp").style("text-align: center"),
@@ -65,6 +72,10 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                 if user_level==6:
                     buttons.append( 
                         put_button("标记为NSFW",color="danger",onclick=partial(mark_as_nsfw,genid=genid))
+                    )
+                if session.local.client_id==text2image_data["userid"]:
+                    buttons.append(
+                        put_button("取消分享",color="danger",onclick=partial(cancel_publish,genid=genid))
                     )
 
                 if len(buttons)>0:

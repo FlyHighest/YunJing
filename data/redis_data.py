@@ -195,7 +195,10 @@ class RClient:
             image_record = Image.get_by_id(generation_id)
             ret = json.loads(image_record.params)
             ret["gentime"] = str(image_record.gentime)
-            ret["user"] = User.get_by_id(image_record.userid).username
+            userid = image_record.userid
+            ret["user"] = User.get_by_id(userid).username
+            ret["userid"] = userid
+            ret['published'] = image_record.published
             return ret 
         except:
             traceback.print_exc()
