@@ -180,7 +180,6 @@ def get_search_images_on_gallery():
 def page_gallery():
     session.set_env(title='云景 · 画廊', output_max_width='90%')
     session.local.rclient: RClient = RClient()
-    session.run_js("$('head link[rel=icon]').attr('href', image_url)", image_url="/statics/favicon.ico")
 
     session.local.last_task_time = time.time() - 3
     # 检查登录情况

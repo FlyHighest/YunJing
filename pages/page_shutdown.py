@@ -11,7 +11,6 @@ from utils.constants import css,header_html_index
 def page_shutdown():
     session.set_env(title='云景 · 首页', output_max_width='80%')
     session.local.rclient: RClient = RClient()
-    session.run_js("$('head link[rel=icon]').attr('href', image_url)", image_url="/statics/favicon.ico")
 
     put_markdown("""
 
