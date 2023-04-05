@@ -108,7 +108,7 @@ def del_from_history(genid):
 def load_history():
     session.local.history_image_cnt = 0
     for img,genid in session.local.rclient.get_history(session.local.client_id, limit=session.local.max_history_bonus):
-        put_image(img).onclick(partial(show_image_information_window,img_url=img, genid=genid))
+        put_image(img+"/med").onclick(partial(show_image_information_window,img_url=img+"/webp", genid=genid)) 
         session.local.history_image_cnt += 1
 
 def change_prompt_word_sheet(val):

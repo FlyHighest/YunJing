@@ -125,7 +125,8 @@ def task_post_image_gen(callback):
                 "width":               int(pin['width']),
                 "num_inference_steps": int(pin['num_inference_steps']),
                 "guidance_scale":      float(pin['guidance_scale']),
-                "seed":                seed
+                "seed":                seed,
+                "userid":              str(session.local.client_id)
             }
 
             # add img2img params
