@@ -153,7 +153,11 @@ def load_more_images_on_gallery(val=None):
             short_ind = np.argmin(session.local.col_height)
             session.local.col_height[short_ind] += height * (256 / width)
             with use_scope("img-col"+str(short_ind)):
-                img_url_md = img_url.replace(".jpeg",".md.jpeg")
+                if "storage." in img_url:
+                    img_url_md = img_url.replace(".jpeg",".md.jpeg")
+                else:
+                    img_url_md = img_url+"/med"
+                    img_url = img_url+"/webp"
                 put_image(img_url_md).onclick(
                     partial(
                         show_image_information_window, 
