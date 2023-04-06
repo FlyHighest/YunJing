@@ -109,10 +109,10 @@ def load_history():
     session.local.history_image_cnt = 0
     for img,genid in session.local.rclient.get_history(session.local.client_id, limit=session.local.max_history_bonus):
         if "storage." in img:
-            img_preview = img + "/med"
+            img_preview = img 
             img_full = img 
         else:
-            img_preview = img 
+            img_preview = img + "/med"
             img_full = img 
         put_image(img_preview).onclick(partial(show_image_information_window,img_url=img_full, genid=genid)) 
         session.local.history_image_cnt += 1
