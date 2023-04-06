@@ -28,6 +28,8 @@ EXTRA_MODEL_LIST = [
   "LORA-国风汉服少女",
   "LORA-国风汉服少女仿明风格",
   "LORA-国风汉服少女仿宋风格",
+  "LORA-墨心",
+  "LORA-疏可走马"
 ]
 SPECIAL_WORD = {
   "云景Anime-v1": ["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
@@ -353,4 +355,4 @@ prompt_template = {
     "")
 }
 
-upload_img_placeholder = "https://storage.yunjing.gallery/images/2023/02/25/7a4eb5d12f560704cf4a7363517f0521.md.png"
+upload_img_placeholder = "https://images.dong-liu.com/upload_placehold.webp"

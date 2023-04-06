@@ -157,7 +157,7 @@ def load_more_images_on_gallery(val=None):
                     img_url_md = img_url.replace(".jpeg",".md.jpeg")
                 else:
                     img_url_md = img_url+"/med"
-                    img_url = img_url+"/webp"
+                    img_url = img_url
                 put_image(img_url_md).onclick(
                     partial(
                         show_image_information_window, 
