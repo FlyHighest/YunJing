@@ -108,7 +108,7 @@ def del_from_history(genid):
 def load_history():
     session.local.history_image_cnt = 0
     for img,genid in session.local.rclient.get_history(session.local.client_id, limit=session.local.max_history_bonus):
-        if "storage." in img_url:
+        if "storage." in img:
             img_preview = img + "/med"
             img_full = img 
         else:
