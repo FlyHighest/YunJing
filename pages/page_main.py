@@ -120,6 +120,7 @@ def load_history():
 def change_prompt_word_sheet(val):
     model_select = pin['model_name']
     extra_model_select = pin['extra_model']
+    pin['prompt'] = EXTRA_MODEL_STRING[extra_model_select] +" "+pin['prompt']
     with use_scope("word_sheet",clear=True):
         content = []
         if model_select in SPECIAL_WORD:
@@ -130,6 +131,8 @@ def change_prompt_word_sheet(val):
             for text in SPECIAL_WORD[extra_model_select]:
                 content.append(put_markdown(text))
         put_collapse("特殊提示词表",content,open=True)
+    pin['extra_model'] = "使用附加模型"
+
 
 
 def popup_img_upload():
@@ -286,7 +289,7 @@ def page_main():
     with use_scope('input'):
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0])
         pin_on_change("model_name",onchange=change_prompt_word_sheet)
-        put_select("extra_model",label="附加模型",options=["请选择附加模型..."]+EXTRA_MODEL_LIST,value="请选择附加模型...")
+        put_select("extra_model",label="附加模型",options=["使用附加模型"]+EXTRA_MODEL_LIST,value="使用附加模型")
         pin_on_change("extra_model",onchange=change_prompt_word_sheet)
 
         prompt_templates = list(prompt_template.keys())

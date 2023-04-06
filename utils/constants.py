@@ -23,14 +23,16 @@ MODEL_NAME_MAPPING = {
 MODELS = list(MODEL_NAME_MAPPING.keys())
 MODELS.sort()
 
-EXTRA_MODEL_LIST = [
-  "LORA-KoreanDollLikeness",
-  "LORA-国风汉服少女",
-  "LORA-国风汉服少女仿明风格",
-  "LORA-国风汉服少女仿宋风格",
-  "LORA-墨心",
-  "LORA-疏可走马"
-]
+EXTRA_MODEL_STRING ={
+  "LORA-KoreanDollLikeness":"<lora:koreandollv10:0.66>",
+  "LORA-国风汉服少女":"<lora:hanfugirlv15:0.66>",
+  "LORA-国风汉服少女仿明风格":"<lora:hanfu2ming:0.66>",
+  "LORA-国风汉服少女仿宋风格":"<lora:hanfu2song:0.66>",
+  "LORA-墨心":"<lora:moxin:0.7>",
+  "LORA-疏可走马":"<lora:shukezouma:0.7>"
+}
+EXTRA_MODEL_LIST=list(EXTRA_MODEL_STRING.keys())
+
 SPECIAL_WORD = {
   "云景Anime-v1": ["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
   "Stable-Diffusion-v1.5":["- \_shuimo\_: 水墨画风，添加art by _shuimo_可触发"],
@@ -43,6 +45,8 @@ SPECIAL_WORD = {
   "LORA-国风汉服少女": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- hanfugirl,hanfu: 触发词"],
   "LORA-国风汉服少女仿明风格": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- duijin: 触发词","- ouqun: 触发词","- yunjian: 触发词","- girlface: 面部增强"],
   "LORA-国风汉服少女仿宋风格": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- songmo: 触发词。例如a chinese girl wear songmo"],
+  "LORA-墨心":["触发词: **shuimobysim**, wuchangshuo, bonian, zhengbanqiao, badashanren"],
+  "LORA-疏可走马":["触发词: shukezouma"]
 }
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
