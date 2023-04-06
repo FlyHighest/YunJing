@@ -173,12 +173,12 @@ def task_post_image_gen(callback):
                 nsfw = False 
                 score = None
                 face = None
-        put_image(output_img_url) # 大图output
+        
 
 
         # 这里是正常处理
         if not nsfw:
- 
+            put_image(output_img_url) # 大图output
             put_row([
                 put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
                 put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
@@ -199,8 +199,8 @@ def task_post_image_gen(callback):
             if session.local.rclient.get_user_config(session.local.client_id)["autopub"]==True:
                 task_publish_to_gallery(scope="images",genid=image_gen_id)
         else:
-            put_text("该图像可能含有不适宜工作场所观看的内容，本网站将不会留存该图像")
-            toast(nsfw_warn_text_gen,color="warn",duration=3)
+            put_text(nsfw_warn_text_gen)
+            # toast(nsfw_warn_text_gen,color="warn",duration=3)
             if score is not None:
                 session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,image_generation_data,nsfw,score,face)
 
