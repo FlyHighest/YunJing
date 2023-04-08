@@ -91,7 +91,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     hiresfix = text2image_data['hiresfix']
                 else:
                     hiresfix = "Off" 
-                put_select("hiresfix",label="高清修复",value=hiresfix,options=[hiresfix])
+                put_select("hiresfix_info",label="高清修复",value=hiresfix,options=[hiresfix])
 
   
 
@@ -297,7 +297,7 @@ def page_main():
     with use_scope('input'):
         put_select("model_name",label="模型",options=MODELS,value=MODELS[0])
         pin_on_change("model_name",onchange=change_prompt_word_sheet)
-        put_select("extra_model",label="附加模型",options=["使用附加模型"]+EXTRA_MODEL_LIST,value="使用附加模型")
+        put_select("extra_model",label="附加模型",options=EXTRA_MODEL_LIST,value="使用附加模型")
         pin_on_change("extra_model",onchange=change_prompt_word_sheet)
 
         prompt_templates = list(prompt_template.keys())
