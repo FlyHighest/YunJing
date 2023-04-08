@@ -6,7 +6,7 @@ from secret import tencentcloud_secret_id, tencentcloud_secret_key
 import nanoid
 import json 
 import os 
-
+import time
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
 
@@ -134,6 +134,7 @@ def upload_to_storage(path):
             ret = ST.upload_tencent(path,"tmp")
         elif result==1:
             ret = ST.upload_tencent(path,"tmp_check")
+            time.sleep(1.5)
             if not is_url_image(ret):
                 ret = ""
         else: # ret == 2, bad content
