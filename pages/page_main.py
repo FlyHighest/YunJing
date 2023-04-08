@@ -324,8 +324,8 @@ def page_main():
         put_scope("img2img-options")
 
         put_row([ 
-            put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
-            put_column(put_select("height",label="高度",options=[str(64*i) for i in range(4,17,2)],value=str(512))),
+            put_column(put_select("width",label="宽度",options=[str(64*i) for i in range(4,21,2)],value=str(512))),
+            put_column(put_select("height",label="高度",options=[str(64*i) for i in range(4,21,2)],value=str(512))),
 
         ])
         put_row([            
