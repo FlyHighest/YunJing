@@ -96,8 +96,10 @@ def fill_prompt_template(template_key):
         return 
     else:
         fill_prompt, fill_neg_prompt = prompt_template[template_key]
-        pin['prompt'] = fill_prompt
-        pin['negative_prompt'] = fill_neg_prompt
+        if fill_prompt is not None:
+            pin['prompt'] = fill_prompt
+        if fill_neg_prompt is not None:
+            pin['negative_prompt'] = fill_neg_prompt
 
 def del_from_history(genid):
     session.local.rclient.del_history(session.local.client_id,genid)

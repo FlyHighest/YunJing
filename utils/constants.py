@@ -295,6 +295,7 @@ thumbup_true="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 102
 prompt_template = {
   "请选择模版...":None,
   "清空(提示词+反向提示词)":("",""),
+  "通用负面提示词":(None,"disfigured, kitsch, ugly, oversaturated, greain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish, mutilated, mangled, old, surreal, calligraphy, sign, writing, watermark, text, body out of frame, extra legs, extra arms, extra feet, out of frame, poorly drawn feet, cross-eye, blurry, bad anatomy"),
   "云景Anime模板":("(((masterpiece))),best quality, illustration,(beautiful detailed girl),beautiful detailed glow","(((_easy_negative_))),monochrome ,lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, lowres, bad anatomy, bad hands, text, error, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, ugly,pregnant,vore,duplicate,morbid,mut ilated,tran nsexual, hermaphrodite,long neck,mutated hands,poorly drawn hands,poorly drawn face,mutation,deformed,blurry,bad anatomy,bad proportions,malformed limbs,extra limbs,cloned face,disfigured,gross proportions, (((missing arms))),(((missing legs))), (((extra arms))),(((extra legs))),pubic hair, plump,bad legs,error legs,username,blurry,bad feet"),
   "AsiaFacemix模版":("solo, full bdoy illustration of a Chinese girl,skirt,girlface,gorgeous,pure,beautyfull detailed face and eyes,jewelry,hair ribbon,hair flower,soft smile,hair ornament,colorful,clear sharp focus,instagram most viewed,official wallpaper, official art,volumetric lighting,cinematic effects,ray tracing wallpaper,Megapixel,highres,Intricate details,ultra detailed,8k",
       "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad feet, "),
@@ -317,49 +318,49 @@ prompt_template = {
     ,
   "SD动物模板":
     ("?, wildlife photography, photograph, high quality, wildlife, f 1.8, soft focus, 8k, national geographic, award - winning photograph by nick nichols",
-     ""),
+     None),
   "SD建筑(室内)":
     ("?, by James McDonald and Joarc Architects, home, interior, octane render, deviantart, cinematic, key art, hyperrealism, sun light, sunrays, canon eos c 300, ƒ 1.8, 35 mm, 8k, medium - format print	",
-    ""),
+    None),
   "SD建筑(室外)":
     ("? , shot 35 mm, realism, octane render, 8k, trending on artstation, 35 mm camera, unreal engine, hyper detailed, photo - realistic maximum detail, volumetric light, realistic matte painting, hyper photorealistic, trending on artstation, ultra - detailed, realistic	",
-    ""),
+    None),
   "SD卡通角色":
     ("? , anthro, very cute kid's film character, disney pixar zootopia character concept artwork, 3d concept, detailed fur, high detail iconic character for upcoming film, trending on artstation, character design, 3d artistic render, highly detailed, octane, blender, cartoon, shadows, lighting",
-    ""),
+    None),
   "SD概念艺术、设计":
     ("? , character sheet, concept design, contrast, style by kim jung gi, zabrocki, karlkka, jayison devadas, trending on artstation, 8k, ultra wide angle, pincushion lens effect",
-    ""),
+    None),
   "SD数字艺术":
     ("? , ultra realistic, concept art, intricate details, highly detailed, photorealistic, octane render, 8k, unreal engine, sharp focus, volumetric lighting unreal engine. art by artgerm and alphonse mucha",
-    ""),
+    None),
   "SD数字艺术(场景)":
     ("?, epic concept art by barlowe wayne, ruan jia, light effect, volumetric light, 3d, ultra clear detailed, octane render, 8k, [颜色] colour scheme	",
-        ""),
+        None),
   "SD时尚模特":
     ("photograph of a Fashion model, ?, full body, highly detailed and intricate, golden ratio, vibrant colors, hyper maximalist, futuristic, city background, luxury, elite, cinematic, fashion, depth of field, colorful, glow, trending on artstation, ultra high detail, ultra realistic, cinematic lighting, focused, 8k,	",
-    ""),
+    None),
   "SD风景":
     ("? , realism, octane render, 8 k, exploration, cinematic, trending on artstation, 35 mm camera, unreal engine, hyper detailed, photo - realistic maximum detail, volumetric light, moody cinematic epic concept art, realistic matte painting, hyper photorealistic, epic, trending on artstation, movie concept art, cinematic composition, ultra - detailed, realistic	",
-    ""),
+    None),
   "SD特写":
     ("?, depth of field. bokeh. soft light. by Yasmin Albatoul, Harry Fayt. centered. extremely detailed. Nikon D850, (35mm|50mm|85mm). award winning photography.	",
-    ""),
+    None),
   "SD结构图/原理图":
     ("23rd century scientific schematics for ?, blueprint, hyperdetailed vector technical documents, callouts, legend, patent registry	",
-    ""),
+    None),
   "SD素描":
     ("?, sketch, drawing, detailed, pencil, black and white by Adonna Khare, Paul Cadden, Pierre-Yves Riveau	",
-    ""),
+    None),
   "SD太空":
     ("?, by Andrew McCarthy, Navaneeth Unnikrishnan, Manuel Dietrich, photo realistic, 8 k, cinematic lighting, hd, atmospheric, hyperdetailed, trending on artstation, deviantart, photography, glow effect	",
-    ""), 
+    None), 
   "SD游戏图标素材":
     ("sprite of video games, ?, icons, 2d icons, rpg skills icons, world of warcraft, league of legends, ability icon, fantasy, potions, spells, objects, flowers, gems, swords, axe, hammer, fire, ice, arcane, shiny object, graphic design, high contrast, artstation",
-    ""),
+    None),
   "SD蒸汽朋克":
     ("? , steampunk cybernetic biomechanical, 3d model, very coherent symmetrical artwork, unreal engine realistic render, 8k, micro detail, intricate, elegant, highly detailed, centered, digital painting, artstation, smooth, sharp focus, illustration, artgerm, Caio Fantini, wlop",
-    "")
+    None)
 }
 
 upload_img_placeholder = "https://images.dong-liu.com/upload_placehold.webp"
