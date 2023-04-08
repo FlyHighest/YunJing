@@ -25,6 +25,7 @@ MODELS = list(MODEL_NAME_MAPPING.keys())
 MODELS.sort()
 
 EXTRA_MODEL_STRING ={
+  "使用附加模型":"",
   "LORA-KoreanDollLikeness":"<lora:koreandollv10:0.66>",
   "LORA-国风汉服少女":"<lora:hanfugirlv15:0.66>",
   "LORA-国风汉服少女仿明风格":"<lora:hanfu2ming:0.66>",
