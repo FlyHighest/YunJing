@@ -71,7 +71,12 @@ Prompt Editing:
 **b. 支持中文提示词和反向提示词**
 
 云景后台接入了[机器翻译模型](https://huggingface.co/Helsinki-NLP/opus-mt-zh-en)，输入汉语文本会自动翻译为英文后再进行图像生成。
-翻译后会去掉括号、改变标点符号等，因此使用汉语时无法使用webui的特性。
+
+
+在反向提示词中，除了一些常见的描述，还可以使用以下几种由低质量图像训练得到的负面词向量：
+
+_easy_negative_, _bad_prompt_, _bad_prompt_version2_, _bad_hand_, _bad_artist_, _bad_artist_anime_, _ng_deepnegative_
+
 
 
 #### (3) 模型介绍
@@ -170,12 +175,6 @@ ChatGPT是一个十分强大的语言大模型，云景后台调用了OpenAI的�
 当前所使用模板来源：
 - 网站[NovelAI tag生成器](https://wolfchen.top/tag/)
 - github项目[stable-diffusion-prompt-templates](https://github.com/Dalabad/stable-diffusion-prompt-templates)
-
-#### 反向提示词embedding
-
-使用质量较差的图像训练出来的反向提示词，可选以下几种：
-
-_easy_negative_, _bad_prompt_, _bad_prompt_version2_, _bad_hand_, _bad_artist_, _bad_artist_anime_, _ng_deepnegative_
 
 ## 二、云景·画廊
 
