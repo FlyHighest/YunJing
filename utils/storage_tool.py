@@ -117,6 +117,36 @@ class StorageTool:
             return ""
         else:
             return response["image_url"]
+    
+    def tencent_copy(self,image_url_temp,userid):
+        source_key = image_url_temp[len(self.tencent_url):]
+        key = f'{userid}/{nanoid.generate(self.alphabet,8)}.webp'
+        self.client.copy(
+            Bucket='yunjing-images-1256692038',
+            Key=key,
+            CopySource={
+                'Bucket': 'yunjing-images-1256692038', 
+                'Key': source_key, 
+                'Region': 'ap-shanghai'
+            }
+        )
+
+    def tencent_check_nsfw(self,image_url):
+        key = image_url[len(self.tencent_url):]
+        response = self.client.get_object_sensitive_content_recognition(
+            Bucket='yunjing-images-1256692038',
+            Key=key,
+            BizType="7ae30966d9f89aa719fa2b5ed21074d7"
+        )
+        res = int(response["Result"])
+        if res==0:
+            return False
+        else:
+            self.client.delete_object(
+                Bucket='yunjing-images-1256692038',
+                Key=key
+            )
+            return True 
 
 ST = StorageTool()
 def is_url_image(image_url):
@@ -132,9 +162,8 @@ def upload_to_storage(path):
         if result==0:
             ret = ST.upload_tencent(path,"tmp")
         elif result==1:
-            ret = ST.upload_tencent(path,"tmp_check")
-            time.sleep(1.5)
-            if not is_url_image(ret):
+            ret = ST.upload_tencent(path,"tmp")
+            if ST.tencent_check_nsfw(ret):
                 ret = ""
         else: # ret == 2, bad content
             ret = ""
