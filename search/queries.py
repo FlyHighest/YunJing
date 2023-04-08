@@ -24,7 +24,7 @@ def query_by_input(keyword,model,username):
     if username!="":
         username = f"and user.username='{username}'"
     
-    sql = f"select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 {username} {model} {keyword} order by image.score desc;"
+    sql = f"select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 {username} {model} {keyword} order by image.gentime desc;"
 
     cursor = mysql_db.cursor()
     cursor.execute(sql)
@@ -56,7 +56,7 @@ def query_recent_images(): # limit 1000
         password=mysql_db_password,
         autocommit=True
     )
-    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 order by image.score desc limit 500;"
+    sql = "select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 order by image.gentime desc limit 500;"
     cursor = mysql_db.cursor()
     cursor.execute(sql)
     query_result = cursor.fetchall()
