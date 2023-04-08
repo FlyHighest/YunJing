@@ -81,7 +81,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                 put_select("model_name_info",label="模型",options=[MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]],value=MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]),
                 if 'extra_model_name' not in text2image_data:
                     text2image_data['extra_model_name'] = "无"
-                put_select("extra_model_info",label="附加模型",options=[text2image_data['extra_model_name']],value=text2image_data['extra_model_name']),
+                # put_select("extra_model_info",label="附加模型",options=[text2image_data['extra_model_name']],value=text2image_data['extra_model_name']),
                 img_guide_opt = "启用" if text2image_data['type']=="image2image" else "未使用"
                 put_row([
                     put_column(put_input("seed_info",label="随机种子",value=text2image_data["seed"])),

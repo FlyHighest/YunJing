@@ -17,7 +17,8 @@ MODEL_NAME_MAPPING = {
     "PixelModel":"Public-Prompts-Pixel-Model",
     "Dreamlike-Photoreal":"dreamlike-photoreal-2.0",
     "Dreamlike-Diffusion":"dreamlike-diffusion-1.0",
-    "Stable-Diffusion-v2.1":"v2-1_768-ema-pruned-fp16"
+    "Stable-Diffusion-v2.1":"v2-1_768-ema-pruned-fp16",
+    "Deliberate":"deliberate_v2"
 }
 
 MODELS = list(MODEL_NAME_MAPPING.keys())

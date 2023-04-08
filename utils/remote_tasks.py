@@ -117,7 +117,7 @@ def task_post_image_gen(callback):
             image_generation_data = {
                 "type":"text2image",
                 "model_name":          MODEL_NAME_MAPPING[pin['model_name']],
-                "extra_model_name":    pin["extra_model"],
+                "extra_model_name":    "None",
                 "scheduler_name":      pin['scheduler_name'],
                 "prompt":              pin['prompt'],
                 "negative_prompt":     pin['negative_prompt'],
