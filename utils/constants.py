@@ -35,7 +35,7 @@ EXTRA_MODEL_STRING ={
   "LORA-墨心":"<lora:moxin:0.7>",
   "LORA-疏可走马":"<lora:shukezouma:0.7>",
   "LORA-线稿风格":"<lora:anime_lineart:1>",
-  "LORA-立绘风格":"<lora:gacha_splash:0.7>"
+  "LORA-立绘风格":"<lora:gacha_splash:0.5>"
 }
 EXTRA_MODEL_LIST=list(EXTRA_MODEL_STRING.keys())
 
@@ -301,7 +301,7 @@ thumbup_true="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 102
 prompt_template = {
   "请选择模版...":None,
   "清空(提示词+反向提示词)":("",""),
-  "通用负面提示词":(None,"((_easy_negative_)),_bad_prompt_,_bad_prompt_version2_,_bad_hand_,_bad_artist_,_bad_artist_anime_,_ng_deepnegative_,bad quality, normal quality, disfigured, kitsch, ugly, oversaturated, greain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish, mutilated, mangled, old, surreal, calligraphy, sign, writing, watermark, text, body out of frame, extra legs, extra arms, extra feet, out of frame, poorly drawn feet, cross-eye, blurry, bad anatomy"),
+  "通用负面提示词":(None,"bad quality, normal quality, disfigured, kitsch, ugly, oversaturated, greain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish, mutilated, mangled, old, surreal, calligraphy, sign, writing, watermark, text, body out of frame, extra legs, extra arms, extra feet, out of frame, poorly drawn feet, cross-eye, blurry, bad anatomy"),
   "云景Anime模板":("(((masterpiece))),best quality, illustration,(beautiful detailed girl),beautiful detailed glow","(((_easy_negative_))),monochrome ,lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, lowres, bad anatomy, bad hands, text, error, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, ugly,pregnant,vore,duplicate,morbid,mut ilated,tran nsexual, hermaphrodite,long neck,mutated hands,poorly drawn hands,poorly drawn face,mutation,deformed,blurry,bad anatomy,bad proportions,malformed limbs,extra limbs,cloned face,disfigured,gross proportions, (((missing arms))),(((missing legs))), (((extra arms))),(((extra legs))),pubic hair, plump,bad legs,error legs,username,blurry,bad feet"),
   "AsiaFacemix模版":("solo, full bdoy illustration of a Chinese girl,skirt,girlface,gorgeous,pure,beautyfull detailed face and eyes,jewelry,hair ribbon,hair flower,soft smile,hair ornament,colorful,clear sharp focus,instagram most viewed,official wallpaper, official art,volumetric lighting,cinematic effects,ray tracing wallpaper,Megapixel,highres,Intricate details,ultra detailed,8k",
       "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad feet, "),
