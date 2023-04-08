@@ -108,6 +108,8 @@ Prompt Editing:
 - [LORA-国风汉服少女仿明风格](https://www.bilibili.com/read/cv21681512): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿明风格模型。
 - [LORA-国风汉服少女仿宋风格](https://www.bilibili.com/read/cv21926093): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿宋风格模型。
 - [LORA-墨心 & 疏可走马](https://civitai.com/models/12597/moxin): simhuang制作的水墨风lora。
+- [LORA-线稿风格](https://civitai.com/models/16014/anime-lineart-manga-like-style): 配合提示词lineart, monochrome，绘制线稿、漫画风图像。
+- [LORA-立绘风格](https://civitai.com/models/13090/gacha-splash-lora): 立绘风格Lora，效果很酷。 
 
 ### 2. 图像引导生成
 

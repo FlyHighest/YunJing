@@ -33,7 +33,9 @@ EXTRA_MODEL_STRING ={
   "LORA-国风汉服少女仿明风格":"<lora:hanfu2ming:0.66>",
   "LORA-国风汉服少女仿宋风格":"<lora:hanfu2song:0.66>",
   "LORA-墨心":"<lora:moxin:0.7>",
-  "LORA-疏可走马":"<lora:shukezouma:0.7>"
+  "LORA-疏可走马":"<lora:shukezouma:0.7>",
+  "LORA-线稿风格":"<lora:anime_lineart:1>",
+  "LORA-立绘风格":"<lora:gacha_splash:0.7>"
 }
 EXTRA_MODEL_LIST=list(EXTRA_MODEL_STRING.keys())
 
@@ -45,12 +47,15 @@ SPECIAL_WORD = {
   "Anything-v3":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
   "VintedoisDiffusion-v0.2":["在提示词最前面添加 estilovintedois 获得更好效果"],
   "PixelModel":["- pixelsprite: 像素风格触发词，绘制物体","- 16bitscene:  像素风格触发词，绘制场景"],
-  "LORA-KoreanDollLikeness": ["附加模型: 使用**ChilloutMixNi**模型获得最佳效果","- girl或者woman: 触发词","- Kpop idol: lora作者推荐的关键词","- aegyo sal: lora作者推荐的关键词"],
-  "LORA-国风汉服少女": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- hanfugirl,hanfu: 触发词"],
-  "LORA-国风汉服少女仿明风格": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- duijin: 触发词","- ouqun: 触发词","- yunjian: 触发词","- girlface: 面部增强"],
-  "LORA-国风汉服少女仿宋风格": ["附加模型: 使用**AsiaFacemix**模型获得最佳效果","- songmo: 触发词。例如a chinese girl wear songmo"],
-  "LORA-墨心":["触发词: **shuimobysim**, wuchangshuo, bonian, zhengbanqiao, badashanren"],
-  "LORA-疏可走马":["触发词: shukezouma"]
+  "LORA-KoreanDollLikeness": ["KoreanDollLikeness: 使用**ChilloutMixNi**模型获得最佳效果","- girl或者woman: 触发词","- Kpop idol: lora作者推荐的关键词","- aegyo sal: lora作者推荐的关键词"],
+  "LORA-国风汉服少女": ["国风汉服少女: 使用**AsiaFacemix**模型获得最佳效果","- hanfugirl,hanfu: 触发词"],
+  "LORA-国风汉服少女仿明风格": ["国风汉服少女仿明风格: 使用**AsiaFacemix**模型获得最佳效果","- duijin: 触发词","- ouqun: 触发词","- yunjian: 触发词","- girlface: 面部增强"],
+  "LORA-国风汉服少女仿宋风格": ["国风汉服少女仿宋风格: 使用**AsiaFacemix**模型获得最佳效果","- songmo: 触发词。例如a chinese girl wear songmo"],
+  "LORA-墨心":["墨心 触发词: **shuimobysim**, wuchangshuo, bonian, zhengbanqiao, badashanren"],
+  "LORA-疏可走马":["疏可走马 触发词: shukezouma"],
+  "LORA-线稿风格":["线稿风格 触发词: lineart, monochrome"],
+  "LORA-立绘风格":["立绘风格 触发词: [(white background:1.5), ::5]"]
+
 }
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
@@ -296,7 +301,7 @@ thumbup_true="""<svg t="1674519918190" class="thumbupicon" viewBox="0 0 1024 102
 prompt_template = {
   "请选择模版...":None,
   "清空(提示词+反向提示词)":("",""),
-  "通用负面提示词":(None,"disfigured, kitsch, ugly, oversaturated, greain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish, mutilated, mangled, old, surreal, calligraphy, sign, writing, watermark, text, body out of frame, extra legs, extra arms, extra feet, out of frame, poorly drawn feet, cross-eye, blurry, bad anatomy"),
+  "通用负面提示词":(None,"((_easy_negative_)),_bad_prompt_,_bad_prompt_version2_,_bad_hand_,_bad_artist_,_bad_artist_anime_,_ng_deepnegative_,bad quality, normal quality, disfigured, kitsch, ugly, oversaturated, greain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish, mutilated, mangled, old, surreal, calligraphy, sign, writing, watermark, text, body out of frame, extra legs, extra arms, extra feet, out of frame, poorly drawn feet, cross-eye, blurry, bad anatomy"),
   "云景Anime模板":("(((masterpiece))),best quality, illustration,(beautiful detailed girl),beautiful detailed glow","(((_easy_negative_))),monochrome ,lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, lowres, bad anatomy, bad hands, text, error, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, ugly,pregnant,vore,duplicate,morbid,mut ilated,tran nsexual, hermaphrodite,long neck,mutated hands,poorly drawn hands,poorly drawn face,mutation,deformed,blurry,bad anatomy,bad proportions,malformed limbs,extra limbs,cloned face,disfigured,gross proportions, (((missing arms))),(((missing legs))), (((extra arms))),(((extra legs))),pubic hair, plump,bad legs,error legs,username,blurry,bad feet"),
   "AsiaFacemix模版":("solo, full bdoy illustration of a Chinese girl,skirt,girlface,gorgeous,pure,beautyfull detailed face and eyes,jewelry,hair ribbon,hair flower,soft smile,hair ornament,colorful,clear sharp focus,instagram most viewed,official wallpaper, official art,volumetric lighting,cinematic effects,ray tracing wallpaper,Megapixel,highres,Intricate details,ultra detailed,8k",
       "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad feet, "),
