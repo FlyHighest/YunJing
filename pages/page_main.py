@@ -1,4 +1,4 @@
-import time
+import time, os,nanoid,string
 from functools import partial
 
 from pywebio import config, session
@@ -156,11 +156,17 @@ def popup_img_upload():
     
     if info is not None:
         f = info["file"]
+        filename_ext = os.path.splitext(info['filename'])[1]
         toast(upload_img_submit,duration=1)
-        upload_data = f['content']
-        upload_url = upload_to_storage(img_bytes=upload_data,expire="PT12H")
+        temp_path = "tempfile-{}.{}",format(nanoid.generate(string.ascii_lowercase,4),filename_ext)
+        temp_file = open(temp_path,"wb")
+        temp_file.write(f['content'])
+        temp_file.close()
+        # upload_data = f['content']
+        upload_url = upload_to_storage(temp_path)
+        os.remove(temp_path)
         if upload_url=="":
-            toast(upload_img_fail,color="error",duration=2)
+            toast(upload_img_fail,color="error",duration=3)
             return
         session.run_js(f"$('#img2img-img').attr('src','{upload_url}')")
         pin["img2img-url"] = upload_url

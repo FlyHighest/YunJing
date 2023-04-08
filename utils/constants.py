@@ -100,7 +100,7 @@ publish_fail_text = "发布失败，请稍后再试"
 too_frequent_error_text = "操作频率过于频繁，请稍后再试"
 not_login_error_text = "请先在“账户”页面登录或注册"
 share_too_low="您的分享值过低，生成频率被限制，本次任务提交失败"
-upload_img_fail="上传图像失败，请稍后再试"
+upload_img_fail="上传图像失败，请确认图像无不良内容后再上传"
 upload_img_submit="正在上传，请稍候……"
 img2img_param_error = "图像引导参数错误，请修改后重试"
 
