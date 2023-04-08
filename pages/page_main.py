@@ -156,7 +156,7 @@ def popup_img_upload():
     
     if info is not None:
         f = info["file"]
-        filename_ext = os.path.splitext(info['filename'])[1]
+        filename_ext = os.path.splitext(f['filename'])[1]
         toast(upload_img_submit,duration=1)
         temp_path = "tempfile-{}.{}",format(nanoid.generate(string.ascii_lowercase,4),filename_ext)
         temp_file = open(temp_path,"wb")
