@@ -107,7 +107,6 @@ def task_post_image_gen(callback):
             seed = random.randint(-2**31,2**31-1) if seed==-1 else seed
 
             # add lora
-            prompt = pin['prompt']
             try:
                 assert 0<=float(pin['guidance_scale'])<=50
             except:
@@ -126,7 +125,8 @@ def task_post_image_gen(callback):
                 "num_inference_steps": int(pin['num_inference_steps']),
                 "guidance_scale":      float(pin['guidance_scale']),
                 "seed":                seed,
-                "userid":              str(session.local.client_id)
+                "userid":              str(session.local.client_id),
+                "hiresfix":            pin["hiresfix"]
             }
 
             # add img2img params

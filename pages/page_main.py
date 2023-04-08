@@ -87,6 +87,12 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_column(put_input("seed_info",label="随机种子",value=text2image_data["seed"])),
                     put_column(put_select("imgguide_info",label="图像引导",options=["启用","未使用"],value=img_guide_opt))
                 ])
+                if "hiresfix" in text2image_data:
+                    hiresfix = text2image_data['hiresfix']
+                else:
+                    hiresfix = "Off" 
+                put_select("hiresfix",label="高清修复",value=hiresfix,options=[hiresfix])
+
   
 
 
