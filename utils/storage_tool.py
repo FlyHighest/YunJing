@@ -113,7 +113,6 @@ class StorageTool:
                 break
             except:
                 continue
-        print(response)
         if response is None:
             return ""
         else:
