@@ -19,7 +19,8 @@ MODEL_NAME_MAPPING = {
     "Dreamlike-Diffusion":"dreamlike-diffusion-1.0",
     "Stable-Diffusion-v2.1":"v2-1_768-ema-pruned-fp16",
     "Deliberate":"deliberate",
-    "MeinaMix":"meinamix"
+    "MeinaMix":"meinamix",
+    "DreamShaper":"dreamshaper"
 }
 
 MODELS = list(MODEL_NAME_MAPPING.keys())

@@ -328,8 +328,8 @@ def page_main():
         ])
         put_row([ 
             put_input("guidance_scale",label="引导程度",value="7.0"),
-            #put_slider('guidance_scale',label="引导程度",min_value=0.0,max_value=30.0,value=7,step=0.1),
-            put_input("seed",label="随机种子",value="-1")
+            put_input("seed",label="随机种子",value="-1"),
+            put_select("hiresfix",label="高清修复",value="Off",options=["Off","On"])
         ])
 
         put_scope("generate_button",put_button(' - 开始绘制 -  ',onclick=partial(task_post_image_gen,callback=show_image_information_window))).style("text-align: center")

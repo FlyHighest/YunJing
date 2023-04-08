@@ -76,7 +76,7 @@ Prompt Editing:
 
 #### (3) 模型介绍
 
-当前后台集成20个模型，可在“模型”选项自由切换。
+当前后台集成22个模型，可在“模型”选项自由切换。
 
 - [Stable-Diffusion-v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5): 原版的stable diffusion 1.5，许多微调模型的基础，比较全能，写实、动漫，人物、风景，包括背景图、头像风格都都能生成，但非常依赖提示词。
 - [Protogen-x5.8](https://huggingface.co/darkstorm2150/Protogen_x5.8_Official_Release): AI模型分享网站civitai上最火的模型之一，比较擅长画人物，有时候提示词没有人物相关的也会画个人出来。
@@ -98,10 +98,12 @@ Prompt Editing:
 - [Dreamlike-Diffusion](https://huggingface.co/dreamlike-art/dreamlike-diffusion-1.0): 基于stable diffusion1.5使用高质量图像微调。
 - [Stable-Diffusion-v2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1) : Stable Diffusion最新版本。
 - [Deliberate](https://civitai.com/models/4823/deliberate): 基于stable diffusion1.5使用高质量图像微调。
+- [MeinaMix](https://civitai.com/models/7240/meinamix): 融合模型，二次元风格，不需要复杂提示词。 
+- [DreamShaper](https://civitai.com/models/4384/dreamshaper): 融合模型，人像效果较好。
 
 附加模型：
 
-- [LORA-KoreanDollLikeness](https://civitai.com/models/7448/korean-doll-likeness): 云景热心用户强烈推荐的模型，擅长绘制韩国明星风格的人像。
+- [LORA-KoreanDollLikeness](https://civitai.com/models/7448/korean-doll-likeness): 擅长绘制韩国明星风格的人像。
 - [LORA-国风汉服少女](https://www.bilibili.com/read/cv21493779): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女模型。
 - [LORA-国风汉服少女仿明风格](https://www.bilibili.com/read/cv21681512): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿明风格模型。
 - [LORA-国风汉服少女仿宋风格](https://www.bilibili.com/read/cv21926093): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿宋风格模型。
