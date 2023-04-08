@@ -145,7 +145,7 @@ def change_prompt_word_sheet(val):
 
 def popup_img_upload():
     info = input_group('添加引导图', [
-        file_upload("",name="file",accept=[".jpg",".jpeg",".png"],placeholder="请选择图像文件",max_size="2M"),
+        file_upload("",name="file",accept=[".jpg",".jpeg",".png",".webp"],placeholder="请选择图像文件",max_size="2M"),
         actions('', [
                 {'label': '上传', 'type':'submit','value':'submit'},
                 {'label': '重选', 'type': 'reset', 'color': 'warning'},
@@ -158,7 +158,7 @@ def popup_img_upload():
         f = info["file"]
         filename_ext = os.path.splitext(f['filename'])[1]
         toast(upload_img_submit,duration=1)
-        temp_path = "tempfile-{}.{}",format(nanoid.generate(string.ascii_lowercase,4),filename_ext)
+        temp_path = "tempfile-{}.{}".format(nanoid.generate(string.ascii_lowercase,4),filename_ext)
         temp_file = open(temp_path,"wb")
         temp_file.write(f['content'])
         temp_file.close()
