@@ -1,37 +1,45 @@
 import pymysql,json
 from secret import mysql_db_database,mysql_db_host,mysql_db_password,mysql_db_user
-import random 
+import random ,httpx
 from utils import FaceDetector
 import traceback
 from utils.constants import MODEL_NAME_MAPPING
+from utils.storage_tool import StorageTool
 # 画廊中默认显示的图
+from PIL import Image 
+from io import BytesIO
 
-def query_by_input(keyword,model,username):
-    mysql_db = pymysql.connect(
-        host=mysql_db_host,
-        database=mysql_db_database,
-        user=mysql_db_user,
-        password=mysql_db_password,
-    )
-    sql = f"select image.imgurl, image.height,image.width,user.username,image.genid,image.prompt,image.face from image left outer join user on (image.userid_id=user.userid) where image.published=1 {username} {model} {keyword} order by image.gentime desc;"
+st = StorageTool()
 
-    cursor = mysql_db.cursor()
-    cursor.execute(sql)
-    query_result = cursor.fetchall()
+mysql_db = pymysql.connect(
+    host=mysql_db_host,
+    database=mysql_db_database,
+    user=mysql_db_user,
+    password=mysql_db_password,
+    autocommit=True
+)
+sql = f"select image.imgurl,image.genid,image.userid_id from image where image.published=1;"
 
-    total = len(query_result)
-    results = []
-    for i in range(total):
-        image, height,width,username,genid,prompt,face = query_result[i]
-       
-        results.append({
-            "image": image,
-            "height": height,
-            "width": width,
-            "username": username,
-            "genid": genid
-        })
+cursor = mysql_db.cursor()
+cursor.execute(sql)
+query_result = cursor.fetchall()
 
-    cursor.close()
-    mysql_db.close()
-    return results
+total = len(query_result)
+results = []
+for i in range(total):
+    image_url, genid, userid = query_result[i]
+    if "dong-liu" in image_url:
+        continue 
+    
+    # get image from storage.yunjing
+    img_bytes = httpx.get(image_url).content 
+    img =Image.open(BytesIO(img_bytes))
+    img.save("temp.webp",quality=90)
+
+    st.upload_tencent("temp.webp",userid)
+
+
+        
+
+cursor.close()
+mysql_db.close()

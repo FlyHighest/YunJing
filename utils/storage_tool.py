@@ -131,7 +131,17 @@ class StorageTool:
             }
         )
 
-    def tencent_check_nsfw(self,image_url):
+    def ilivedata_check_nsfw(self, image:Image, userid="tmp"):
+        '''
+        res: 0 normal 1 suspect；2 forbid
+        '''
+        b64 = img2base64(image)
+        res = check(image,2,userid)
+        return res 
+        
+
+    def tencent_check_nsfw(self,image_path:str):
+        image_url = self.upload_tencent(image_path,"tmp")
         key = image_url[len(self.tencent_url):]
         response = self.client.get_object_sensitive_content_recognition(
             Bucket='yunjing-images-1256692038',
@@ -147,28 +157,25 @@ class StorageTool:
                 Key=key
             )
             return True 
+    
+    def check_is_nfsw(self,image_path):
+        image = Image.open(image_path).convert("RGB")
+        ilivedata_res = self.ilivedata_check_nsfw(image)
+        if ilivedata_res == 0:
+            return False 
+        elif ilivedata_res == 2:
+            return True 
+        else:
+            return self.tencent_check_nsfw(image_path)
 
 ST = StorageTool()
-def is_url_image(image_url):
-   r = httpx.head(image_url)
-   if  r.headers["content-type"].startswith("image"):
-      return True
-   return False
 
 def upload_to_storage(path):
     try:
-        image_base64 = img2base64(path) 
-        result = check(image_base64, 2, "tmp")
-        if result==0:
-            ret = ST.upload_tencent(path,"tmp")
-        elif result==1:
-            ret = ST.upload_tencent(path,"tmp")
-            if ST.tencent_check_nsfw(ret):
-                ret = ""
-        else: # ret == 2, bad content
-            ret = ""
-
-        return ret 
+        if ST.check_is_nfsw(path):
+            return ""
+        else:
+            return ST.upload_tencent(path,"tmp")
     except:
         return ""
 
