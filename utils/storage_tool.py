@@ -136,7 +136,7 @@ class StorageTool:
         res: 0 normal 1 suspect；2 forbid
         '''
         b64 = img2base64(image)
-        res = check(image,2,userid)
+        res = check(b64,2,userid)
         return res 
         
 
