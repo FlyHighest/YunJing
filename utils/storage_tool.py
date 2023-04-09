@@ -9,7 +9,7 @@ import os
 import time
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
-
+import traceback
 import os , json
 import datetime
 import base64
@@ -183,6 +183,7 @@ def upload_to_storage(path):
         else:
             return ST.upload_tencent(path,"tmp")
     except:
+        traceback.print_exc()
         return ""
 
 if __name__=="__main__":
