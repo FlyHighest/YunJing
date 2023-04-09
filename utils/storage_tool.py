@@ -141,7 +141,7 @@ class StorageTool:
         
 
     def tencent_check_nsfw(self,image_path:str):
-        image_url = self.upload_tencent(image_path,"tmp")
+        image_url = self.upload_tencent(image_path,"tmp_check")
         key = image_url[len(self.tencent_url):]
         response = self.client.get_object_sensitive_content_recognition(
             Bucket='yunjing-images-1256692038',
@@ -149,24 +149,30 @@ class StorageTool:
             BizType="7ae30966d9f89aa719fa2b5ed21074d7"
         )
         res = int(response["Result"])
-        if res==0:
-            return False
-        else:
-            self.client.delete_object(
+
+        self.client.delete_object(
                 Bucket='yunjing-images-1256692038',
                 Key=key
             )
+        
+        if res==0:
+            return False
+        else:
             return True 
     
     def check_is_nfsw(self,image_path):
         image = Image.open(image_path).convert("RGB")
         ilivedata_res = self.ilivedata_check_nsfw(image)
         if ilivedata_res == 0:
+            print("云上结果 正常")
             return False 
         elif ilivedata_res == 2:
+            print("云上结果 敏感")
             return True 
         else:
-            return self.tencent_check_nsfw(image_path)
+            tencent_res =  self.tencent_check_nsfw(image_path)
+            print("腾讯结果 ","正常" if tencent_res == False else "敏感")
+            return tencent_res
 
 ST = StorageTool()
 
