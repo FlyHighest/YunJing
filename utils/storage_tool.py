@@ -9,7 +9,7 @@ import os
 import time
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
-
+import traceback
 import os , json
 import datetime
 import base64
@@ -131,7 +131,17 @@ class StorageTool:
             }
         )
 
-    def tencent_check_nsfw(self,image_url):
+    def ilivedata_check_nsfw(self, image:Image, userid="tmp"):
+        '''
+        res: 0 normal 1 suspect；2 forbid
+        '''
+        b64 = img2base64(image)
+        res = check(b64,2,userid)
+        return res 
+        
+
+    def tencent_check_nsfw(self,image_path:str):
+        image_url = self.upload_tencent(image_path,"tmp_check")
         key = image_url[len(self.tencent_url):]
         response = self.client.get_object_sensitive_content_recognition(
             Bucket='yunjing-images-1256692038',
@@ -139,37 +149,41 @@ class StorageTool:
             BizType="7ae30966d9f89aa719fa2b5ed21074d7"
         )
         res = int(response["Result"])
-        if res==0:
-            return False
-        else:
-            self.client.delete_object(
+
+        self.client.delete_object(
                 Bucket='yunjing-images-1256692038',
                 Key=key
             )
+        
+        if res==0:
+            return False
+        else:
             return True 
+    
+    def check_is_nfsw(self,image_path):
+        image = Image.open(image_path).convert("RGB")
+        ilivedata_res = self.ilivedata_check_nsfw(image)
+        if ilivedata_res == 0:
+            print("云上结果 正常")
+            return False 
+        elif ilivedata_res == 2:
+            print("云上结果 敏感")
+            return True 
+        else:
+            tencent_res =  self.tencent_check_nsfw(image_path)
+            print("腾讯结果 ","正常" if tencent_res == False else "敏感")
+            return tencent_res
 
 ST = StorageTool()
-def is_url_image(image_url):
-   r = httpx.head(image_url)
-   if  r.headers["content-type"].startswith("image"):
-      return True
-   return False
 
 def upload_to_storage(path):
     try:
-        image_base64 = img2base64(path) 
-        result = check(image_base64, 2, "tmp")
-        if result==0:
-            ret = ST.upload_tencent(path,"tmp")
-        elif result==1:
-            ret = ST.upload_tencent(path,"tmp")
-            if ST.tencent_check_nsfw(ret):
-                ret = ""
-        else: # ret == 2, bad content
-            ret = ""
-
-        return ret 
+        if ST.check_is_nfsw(path):
+            return ""
+        else:
+            return ST.upload_tencent(path,"tmp")
     except:
+        traceback.print_exc()
         return ""
 
 if __name__=="__main__":
