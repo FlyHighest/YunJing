@@ -1,9 +1,9 @@
 import os
 import openai
-from secret import openai_api_key
+from secret import openai_api_key,openai_api_base
 import traceback
 openai.api_key = openai_api_key
-
+openai.api_base = openai_api_base
 
 system_content_image_describe = \
 "You are a generative art prompt generator. \
