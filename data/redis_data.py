@@ -122,7 +122,8 @@ class RClient:
         return rate, num gen, num share
         '''
         num_generated = Image.select().where(Image.userid==userid).count()
-        num_published = Image.select().where((Image.published==1) & (Image.userid==userid)).count()
+        num_published = 0.2*Image.select().where((Image.published==1) & (Image.userid==userid) & (Image.nsfw==1)).count() \
+                        + Image.select().where((Image.published==1) & (Image.userid==userid) & (Image.nsfw==0)).count()
         if num_generated <= 100:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published
