@@ -67,7 +67,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     buttons.extend( [
                         put_button("复刻这张图", color="info", onclick=fuke_func),
                         #put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
-                        put_html(f'<a href="{img_url}" download>下载图像</a>')
+                        put_html(f'<a href="{img_url}" content-type="image/webp" download>下载图像</a>')
                     ])
                 user_level = session.local.rclient.get_user_level(session.local.client_id)
                 if user_level==6:
