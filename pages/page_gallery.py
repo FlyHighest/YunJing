@@ -66,7 +66,8 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                 if not session.local.client_id.startswith("@"): 
                     buttons.extend( [
                         put_button("复刻这张图", color="info", onclick=fuke_func),
-                        put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
+                        #put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
+                        put_html(f'<a href="{img_url}" download>下载图像</a>')
                     ])
                 user_level = session.local.rclient.get_user_level(session.local.client_id)
                 if user_level==6:
@@ -108,9 +109,9 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                         
 
             with use_scope("popup_image_info"):
-                put_text("✅ "+ (text2image_data["prompt"] or "(无提示词)" ) )
-                
-                put_text("❌ "+ (text2image_data["negative_prompt"] or "(无反向提示词)" ) )
+                put_collapse("✅ 提示词",text2image_data["prompt"] or "(无提示词)",open=False)
+                put_collapse("❌ 反向提示词",text2image_data["negative_prompt"] or "(无反向提示词)",open=False)
+
                 put_row([ 
                     put_column(put_select("width_info",label="宽度",options=[text2image_data["width"]],value=text2image_data["width"])),
                     put_column(put_select("height_info",label="高度",options=[text2image_data["height"]],value=text2image_data["height"])),

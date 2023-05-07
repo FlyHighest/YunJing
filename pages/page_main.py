@@ -51,18 +51,14 @@ def show_image_information_window(img_url,genid, fuke_func=None):
             ],size="66% 2% 32%")
             with use_scope("popup_image_disp"):
                 put_image(img_url)
-                if fuke_func is None:
-                    put_column([
-                        put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
-                        put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery, scope="popup_image_disp", genid= genid)),
-                        put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
-                        put_button("删除这张图",color="danger",onclick=partial(del_from_history,genid=genid))
-                    ]).style("margin: 3%; text-align: center")
-                else:
-                    put_column([
-                        put_button("复刻这张图", color="info", onclick=fuke_func),
-                        put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
-                    ]).style("margin: 3%; text-align: center")
+                put_column([
+                    put_html(f'<a href="{img_url}" download>下载图像</a>'),
+                    put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
+                    put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery, scope="popup_image_disp", genid= genid)),
+                    # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
+                    put_button("删除这张图",color="danger",onclick=partial(del_from_history,genid=genid))
+                ]).style("margin: 3%; text-align: center")
+                
 
 
             with use_scope("popup_image_info"):
