@@ -180,7 +180,8 @@ def task_post_image_gen(callback):
         if not nsfw:
             put_image(output_img_url) # 大图output
             put_row([
-                put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
+                put_html(f'<a href="{output_img_url}" download>下载图像</a>'),
+                # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
                 put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
             ]).style("margin: 5%")
         
