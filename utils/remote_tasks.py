@@ -254,9 +254,8 @@ def task_post_enhance_prompt():
             pin['prompt'] = enhanced_text
         else:
             ret = prediction.content.decode()
-            print(ret)
-            if ret.startswith("validation error: "):
-                pin['prompt'] = ret.replace("validation error: ","")
+            if ret.startswith("request validation error: "):
+                pin['prompt'] = ret.replace("request validation error: ","")
     except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
         traceback.print_exc()
         toast(server_error_text,duration=4,color="warn")
