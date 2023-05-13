@@ -12,7 +12,7 @@ from pywebio_battery.web import *
 
 from .custom_exception import *
 from secret import MODEL_URL
-from utils import get_presigned_url_tencent
+from .storage_tool import get_presigned_url_tencent
 from .constants import *
 
 def before_gen_post():
