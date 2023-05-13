@@ -165,7 +165,7 @@ def load_more_images_on_gallery(val=None):
                     img_url_md = img_url+"/med"
                     img_url = img_url
                     img_url = get_presigned_url_tencent(img_url)
-                    img_url_md = get_presigned_url_tencent(img_url)
+                    img_url_md = get_presigned_url_tencent(img_url_md)
                 put_image(img_url_md).onclick(
                     partial(
                         show_image_information_window, 
