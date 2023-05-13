@@ -178,14 +178,9 @@ def task_post_image_gen(callback):
 
         # 这里是正常处理
         if not nsfw:
-            output_img_url=get_presigned_url_tencent(output_img_url)
-            put_image(output_img_url) # 大图output
-            put_row([
-                put_html(f'<a href="{output_img_url}" content-type="image/webp" download>下载图像</a>'),
-                # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
-                put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
-            ]).style("margin: 5%")
-        
+
+            output_img_url_signed=get_presigned_url_tencent(output_img_url)
+
             # 历史记录相关
             with use_scope('history_images'):
                 session.local.history_image_cnt += 1
@@ -196,7 +191,14 @@ def task_post_image_gen(callback):
                 if  session.local.history_image_cnt > session.local.max_history_bonus:
                     session.local.history_image_cnt -= 1
                     session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
-                put_image(output_img_url).onclick(partial(callback, img_url=output_img_url,genid=image_gen_id))
+                put_image(output_img_url_signed).onclick(partial(callback, img_url=output_img_url_signed,genid=image_gen_id))
+
+            put_image(output_img_url_signed) # 大图output
+            put_row([
+                put_html(f'<a href="{output_img_url_signed}" content-type="image/webp" download>下载图像</a>'),
+                # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
+                put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
+            ]).style("margin: 5%")
             # 自动发布
             if session.local.rclient.get_user_config(session.local.client_id)["autopub"]==True:
                 task_publish_to_gallery(scope="images",genid=image_gen_id)
