@@ -35,6 +35,9 @@ def get_domain_key_from_tencent_url(image_url):
 def get_presigned_url_tencent(image_url):
     domain, key = get_domain_key_from_tencent_url(image_url)
     bucket = domain.split("/")[-1].split(".")[0]
+    if bucket=="images":
+        bucket = "yunjing-images-1256692038"
+        
     return client.get_presigned_url(
         Bucket=bucket,
         Key=key,
