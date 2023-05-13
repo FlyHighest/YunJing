@@ -11,7 +11,7 @@ from data import RClient
 import time ,random
 from utils.constants import *
 from utils import task_post_upscale
-from utils import get_username
+from utils import get_username,get_presigned_url_tencent
 
 from search import query_recent_images,query_by_input
 import numpy as np 
@@ -164,6 +164,8 @@ def load_more_images_on_gallery(val=None):
                 else:
                     img_url_md = img_url+"/med"
                     img_url = img_url
+                    img_url = get_presigned_url_tencent(img_url)
+                    img_url_md = get_presigned_url_tencent(img_url)
                 put_image(img_url_md).onclick(
                     partial(
                         show_image_information_window, 
