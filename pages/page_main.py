@@ -319,7 +319,7 @@ def page_main():
                 rows=2,
             )
         put_row_autosize([
-            put_button("帮我写",color="info",onclick=task_post_enhance_prompt),
+            put_button("帮我写(通用)",color="info",onclick=task_post_enhance_prompt),
             put_button("帮我写(ChatGPT版)",color="info",onclick=show_chatgpt_window),
         ])
         
