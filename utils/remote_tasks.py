@@ -12,7 +12,7 @@ from pywebio_battery.web import *
 
 from .custom_exception import *
 from secret import MODEL_URL
-
+from utils import get_presigned_url_tencent
 from .constants import *
 
 def before_gen_post():
@@ -178,6 +178,7 @@ def task_post_image_gen(callback):
 
         # 这里是正常处理
         if not nsfw:
+            output_img_url=get_presigned_url_tencent(output_img_url)
             put_image(output_img_url) # 大图output
             put_row([
                 put_html(f'<a href="{output_img_url}" content-type="image/webp" download>下载图像</a>'),
