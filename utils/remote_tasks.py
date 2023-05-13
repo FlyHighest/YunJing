@@ -254,6 +254,7 @@ def task_post_enhance_prompt():
             pin['prompt'] = enhanced_text
         else:
             ret = prediction.content.decode()
+            print(ret)
             if ret.startswith("validation error: "):
                 pin['prompt'] = ret.replace("validation error: ","")
     except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:

@@ -71,7 +71,7 @@ Prompt Editing:
 
 **b. 支持中文提示词和反向提示词**
 
-云景后台接入了[机器翻译模型](https://huggingface.co/Helsinki-NLP/opus-mt-zh-en)，输入汉语文本会自动翻译为英文后再进行图像生成。
+云景后台接入了腾讯机器翻译API，输入汉语文本会自动翻译为英文后再进行图像生成。
 
 
 在反向提示词中，除了一些常见的描述，还可以使用以下几种由低质量图像训练得到的负面词向量：
@@ -152,7 +152,7 @@ _easy_negative_, _bad_prompt_, _bad_prompt_version2_, _bad_hand_, _bad_artist_, 
 ### 4. 提示词增强
 
 #### 帮我写
-在提示词输入框右侧有“帮我写”按钮，点击后将对当前输入的内容自动扩写。扩写模型使用[MagicPrompt](https://huggingface.co/Gustavosta/MagicPrompt-Stable-Diffusion)，主要是为stable diffusion准备的，protogen和openjourney也可以参考。
+在提示词输入框右侧有“帮我写”按钮，点击后将对当前输入的内容自动扩写。扩写模型使用微软公司发布的模型[Promptist](https://huggingface.co/spaces/microsoft/Promptist)。
 
 虽然会拓展出来一些提高质量、风格或者艺术家的词汇，但仍无法百分之百保证生成图像的质量，还需手动调整，仅供参考。
 
