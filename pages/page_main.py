@@ -116,6 +116,7 @@ def load_history():
             img_preview = img 
             img_full = img 
         else:
+            # 私人图像，获取预签名url
             img_preview = img + "/med" if len(img)>10 else img 
             img_full = img 
         put_image(img_preview).onclick(partial(show_image_information_window,img_url=img_full, genid=genid)) 

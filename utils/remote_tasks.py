@@ -237,7 +237,8 @@ def task_post_enhance_prompt():
         before_post()
         data ={
             "type": "enhanceprompt",
-            "starting_text":  pin['prompt']
+            "starting_text":  pin['prompt'],
+            "model_type": "universal"
         }
         post_data = json.dumps(data)
         prediction = httpx.post(

@@ -25,6 +25,23 @@ endpoint_host = 'isafe.ilivedata.com'
 endpoint_path = '/api/v1/image/check'
 endpoint_url = 'https://isafe.ilivedata.com/api/v1/image/check'
 
+config = CosConfig(Region="ap-shanghai", SecretId=tencentcloud_secret_id, SecretKey=tencentcloud_secret_key)
+client = CosS3Client(config)
+
+def get_domain_key_from_tencent_url(image_url):
+    splits = image_url.split("/")
+    return "/".join(splits[:3]), "/".join(splits[3:])
+
+def get_presigned_url_tencent(image_url):
+    domain, key = get_domain_key_from_tencent_url(image_url)
+    bucket = domain.split("/")[-1].split(".")[0]
+    return client.get_presigned_url(
+        Bucket=bucket,
+        Key=key,
+        Method="GET",
+        Expired=43200
+    )
+
 def img2base64(img):
     if type(img)==str:
         image = Image.open(img)
@@ -81,14 +98,7 @@ def send(querystring, signature, time_stamp):
 
 class StorageTool:
     def __init__(self) -> None:
-        
-        region = None              # 通过自定义域名初始化不需要配置 region
-        token = None               # 如果使用永久密钥不需要填入 token，如果使用临时密钥需要填入，临时密钥生成和使用指引参见 https://cloud.tencent.com/document/product/436/14048
-        scheme = 'https'           # 指定使用 http/https 协议来访问 COS，默认为 https，可不填
-
-        domain = 'images.dong-liu.com' # 用户自定义域名，需要先开启桶的自定义域名，具体请参见 https://cloud.tencent.com/document/product/436/36638
-        config = CosConfig(Region=region, SecretId=tencentcloud_secret_id, SecretKey=tencentcloud_secret_key, Token=token, Domain=domain, Scheme=scheme)
-        self.client = CosS3Client(config)
+        self.client = client 
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
         self.tencent_url = "https://images.dong-liu.com/"
         
@@ -109,14 +119,19 @@ class StorageTool:
                     Key=key,
                     LocalFilePath=img_path
                 )
-                response["image_url"] = self.tencent_url+key
+                url = self.client.get_presigned_url(
+                    Bucket='yunjing-images-1256692038',
+                    Key=key,
+                    Method="GET",
+                    Expired=43200
+                )
                 break
             except:
                 continue
         if response is None:
             return ""
         else:
-            return response["image_url"]
+            return url
     
     def tencent_copy(self,image_url_temp,userid):
         source_key = image_url_temp[len(self.tencent_url):]
