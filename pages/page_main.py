@@ -13,7 +13,7 @@ from utils.constants import *
 from utils import (task_post_enhance_prompt, task_post_image_gen,
                            task_post_upscale, task_publish_to_gallery)
 from utils import gpt_image_describe
-from utils import  get_username,put_column_autosize,upload_to_storage,put_row_autosize
+from utils import  get_username,put_column_autosize,upload_to_storage,put_row_autosize,get_presigned_url_tencent
 
 
 def set_generation_params(generation_id):
@@ -117,8 +117,11 @@ def load_history():
             img_full = img 
         else:
             # 私人图像，获取预签名url
+            
             img_preview = img + "/med" if len(img)>10 else img 
             img_full = img 
+            img_preview = get_presigned_url_tencent(img_preview)
+            img_full = get_presigned_url_tencent(img_full)
         put_image(img_preview).onclick(partial(show_image_information_window,img_url=img_full, genid=genid)) 
         session.local.history_image_cnt += 1
 
