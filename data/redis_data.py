@@ -192,7 +192,7 @@ class RClient:
         length = self.r.llen(f"history:{userid}")
 
         img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",length-limit,length-1)]
-        return img_url_and_genid[::-1]
+        return img_url_and_genid
 
     def check_genid_in_imagetable(self,genid):
         try:

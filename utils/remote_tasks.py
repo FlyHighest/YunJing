@@ -43,7 +43,7 @@ def task_publish_to_gallery(scope, genid):
 def task_post_enhance_prompt():
     session.run_js('''$("#pywebio-scope-input textarea:first").prop("disabled",true)''')
     try:
-        before_post()
+        
         data ={
             "type": "enhanceprompt",
             "starting_text":  pin['prompt'],
@@ -85,7 +85,7 @@ def task_post_enhance_prompt():
 def task_post_upscale(scope, img_url):
     with use_scope(scope):
         try:
-            before_post()
+
             with put_loading():
                 upscale_data = {
                         "type":"upscale",

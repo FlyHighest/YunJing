@@ -3,12 +3,13 @@ import json
 import httpx 
 from .decorators import *
 from .custom_exception import *
+import requests 
 
 @api_checker
 @cd_checker
 def generate_image(image_generation_data:dict):
     post_data = json.dumps(image_generation_data)
-    prediction = httpx.post(
+    prediction = requests.post(
                     MODEL_URL,
                     data=post_data,
                     timeout=180000
