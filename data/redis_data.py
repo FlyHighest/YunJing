@@ -137,8 +137,8 @@ class RClient:
         '''
         return rate, num gen, num share
         '''
-        num_generated = int(self.r.hget(f"user:{userid}","num_generated"))
-        num_published = int(self.r.hget(f"user:{userid}","num_published"))
+        num_generated = int(self.r.hget(f"user:{userid}","num_generated") or 0)
+        num_published = int(self.r.hget(f"user:{userid}","num_published") or 0)
         if num_generated <= 100:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published

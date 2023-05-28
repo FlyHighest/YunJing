@@ -382,7 +382,7 @@ def page_main():
         toast("请先登录，即将跳转到“账户”页面")
         time.sleep(0.5)
         session.run_js(f'window.open("/account");')
-        
+        return 
     # 设置footer
     sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
     footer_html = "您好，{}！<br>当前分享值{:.2f}%，生成数{}，分享数{}。".format(username,sharerate,num_gen,num_pub)
