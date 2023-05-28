@@ -33,6 +33,7 @@ class LoRAInformationCard:
         if len(self.additional_words)>0:
             additional_words = ";".join( [f'`{i}`' for i in self.additional_words] )
             markdown_strs.append(f"* 可附加提示词：{additional_words}")
+        return "\n".join(markdown_strs)
         
 LoRA_list = []
 
