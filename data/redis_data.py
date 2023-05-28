@@ -23,18 +23,47 @@ class RClient:
         self.r = redis.Redis("localhost", 6379, decode_responses=True)
         self.mysql_db = mysql_db 
         self.mysql_db.connect()
+        if not self.r.exists("max_userid"):
+            self.r.set("max_userid",10000)
+
+    # 画廊query相关 
+    def query_best_images(self):
+        genids = self.r.zrange("gallery",-200,-1)
+        random.shuffle(genids)
+        results = []
+        for genid in genids:
+            image,height,width,username=self.r.hmget(f"image:{genid}",["image","height","width","username"])
+            results.append({
+                "image": image,
+                "height": height,
+                "width": width,
+                "username": username,
+                "genid": genid
+            })
+        return results
+
+
+    def set_generation_lock(self,userid, cd=10):
+        self.r.set(f"lock:gen:{userid}",1,ex=cd)
+    
+    def exists_generation_lock(self,userid):
+        return self.r.get(f"lock:gen:{userid}") is not None
+
+    def unset_generation_lock(self,userid):
+        self.r.delete(f"lock:gen:{userid}")
+
 
     # 整体统计
     def get_server_status(self):
         # 排队任务数
-        queue_size = self.get_queue_size()
+        # queue_size = self.get_queue_size()
         # 已生成图像数
         generated_num = self.get_generated_number()
         # 高清图生成数量
         upscale_num = self.get_upscale_number()
         # 画廊图像数
         gallery_num = self.get_gallery_number()
-        return queue_size, generated_num, upscale_num, gallery_num
+        return  generated_num, upscale_num, gallery_num
 
     def add_generated_number(self):
         self.r.incr("status_generated_num")
@@ -84,19 +113,18 @@ class RClient:
 
     def get_user_config(self,userid):
         try:
-            return json.loads(User.get_by_id(userid).config)
+            return json.loads(self.r.hget(f"user:{userid}","config"))
         except:
             return {
-                "autopub":False,
                 "colnum":6,
                 "hisnum": 200
             }
 
     def update_user_config(self,userid,config):
         try:
-            user = User.get_by_id(userid)
-            user.config = json.dumps(config)
-            user.save()
+            
+            config = json.dumps(config)
+            self.r.hset(f"user:{userid}","config",config)
             return True
         except:
             return False 
@@ -104,53 +132,31 @@ class RClient:
 
     def get_user_level(self,userid):
         try:
-            return User.get_by_id(userid).level
+            return int(self.r.hget(f"user:{userid}","level"))
         except:
             return 0
-
-    def get_lastgentime(self,userid):
-        try:
-            return int(self.r.get(f"gentime:{userid}"))
-        except:
-            return -1
-
-    def set_lastgentime(self,userid):
-        self.r.set(f"gentime:{userid}",int(time.time()))
 
     def get_sharerate(self, userid):
         '''
         return rate, num gen, num share
         '''
-        num_generated = Image.select().where((Image.userid==userid)& (Image.nsfw==0)).count() +0.2*Image.select().where((Image.userid==userid)& (Image.nsfw==1)).count()
-        num_published = Image.select().where((Image.published==1) & (Image.userid==userid) & (Image.nsfw==0)).count()
+        num_generated = int(self.r.hget(f"user:{userid}","num_generated"))
+        num_published = int(self.r.hget(f"user:{userid}","num_published"))
         if num_generated <= 100:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published
 
-    def record_new_but_history_only(self, client_id, img_url, gen_id,nsfw):
+    def record_history(self, userid, img_url,genid):
         try:
-            with self.mysql_db.atomic():
-                if not nsfw:
-                    Histories.create(
-                        userid=client_id,
-                        imgurl=img_url,
-                        genid=gen_id
-                    )
+            self.r.rpush(f"history:{userid}",json.dumps((img_url,genid)))
         except:
             pass 
 
-    def record_new_generated_image(self, client_id, img_url,gen_id,text2image_data,nsfw,score,face): 
+    def record_new_generated_image(self, userid, img_url,gen_id,text2image_data,nsfw,score,face): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.add_generated_number()
         try:
-            with self.mysql_db.atomic():
-                if not nsfw:
-                    Histories.create(
-                        userid=client_id,
-                        imgurl=img_url,
-                        genid=gen_id
-                    )
-                Image.create(
+            data_mapping = dict(
                     genid=gen_id,
                     imgurl=img_url,
                     height=text2image_data['height'],
@@ -158,47 +164,54 @@ class RClient:
                     params=json.dumps(text2image_data),
                     modelname=text2image_data['model_name'],
                     prompt=text2image_data['prompt'],
-                    published=False,
-                    userid=client_id,
-                    nsfw=nsfw,
-                    score=score,
-                    face=face
+                    published=int(False),
+                    userid=userid,
+                    nsfw=int(nsfw),
+                    score=float(score),
+                    face=int(face)
                 )
+            self.r.hset(f"image:{gen_id}",mapping=data_mapping)
+            num_generated = int(self.r.hget(f"user:{userid}","num_generated"))  
+            self.r.hset(f"user:{userid}","num_generated",num_generated+1)
         except IntegrityError:
             pass
         
     def mark_as_nsfw(self,genid):
-        Histories.delete().where(Histories.genid==genid).execute()
-        img = Image.get_by_id(genid)
-        img.nsfw=True
-        img.published=False
-        img.save()
+        # Histories.delete().where(Histories.genid==genid).execute()
+        # img = Image.get_by_id(genid)
+        # img.nsfw=True
+        # img.published=False
+        # img.save()
+        pass 
 
     def del_history(self,userid,genid):
-        Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
+        # Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
+        url = self.r.hget(f"image:{genid}","imgurl")
+        self.r.lrem(f"history:{userid}",0,json.dumps((url,genid)))
 
-    def get_history(self, client_id, limit=200):
-        if client_id.startswith("@"): return []
-        images = Histories.select().where(Histories.userid==client_id).order_by(Histories.gentime.desc()).limit(limit)
-        img_url_and_genid = [(image.imgurl,image.genid) for image in images]
+    def get_history(self, userid, limit=200):
+        if userid.startswith("@"): return []
+        length = self.r.llen(f"history:{userid}")
+
+        img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",length-limit,length-1)]
         return img_url_and_genid[::-1]
 
     def check_genid_in_imagetable(self,genid):
         try:
-            return Image.get_by_id(genid).imgurl
+            return self.r.exists(f"image:{genid}")
         except:
-            return None
+            return None, None,None,None
 
 
     def get_image_information(self, generation_id=None):
         try:
-            image_record = Image.get_by_id(generation_id)
-            ret = json.loads(image_record.params)
-            ret["gentime"] = str(image_record.gentime)
-            userid = image_record.userid
-            ret["user"] = User.get_by_id(userid).username
-            ret["userid"] = userid
-            ret['published'] = image_record.published
+            image_record = self.r.hgetall(f"image:{generation_id}")
+            ret = json.loads(image_record["params"])
+            ret["gentime"] = str(image_record["gentime"])
+            userid = image_record["userid"]
+            ret["user"] = self.r.hget(f"user:{userid}","name")
+            ret["userid"] = userid 
+            ret['published'] = image_record["published"] # TODO: possibly unused
             return ret 
         except:
             traceback.print_exc()
@@ -206,50 +219,41 @@ class RClient:
 
     def record_publish(self,genid):
         try:
-            self.store_gallery_image_information(genid)
+            self.r.hset(f"image:{genid}","published",1)
             self.add_gallery_number()
+            userid = self.r.hget(f"image:{genid}","userid")
+            num_published = int(self.r.hget(f"user:{userid}","num_published"))  
+            self.r.hset(f"user:{userid}","num_published",num_published+1)
+
+            score = float(self.r.hget(f"image:{genid}","score"))
+            model_name = self.r.hget(f"image:{genid}","modelname")
+            self.r.zadd("gallery",{genid:score})
+            self.r.zadd(f"gallery:userid:{userid}",{genid:score})
+            self.r.zadd(f"gallery:model:{model_name}",{genid:score})
+            
             return True
         except Exception as _:
             traceback.print_exc()
             return False
-
-    def update_lifecycle(self,img_url):
-        pass 
-
-    def store_gallery_image_information(self, genid):
-        generation_id = genid
-        image = Image.get_by_id(generation_id)
-        image.published = True
-        image.save()
+        
 
     def cancel_publish(self,genid):
-        image = Image.get_by_id(genid)
-        image.published = False
-        image.save()
+        self.r.hset(f"image:{genid}","published",0)
+        self.r.zrem("gallery",genid)
+        userid = self.r.hget(f"image:{genid}","userid")
+        model_name = self.r.hget(f"image:{genid}","modelname")
+        self.r.zrem(f"gallery:userid:{userid}",genid)
+        self.r.zrem(f"gallery:model:{model_name}",genid)
 
-    def get_random_samples_from_gallery(self, num):
-        images = Image.select().where(Image.published==True).order_by(fn.Rand()).limit(num)
-        ret = []
-        for img in images:
-            ret.append(img.imgurl)
-        return ret 
-
-    def add_check_image(self, genid):
-        self.r.rpush("Check",genid)
-        return True 
-    def get_check_image(self):
-        if self.r.llen("Check")>0:
-            img = self.r.lpop("Check")
-            return img 
-        else:
-            return None
 
     def reset_pass_and_email(self,username,password,email):
         try:
-            user = User.get(User.username==username)
-            user.password = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
-            user.email = email 
-            user.save()
+
+            userid = self.r.get(f"userid:{username}")
+            password = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
+            email = email 
+            self.r.hset(f"user:{userid}","password",password)
+            self.r.hset(f"user:{userid}","email",email)
             return True
         except:
             return False
@@ -257,22 +261,30 @@ class RClient:
     def register_user(self,username,password,email):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
-            with self.mysql_db.atomic():
-                User.create(
+            mapping = \
+                dict(
                     username=username,
                     password=pw_hash,
                     email=email,
-                    level=1
+                    level=1,
+                    jointime=time.strftime("%Y-%m-%d %H:%M:%S"),
+                    num_generated=0,
+                    num_published=0
                 )
+            userid = int(self.r.get("max_userid")) + 1
+            self.r.set("max_userid",userid)
+            self.r.hset(f"user:{userid}",mapping=mapping)
+            self.r.set(f"userid:{username}",userid)
+            self.r.sadd("user-emails",email)
             return True
         except:
             return False
 
     def check_user_email(self,username,email):
         try:
-            user=User.get(User.username==username)
-            print(username,email,user.email)
-            if user.email==email:
+            userid = self.r.get(f"userid:{username}")
+            user_email = self.r.hget(f"user:{userid}","email")
+            if user_email==email:
                 return True
             else:
                 return False 
@@ -282,8 +294,10 @@ class RClient:
     def verif_user(self,username,password):
         try:
             pw_hash = hashlib.sha1((username+password).encode("utf-8")).hexdigest()
-            user = User.get((User.username==username) & (User.password==pw_hash))
-            return user is not None
+           
+            userid = self.r.get(f"userid:{username}")
+            user_password = self.r.hget(f"user:{userid}","password")
+            return pw_hash == user_password
         except:
             return False
 
@@ -294,40 +308,40 @@ class RClient:
             return None
 
     def check_likes(self,userid,genid):
-        if Likes.select().where((Likes.userid==userid) & (Likes.genid==genid)).count()>0:
-            return True 
-        else:
-            return False
+        return False
 
     def set_likes(self,userid,genid):
-        with self.mysql_db.atomic():
-            if not self.check_likes(userid,genid):
-                Likes.create(
-                    userid=userid,
-                    genid=genid
-                )
+        pass 
+        # with self.mysql_db.atomic():
+        #     if not self.check_likes(userid,genid):
+        #         Likes.create(
+        #             userid=userid,
+        #             genid=genid
+        #         )
 
     def get_likenum(self,genid):
-        return Likes.select().where(Likes.genid==genid).count()
+        return 0
+        # return Likes.select().where(Likes.genid==genid).count()
         
     def cancel_likes(self,userid,genid):
-        Likes.delete().where((Likes.userid==userid) & (Likes.genid==genid)).execute()
+        pass 
+        #Likes.delete().where((Likes.userid==userid) & (Likes.genid==genid)).execute()
 
     def check_email_exists(self,email):
-        if User.select().where(User.email==email).count()>0:
+        if self.r.sismember("user-emails",email):
             return True
         else:
             return False
 
     def get_imgurl_by_id(self,genid):
         try:
-            return Image.get_by_id(genid).imgurl
+            return self.r.hget(f"image:{genid}","imgurl")
         except:
             return ""
 
     def check_published(self,genid):
         try:
-            if Image.get_by_id(genid).published==True:
+            if self.r.hget(f"image:{genid}","published")=="1":
                 return True 
             else:
                 return False
@@ -337,7 +351,6 @@ class RClient:
     def record_chatgpt(self,input,output):
         self.r.rpush("chatgptrecord",input+"|"+output)
 
-    # 点赞相关的功能
     
 
 if __name__=="__main__":

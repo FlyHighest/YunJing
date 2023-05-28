@@ -8,9 +8,8 @@ from utils.constants import css,header_html_index
 
 @use_scope("current_server_status",clear=True)
 def show_server_status():
-    queue_size, generated_num, upscale_num, gallery_num = session.local.rclient.get_server_status()
+    generated_num, upscale_num, gallery_num = session.local.rclient.get_server_status()
     put_markdown(f" \
-- 当前排队任务数：{queue_size} \n\
 - 已生成图像数：{generated_num} \n\
 - 超分辨率次数：{upscale_num} \n\
 - 画廊图像数：{gallery_num}  \
@@ -23,6 +22,8 @@ def page_index():
 
     put_html(header_html_index)
     put_markdown("""
+
+网站建设中，画廊搜索、点赞等功能暂不可用，部分历史、画廊图像无法加载。
 
 ------
 [云景 · 绘图](/main)：在这里创作您的作品，用一组文本描述绘制画面。

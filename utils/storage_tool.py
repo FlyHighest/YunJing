@@ -42,7 +42,7 @@ def get_presigned_url_tencent(image_url):
         Bucket=bucket,
         Key=key,
         Method="GET",
-        Expired=43200
+        Expired=7200
     )
 
 def img2base64(img):

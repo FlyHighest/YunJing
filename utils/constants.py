@@ -26,37 +26,48 @@ MODEL_NAME_MAPPING = {
 MODELS = list(MODEL_NAME_MAPPING.keys())
 MODELS.sort()
 
+
+
 EXTRA_MODEL_STRING ={
   "使用附加模型":"",
-  "LORA-KoreanDollLikeness":"<lora:koreandollv10:0.66>",
-  "LORA-国风汉服少女":"<lora:hanfugirlv15:0.66>",
-  "LORA-国风汉服少女仿明风格":"<lora:hanfu2ming:0.66>",
-  "LORA-国风汉服少女仿宋风格":"<lora:hanfu2song:0.66>",
-  "LORA-墨心":"<lora:moxin:0.7>",
-  "LORA-疏可走马":"<lora:shukezouma:0.7>",
-  "LORA-线稿风格":"<lora:anime_lineart:1>",
+  "LoRA-KoreanDollLikeness":"<lora:koreandollv10:0.66>",
+  "LoRA-国风汉服少女":"<lora:hanfugirlv15:0.66>",
+  "LoRA-国风汉服少女仿明风格":"<lora:hanfu2ming:0.66>",
+  "LoRA-国风汉服少女仿宋风格":"<lora:hanfu2song:0.66>",
+  "LoRA-墨心":"<lora:moxin:0.7>",
+  "LoRA-疏可走马":"<lora:shukezouma:0.7>",
+  "LoRA-线稿风格":"<lora:anime_lineart:1>",
   "LORA-立绘风格":"<lora:gacha_splash:0.5>"
 }
 EXTRA_MODEL_LIST=list(EXTRA_MODEL_STRING.keys())
 
 SPECIAL_WORD = {
-  "云景Anime-v1": ["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
-  "Stable-Diffusion-v1.5":["- \_shuimo\_: 水墨画风，添加art by _shuimo_可触发"],
-  "Counterfeit-V2.5":["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
-  "ACertainThing":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
-  "Anything-v3":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
+  # "云景Anime-v1": ["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
+  # "Stable-Diffusion-v1.5":["- \_shuimo\_: 水墨画风，添加art by _shuimo_可触发"],
+  # "Counterfeit-V2.5":["- \_easy\_negative\_: 在反向提示词添加，提高图像质量"],
+  # "ACertainThing":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
+  # "Anything-v3":["- \_bad\_promt\_version2\_: 在反向提示词添加，提高图像质量"],
   "VintedoisDiffusion-v0.2":["在提示词最前面添加 estilovintedois 获得更好效果"],
   "PixelModel":["- pixelsprite: 像素风格触发词，绘制物体","- 16bitscene:  像素风格触发词，绘制场景"],
-  "LORA-KoreanDollLikeness": ["KoreanDollLikeness: 使用**ChilloutMixNi**模型获得最佳效果","- girl或者woman: 触发词","- Kpop idol: lora作者推荐的关键词","- aegyo sal: lora作者推荐的关键词"],
-  "LORA-国风汉服少女": ["国风汉服少女: 使用**AsiaFacemix**模型获得最佳效果","- hanfugirl,hanfu: 触发词"],
-  "LORA-国风汉服少女仿明风格": ["国风汉服少女仿明风格: 使用**AsiaFacemix**模型获得最佳效果","- duijin: 触发词","- ouqun: 触发词","- yunjian: 触发词","- girlface: 面部增强"],
-  "LORA-国风汉服少女仿宋风格": ["国风汉服少女仿宋风格: 使用**AsiaFacemix**模型获得最佳效果","- songmo: 触发词。例如a chinese girl wear songmo"],
-  "LORA-墨心":["墨心 触发词: **shuimobysim**, wuchangshuo, bonian, zhengbanqiao, badashanren"],
-  "LORA-疏可走马":["疏可走马 触发词: shukezouma"],
-  "LORA-线稿风格":["线稿风格 触发词: lineart, monochrome"],
-  "LORA-立绘风格":["立绘风格 触发词: [(white background:1.5), ::5]"]
+  "LoRA-KoreanDollLikeness": ["KoreanDollLikeness: 使用**ChilloutMixNi**模型获得最佳效果","- girl或者woman: 触发词","- Kpop idol: lora作者推荐的关键词","- aegyo sal: lora作者推荐的关键词"],
+  "LoRA-国风汉服少女": ["国风汉服少女: 使用**AsiaFacemix**模型获得最佳效果","- hanfugirl,hanfu: 触发词"],
+  "LoRA-国风汉服少女仿明风格": ["国风汉服少女仿明风格: 使用**AsiaFacemix**模型获得最佳效果","- `duijin`: 触发词","- `ouqun`: 触发词","- `yunjian`: 触发词","- `girlface`: 面部增强"],
+  "LoRA-国风汉服少女仿宋风格": ["国风汉服少女仿宋风格: 使用**AsiaFacemix**模型获得最佳效果","- `songmo`: 触发词。例如a chinese girl wear songmo"],
+  "LoRA-墨心":["墨心 触发词: `shuimobysim`, `wuchangshuo`, `bonian`, `zhengbanqiao`, `badashanren`"],
+  "LORA-疏可走马":["疏可走马 触发词: `shukezouma`"],
+  "LoRA-线稿风格":["线稿风格 触发词: `lineart, monochrome`"],
+  "LoRA-立绘风格":["立绘风格 触发词: `[(white background:1.5), ::5]`"],
+  "LoRA-细节调整":["权重调整范围-2到2，可减少或增加细节"],
+  "LoRA-CLAMP风格":["配合AnyLora模型获得最佳效果。触发词: `clamp \(circle\)`；可添加`watercolor, 1990s \(style\), retro artstyle`"]
 
 }
+
+
+
+        
+
+
+
 
 MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
 MODEL_NAME_MAPPING_REVERSE["Anything-v3"]="Anything-v3"
@@ -88,21 +99,22 @@ MAX_HISTORY = 10
 MAX_QUEUE = 10
 IMAGE_NUM_PER_LOAD = 20
 IMAGE_NUM_PER_ROW = 5
-image_gen_text = "正在生成，请稍后"
-server_error_text = "模型服务错误，请稍后再试"
+image_gen_text = "正在生成，请稍后🎁"
+server_error_text = "模型服务错误，请稍后再试😭"
 nsfw_warn_text_publish = "检测到不适宜内容，人工审核后发布"
 nsfw_warn_text_gen = "图像可能含有不适宜工作场所观看的内容，请更换提示词或随机种子"
 queue_too_long_text = "当前排队过长，请稍后再试"
 unknown_error_text = "未知错误"
 generation_outdated_error_text = "生成参数已过期"
-publish_success_text = "发布成功，稍后将显示在画廊"
+publish_success_text = "🥰发布成功，稍后将显示在画廊"
 publish_fail_text = "发布失败，请稍后再试"
-too_frequent_error_text = "操作频率过于频繁，请稍后再试"
+too_frequent_error_text = "操作频率过于频繁，请稍后再试😊"
 not_login_error_text = "请先在“账户”页面登录或注册"
-share_too_low="您的分享值过低，生成频率被限制，本次任务提交失败"
-upload_img_fail="上传图像失败，请确认图像无不良内容后再上传"
+share_too_low="您的分享值过低，还请多分享您的作品😊"
+upload_img_fail="上传图像失败，请确认图像无不良内容后再上传😊"
 upload_img_submit="正在上传，请稍候……"
 img2img_param_error = "图像引导参数错误，请修改后重试"
+has_published_text = "图像已发布"
 
 css = """
 .footer {

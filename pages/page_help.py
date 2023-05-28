@@ -4,13 +4,7 @@ from pywebio.pin import put_input,pin
 
 from utils.constants import header_html_help,css
 from data import RClient
-def submit_img_to_check():
-    try:
-        session.local.rclient.add_check_image(pin['img_url'])
-        toast("提交成功")
-        pin['img_url'] = ""
-    except:
-        toast("未知错误，请联系管理员")
+
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_help():
@@ -109,13 +103,25 @@ _easy_negative_, _bad_prompt_, _bad_prompt_version2_, _bad_hand_, _bad_artist_, 
 
 附加模型：
 
-- [LORA-KoreanDollLikeness](https://civitai.com/models/7448/korean-doll-likeness): 擅长绘制韩国明星风格的人像。
-- [LORA-国风汉服少女](https://www.bilibili.com/read/cv21493779): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女模型。
-- [LORA-国风汉服少女仿明风格](https://www.bilibili.com/read/cv21681512): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿明风格模型。
-- [LORA-国风汉服少女仿宋风格](https://www.bilibili.com/read/cv21926093): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿宋风格模型。
-- [LORA-墨心 & 疏可走马](https://civitai.com/models/12597/moxin): simhuang制作的水墨风lora。
-- [LORA-线稿风格](https://civitai.com/models/16014/anime-lineart-manga-like-style): 配合提示词lineart, monochrome，绘制线稿、漫画风图像。
-- [LORA-立绘风格](https://civitai.com/models/13090/gacha-splash-lora): 立绘风格Lora，效果很酷。 
+- [LoRA-KoreanDollLikeness](https://civitai.com/models/7448/korean-doll-likeness): 擅长绘制韩国明星风格的人像。
+- [LoRA-国风汉服少女](https://www.bilibili.com/read/cv21493779): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女模型。
+- [LoRA-国风汉服少女仿明风格](https://www.bilibili.com/read/cv21681512): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿明风格模型。
+- [LoRA-国风汉服少女仿宋风格](https://www.bilibili.com/read/cv21926093): B站up[@K43](https://space.bilibili.com/51049)制作的汉服少女仿宋风格模型。
+- [LoRA-墨心 & 疏可走马](https://civitai.com/models/12597/moxin): simhuang制作的水墨风lora。
+- [LoRA-线稿风格](https://civitai.com/models/16014/anime-lineart-manga-like-style): 配合提示词lineart, monochrome，绘制线稿、漫画风图像。
+- [LoRA-立绘风格](https://civitai.com/models/13090/gacha-splash-lora): 立绘风格Lora，效果很酷。 
+- [LoRA-细节调整] https://civitai.com/models/58390?modelVersionId=62833)
+- [LoRA-CLAMP风格]](https://civitai.com/models/76069/clamp-style-lora)
+- [LoRA-Hamao风格](https://civitai.com/models/76790/hamao-style-lora)
+- [LoRA-LAM风格](https://civitai.com/models/69673/lam-ramdayo-style-lora)
+- [LoRA-《无职转生》风格](https://civitai.com/models/62950/mushoku-tensei-jobless-reincarnation-anime-style-lora)
+- [LoRA-《龙珠超》风格](https://civitai.com/models/59619/dragon-ball-super-style-lora)
+- [LoRA-《鬼灭之刃》风格](https://civitai.com/models/21272/demon-slayer-kimetsu-no-yaiba-anime-style-lora)
+- [LoRA-新海诚风格](https://civitai.com/models/10626/makoto-shinkai-your-name-substyles-style-lora)
+- [LoRA-派蒙的画作风格](https://civitai.com/models/26291/paimons-paintings-style-genshin-impact-stickers)
+- [LoRA-沁彩](https://civitai.com/models/16055/colorwater)
+- [LoRA-小人书风格](https://civitai.com/models/18323?modelVersionId=25661)
+
 
 ### 2. 图像引导生成
 

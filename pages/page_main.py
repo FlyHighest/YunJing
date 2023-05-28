@@ -1,6 +1,8 @@
 import time, os,nanoid,string
 from functools import partial
-
+import httpx,traceback
+import random 
+import json,hashlib
 from pywebio import config, session
 from pywebio.output import *
 from pywebio.pin import *
@@ -10,10 +12,124 @@ from utils.custom_exception import *
 from data import RClient
 
 from utils.constants import *
-from utils import (task_post_enhance_prompt, task_post_image_gen,
+from utils import (task_post_enhance_prompt,
                            task_post_upscale, task_publish_to_gallery)
-from utils import gpt_image_describe
+from utils import gpt_image_describe,generate_image
 from utils import  get_username,put_column_autosize,upload_to_storage,put_row_autosize,get_presigned_url_tencent
+from utils import MODEL_NAMES, LoRA_INFO
+
+def convert_int(s):
+    try:
+        return int(s)
+    except:
+        return -1
+
+def check_i2i_param(denoising_strength, img_url):
+    try:
+        assert 0<=float(denoising_strength)<=1
+        assert len(img_url)>8
+        return True 
+    except:
+        return False 
+
+@use_scope('images', clear=False)
+def task_post_image_gen(callback):
+    clear()
+    session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",true)''')
+    try:
+        toast(image_gen_text)
+        with put_loading(shape="border",color="primary"):
+            
+            seed = convert_int(pin['seed'])
+            
+            seed = random.randint(-2**31,2**31-1) if seed==-1 else seed
+
+            # add lora
+            try:
+                assert 0<=float(pin['guidance_scale'])<=50
+            except:
+                pin['guidance_scale'] = 7.0
+
+
+            image_generation_data = {
+                "type":"text2image",
+                "model_name":          MODEL_NAME_MAPPING[pin['model_name']],
+                "extra_model_name":    "None",
+                "scheduler_name":      pin['scheduler_name'],
+                "prompt":              pin['prompt'],
+                "negative_prompt":     pin['negative_prompt'],
+                "height":              int(pin['height']),
+                "width":               int(pin['width']),
+                "num_inference_steps": int(pin['num_inference_steps']),
+                "guidance_scale":      float(pin['guidance_scale']),
+                "seed":                seed,
+                "userid":              str(session.local.client_id),
+                "hiresfix":            pin["hiresfix"]
+            }
+
+            # add img2img params
+            if len(pin["enable_img2img"])>0:
+                i2i_url = pin["img2img-url"]
+                i2i_preprocess = pin["i2i-preprocess"]
+                i2i_model = pin["i2i-model"]
+                i2i_guidance_strength = pin['i2i-strength']
+                if not check_i2i_param(i2i_guidance_strength, i2i_url):
+                    raise Img2imgParamError
+
+                image_generation_data['i2i_url']=i2i_url
+                image_generation_data['i2i_preprocess']=i2i_preprocess
+                image_generation_data['i2i_model']=i2i_model
+                image_generation_data['i2i_guidance_strength']=i2i_guidance_strength
+                image_generation_data['type']="image2image"
+
+
+            image_gen_id = hashlib.sha1(json.dumps(image_generation_data).encode('utf-8')).hexdigest()
+            output_img_url, nsfw, score,face = session.local.rclient.check_genid_in_imagetable(image_gen_id)
+
+            if output_img_url is None:
+                image_generation_data['gen_id'] = image_gen_id
+                output_img_url,nsfw,score,face = generate_image(image_generation_data)
+                session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,image_generation_data,nsfw,score,face)
+
+        # 这里是正常处理
+        
+        output_img_url_signed=get_presigned_url_tencent(output_img_url)
+
+        # 历史记录相关
+
+        if nsfw:
+            put_text(nsfw_warn_text_gen)
+        else:
+            with use_scope('history_images'):
+                session.local.history_image_cnt += 1
+                session.local.rclient.record_history(session.local.client_id,output_img_url,image_gen_id)
+                if  session.local.history_image_cnt > session.local.max_history_bonus:
+                    session.local.history_image_cnt -= 1
+                    session.run_js('''$("#pywebio-scope-history_images img:first-child").remove()''')
+                put_image(output_img_url_signed).onclick(partial(callback, img_url=output_img_url_signed,genid=image_gen_id))
+        
+
+        put_image(output_img_url_signed) # 大图output
+        put_row([
+            put_html(f'<a href="{output_img_url_signed}" content-type="image/webp" download>下载图像</a>'),
+            # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
+            put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
+        ]).style("margin: 5%")
+
+ 
+    except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
+        traceback.print_exc()
+        toast(server_error_text,duration=4,color="warn")
+    except Img2imgParamError as _:
+        toast(img2img_param_error, duration=4,color="warn")
+    except Exception as _:
+        traceback.print_exc()
+        toast(unknown_error_text,duration=4,color="warn")
+    finally:
+        session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",false)''')
+        sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
+        footer_html = "您好，{}！<br>当前分享值{:.2f}%，生成数{}，分享数{}。".format(session.local.username,sharerate,num_gen,num_pub)
+        session.run_js(f'$("footer").html("{footer_html}")')
 
 
 def set_generation_params(generation_id):
@@ -21,7 +137,7 @@ def set_generation_params(generation_id):
     if text2image_data is None:
         toast(generation_outdated_error_text,color="warn",duration=4)
     else:
-        pin.model_name = MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]
+        pin.model_name = text2image_data['model_name']
         pin.scheduler_name = text2image_data["scheduler_name"]
         pin.prompt= text2image_data["prompt"] 
         pin.negative_prompt = text2image_data["negative_prompt"]
@@ -29,9 +145,8 @@ def set_generation_params(generation_id):
         pin.width = str(text2image_data["width"])
         pin.num_inference_steps = str(text2image_data["num_inference_steps"])
         pin.guidance_scale = text2image_data["guidance_scale"]
-        pin.seed = text2image_data["seed"]
-        if 'extra_model_name' in text2image_data:
-            pin.extra_model = text2image_data['extra_model_name']
+        pin.seed = text2image_data["seed"] 
+        pin.hiresfix = text2image_data["hiresfix"] if "hiresfix" in text2image_data else "Off"
 
 def close_popup_and_set_params(generation_id):
     close_popup()
@@ -62,9 +177,9 @@ def show_image_information_window(img_url,genid, fuke_func=None):
 
 
             with use_scope("popup_image_info"):
-                put_text("✅ "+ (text2image_data["prompt"] or "(无提示词)" ) )
-                
-                put_text("❌ "+ (text2image_data["negative_prompt"] or "(无反向提示词)" ) )
+                put_collapse("✅ 提示词",text2image_data["prompt"] or "(无提示词)",open=False)
+                put_collapse("❌ 反向提示词",text2image_data["negative_prompt"] or "(无反向提示词)",open=False)
+
                 put_row([ 
                     put_column(put_select("width_info",label="宽度",options=[text2image_data["width"]],value=text2image_data["width"])),
                     put_column(put_select("height_info",label="高度",options=[text2image_data["height"]],value=text2image_data["height"])),
@@ -75,9 +190,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
                 ]),
                 put_select("model_name_info",label="模型",options=[MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]],value=MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]),
-                if 'extra_model_name' not in text2image_data:
-                    text2image_data['extra_model_name'] = "无"
-                # put_select("extra_model_info",label="附加模型",options=[text2image_data['extra_model_name']],value=text2image_data['extra_model_name']),
+                
                 img_guide_opt = "启用" if text2image_data['type']=="image2image" else "未使用"
                 put_row([
                     put_column(put_input("seed_info",label="随机种子",value=text2image_data["seed"])),
@@ -126,18 +239,16 @@ def load_history():
         session.local.history_image_cnt += 1
 
 def change_prompt_word_sheet(val):
-    model_select = pin['model_name']
+    #model_select = pin['model_name']
     extra_model_select = pin['extra_model']
     pin['prompt'] = EXTRA_MODEL_STRING[extra_model_select] +" "+pin['prompt']
     with use_scope("word_sheet",clear=True):
         content = []
-        if model_select in SPECIAL_WORD:
-            for text in SPECIAL_WORD[model_select]:
-                content.append(put_markdown(text))
-        content.append(put_markdown("----"))
-        if extra_model_select in SPECIAL_WORD:
-            for text in SPECIAL_WORD[extra_model_select]:
-                content.append(put_markdown(text))
+        # if model_select in SPECIAL_WORD:
+        #     for text in SPECIAL_WORD[model_select]:
+        #         content.append(put_markdown(text))
+        # content.append(put_markdown("----"))
+        content.append(put_markdown(LoRA_INFO[extra_model_select]))
         put_collapse("特殊提示词表",content,open=True)
     pin['extra_model'] = "使用附加模型"
 
@@ -269,7 +380,7 @@ def page_main():
             set_cookie("client_id", new_client_id)
         session.local.client_id = get_cookie("client_id")
         toast("请先登录，正在跳转到“账户”页面 ...")
-        time.sleep(1.5)
+        time.sleep(0.1)
         session.run_js(f'window.open("/account");')
         
     # 设置footer
@@ -277,7 +388,7 @@ def page_main():
     footer_html = "您好，{}！<br>当前分享值{:.2f}%，生成数{}，分享数{}。".format(username,sharerate,num_gen,num_pub)
     session.run_js(f'$("footer").html("{footer_html}")')
 
-    session.local.last_task_time = time.time() - 3
+    # session.local.last_task_time = time.time() - 3
     
     if not session.local.client_id.startswith("@"):
         config = session.local.rclient.get_user_config(session.local.client_id)
@@ -301,9 +412,9 @@ def page_main():
     
 
     with use_scope('input'):
-        put_select("model_name",label="模型",options=MODELS,value=MODELS[0])
+        put_select("model_name",label="模型",options=MODEL_NAMES,value='YunJingAnime-v1')
         pin_on_change("model_name",onchange=change_prompt_word_sheet)
-        put_select("extra_model",label="附加模型",options=EXTRA_MODEL_LIST,value="使用附加模型")
+        put_select("extra_model",label="附加模型",options=list(LoRA_INFO.keys()),value="使用附加模型")
         pin_on_change("extra_model",onchange=change_prompt_word_sheet)
 
         prompt_templates = list(prompt_template.keys())

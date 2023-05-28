@@ -13,7 +13,7 @@ from utils.constants import *
 from utils import task_post_upscale
 from utils import get_username,get_presigned_url_tencent
 
-from search import query_recent_images,query_by_input
+# from search import query_recent_images,query_by_input
 import numpy as np 
 @use_scope("popup_likes",clear=True)
 def popup_cancel_like(userid, genid):
@@ -182,7 +182,7 @@ def reset_flow():
 
 def get_search_images_on_gallery():
     reset_flow()
-    session.local.image_list = query_by_input(pin['search_prompt'],pin['search_model'],pin['search_user'])
+    session.local.image_list = []# query_by_input(pin['search_prompt'],pin['search_model'],pin['search_user'])
     toast(f"搜索到{len(session.local.image_list)}张图像",duration=2)
     
     load_more_images_on_gallery(0)
@@ -244,21 +244,21 @@ def page_gallery():
     # put_row([ 
     #         put_column(put_markdown('## 云景 · 画廊')),
     #     ])
-    put_scope("search_scope")
-    with use_scope("search_scope"):
-        put_row([
-            put_column(
-                put_textarea("search_prompt",label="",placeholder="请输入关键词",rows=1),
-            ),
-        ])
-        put_row([
-            put_column(put_select("search_model",label="",options=["模型: 任意"]+MODELS,value="模型: 任意")),
-            put_column(put_textarea("search_user",label="",placeholder="作者",rows=1)),
-            put_column(put_button(label="搜索",onclick=get_search_images_on_gallery))
-        ])
+    # put_scope("search_scope")
+    # with use_scope("search_scope"):
+    #     put_row([
+    #         put_column(
+    #             put_textarea("search_prompt",label="",placeholder="请输入关键词",rows=1),
+    #         ),
+    #     ])
+    #     put_row([
+    #         put_column(put_select("search_model",label="",options=["模型: 任意"]+MODELS,value="模型: 任意")),
+    #         put_column(put_textarea("search_user",label="",placeholder="作者",rows=1)),
+    #         put_column(put_button(label="搜索",onclick=get_search_images_on_gallery))
+    #     ])
 
     put_scope("image_flow")
     reset_flow()
-    session.local.image_list = query_recent_images()
+    session.local.image_list = session.local.rclient.query_best_images()
     # random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)

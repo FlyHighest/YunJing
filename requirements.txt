@@ -9,3 +9,4 @@ cryptography
 tencentcloud-sdk-python
 tencentcloud-sdk-python-ses 
 cos-python-sdk-v5
+pillow
