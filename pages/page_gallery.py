@@ -121,7 +121,8 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_column(put_select("num_inference_steps_info",label="推理步骤",options=[text2image_data["num_inference_steps"]],value=text2image_data["num_inference_steps"])),
                     put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
                 ]),
-                put_select("model_name_info",label="模型",options=[MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]],value=MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]),
+                put_select("model_name_info",label="模型",options=[text2image_data['model_name']],value=text2image_data['model_name']),
+
                 if 'extra_model_name' not in text2image_data:
                     text2image_data['extra_model_name'] = "无"
                 # put_select("extra_model_info",label="附加模型",options=[text2image_data['extra_model_name']],value=text2image_data['extra_model_name']),
@@ -150,7 +151,7 @@ def load_more_images_on_gallery(val=None):
     if len(images) > 0:
         for img_info in images:
 
-            img_url = img_info["image"]
+            img_url = img_info["image_url"]
             height=img_info["height"]
             width = img_info['width']
             username=img_info['username']  

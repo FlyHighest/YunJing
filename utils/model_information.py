@@ -87,7 +87,7 @@ LoRA_list.append(
 LoRA_INFO = dict()
 
 for card in LoRA_list:
-    LoRA_INFO[card.name] = str(card) 
+    LoRA_INFO[card.name] = card
 
 
 MODEL_NAMES = \

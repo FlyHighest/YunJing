@@ -8,12 +8,10 @@ import httpx,re,json
 from secret import *
 import os 
 import time
-from peewee import fn, IntegrityError
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
-EXP_7DAYS = 7*24*60*60
 
-from .data_models import mysql_db, User,Image,Likes,Histories
+# from .data_models import mysql_db, User,Image,Likes,Histories
 
 
 
@@ -21,8 +19,7 @@ class RClient:
 
     def __init__(self) -> None:
         self.r = redis.Redis("localhost", 6379, decode_responses=True)
-        self.mysql_db = mysql_db 
-        self.mysql_db.connect()
+
         if not self.r.exists("max_userid"):
             self.r.set("max_userid",10000)
 
@@ -32,11 +29,11 @@ class RClient:
         random.shuffle(genids)
         results = []
         for genid in genids:
-            image,height,width,username=self.r.hmget(f"image:{genid}",["image","height","width","username"])
+            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","username"])
             results.append({
-                "image": image,
-                "height": height,
-                "width": width,
+                "image_url": image_url,
+                "height": int(height),
+                "width": int(width),
                 "username": username,
                 "genid": genid
             })
@@ -91,7 +88,7 @@ class RClient:
     
     def get_gallery_number(self):
         try:
-            return Image.select().where(Image.published==True).count()
+            return self.r.get("status_gallery_num")
             
         except:
             return 0
@@ -168,12 +165,13 @@ class RClient:
                     userid=userid,
                     nsfw=int(nsfw),
                     score=float(score),
-                    face=int(face)
+                    face=int(face),
+                    gentime=time.strftime("%Y-%m-%d %H:%M:%S")
                 )
             self.r.hset(f"image:{gen_id}",mapping=data_mapping)
             num_generated = int(self.r.hget(f"user:{userid}","num_generated"))  
             self.r.hset(f"user:{userid}","num_generated",num_generated+1)
-        except IntegrityError:
+        except:
             pass
         
     def mark_as_nsfw(self,genid):
@@ -198,9 +196,14 @@ class RClient:
 
     def check_genid_in_imagetable(self,genid):
         try:
-            return self.r.exists(f"image:{genid}")
+            if self.r.exists(f"image:{genid}"):
+                imgurl,nsfw= self.r.hmget(f"image:{genid}",["imgurl","nsfw"])
+                nsfw = True if nsfw=="1" else False 
+                return imgurl, nsfw
+            else:
+                return None, None
         except:
-            return None, None,None,None
+            return None, None
 
 
     def get_image_information(self, generation_id=None):
@@ -209,7 +212,7 @@ class RClient:
             ret = json.loads(image_record["params"])
             ret["gentime"] = str(image_record["gentime"])
             userid = image_record["userid"]
-            ret["user"] = self.r.hget(f"user:{userid}","name")
+            ret["user"] = self.r.hget(f"user:{userid}","username")
             ret["userid"] = userid 
             ret['published'] = image_record["published"] # TODO: possibly unused
             return ret 
@@ -303,7 +306,7 @@ class RClient:
 
     def get_userid(self, username):
         try:
-            return str(User.get(User.username==username).userid)
+            return self.r.get(f"userid:{username}")
         except:
             return None
 

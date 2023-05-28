@@ -64,42 +64,37 @@ SPECIAL_WORD = {
 
 
 
-        
+      
 
-
-
-
-MODEL_NAME_MAPPING_REVERSE = {v:k for k,v in MODEL_NAME_MAPPING.items()}
-MODEL_NAME_MAPPING_REVERSE["Anything-v3"]="Anything-v3"
-MODEL_NAME_MAPPING_REVERSE["GF2+3"]="国风GuoFeng-v2"
-
-SCHEDULERS = [
-    "Euler a",
-    "Euler",
-    "LMS",
-    "Heun",
-    "DPM2",
-    "DPM2 a",
-    "DPM++ 2S a",
-    "DPM++ 2M",
-    "DPM++ SDE",
-    "DPM fast",
-    "DPM adaptive",
-    "LMS Karras",
-    "DPM2 Karras",
-    "DPM2 a Karras",
-    "DPM++ 2S a Karras",
-    "DPM++ 2M Karras",
-    "DPM++ SDE Karras",
-    "DDIM",
-    "PLMS"
-]
+SCHEDULERS = ["Euler a", "Euler", "LMS", "Heun", "DPM2", "DPM2 a", "DPM++ 2S a", "DPM++ 2M", "DPM++ SDE", "DPM++ 2M SDE", "DPM fast", "DPM adaptive", "LMS Karras", "DPM2 Karras", "DPM2 a Karras", "DPM++ 2S a Karras", "DPM++ 2M Karras", "DPM++ SDE Karras", "DPM++ 2M SDE Karras", "DDIM", "PLMS", "UniPC"]
+# [
+#     "Euler a",
+#     "Euler",
+#     "LMS",
+#     "Heun",
+#     "DPM2",
+#     "DPM2 a",
+#     "DPM++ 2S a",
+#     "DPM++ 2M",
+#     "DPM++ SDE",
+#     "DPM fast",
+#     "DPM adaptive",
+#     "LMS Karras",
+#     "DPM2 Karras",
+#     "DPM2 a Karras",
+#     "DPM++ 2S a Karras",
+#     "DPM++ 2M Karras",
+#     "DPM++ SDE Karras",
+#     "DDIM",
+#     "PLMS"
+# ]
 
 MAX_HISTORY = 10
 MAX_QUEUE = 10
 IMAGE_NUM_PER_LOAD = 20
 IMAGE_NUM_PER_ROW = 5
-image_gen_text = "正在生成，请稍后🎁"
+image_gen_text = "正在生成，请稍后"
+image_gen_emoji = "🎉🎁😉😊🍇🍉🥂🍎🍒🍓🎂🍺"
 server_error_text = "模型服务错误，请稍后再试😭"
 nsfw_warn_text_publish = "检测到不适宜内容，人工审核后发布"
 nsfw_warn_text_gen = "图像可能含有不适宜工作场所观看的内容，请更换提示词或随机种子"

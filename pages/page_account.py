@@ -492,7 +492,6 @@ def page_account():
     put_scope("login").style("text-align:center")
     put_scope("options").style("text-align:center")
     put_scope("userconfig")
-    put_scope("check").style("text-align:center")
     if not username:
         with use_scope("options"):
             put_button("已有账号，点击登录",outline=True,onclick=show_login)
@@ -547,20 +546,3 @@ def page_account():
 
         with use_scope("options"):
             clear()
-
-        with use_scope("check"):
-            user_level = session.local.rclient.get_user_level(session.local.client_id)
-            if user_level==6:
-                
-                while True:
-                    genid = session.local.rclient.get_check_image()
-                    if genid is None:
-                        break 
-                    check_img = session.local.rclient.get_imgurl_by_id(genid)
-                    put_image(check_img)
-                    res_sfw = radio("Safe for work?",options=["SFW","NSFW"])
-                    if res_sfw=="SFW":
-                        session.local.rclient.record_publish(genid)
-                        toast("已发布")
-                    clear()
-                put_text("审核队列为空")

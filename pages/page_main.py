@@ -37,7 +37,7 @@ def task_post_image_gen(callback):
     clear()
     session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",true)''')
     try:
-        toast(image_gen_text)
+        toast(image_gen_text+random.choice(image_gen_emoji))
         with put_loading(shape="border",color="primary"):
             
             seed = convert_int(pin['seed'])
@@ -53,7 +53,7 @@ def task_post_image_gen(callback):
 
             image_generation_data = {
                 "type":"text2image",
-                "model_name":          MODEL_NAME_MAPPING[pin['model_name']],
+                "model_name":          pin['model_name'],
                 "extra_model_name":    "None",
                 "scheduler_name":      pin['scheduler_name'],
                 "prompt":              pin['prompt'],
@@ -84,8 +84,7 @@ def task_post_image_gen(callback):
 
 
             image_gen_id = hashlib.sha1(json.dumps(image_generation_data).encode('utf-8')).hexdigest()
-            output_img_url, nsfw, score,face = session.local.rclient.check_genid_in_imagetable(image_gen_id)
-
+            output_img_url, nsfw = session.local.rclient.check_genid_in_imagetable(image_gen_id)
             if output_img_url is None:
                 image_generation_data['gen_id'] = image_gen_id
                 output_img_url,nsfw,score,face = generate_image(image_generation_data)
@@ -189,7 +188,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_column(put_select("num_inference_steps_info",label="推理步骤",options=[text2image_data["num_inference_steps"]],value=text2image_data["num_inference_steps"])),
                     put_column(put_select("scheduler_name_info",label="采样器",options=[text2image_data["scheduler_name"]],value=text2image_data["scheduler_name"])),
                 ]),
-                put_select("model_name_info",label="模型",options=[MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]],value=MODEL_NAME_MAPPING_REVERSE[text2image_data['model_name']]),
+                put_select("model_name_info",label="模型",options=[text2image_data['model_name']],value=text2image_data['model_name']),
                 
                 img_guide_opt = "启用" if text2image_data['type']=="image2image" else "未使用"
                 put_row([
@@ -239,18 +238,19 @@ def load_history():
         session.local.history_image_cnt += 1
 
 def change_prompt_word_sheet(val):
-    #model_select = pin['model_name']
-    extra_model_select = pin['extra_model']
-    pin['prompt'] = EXTRA_MODEL_STRING[extra_model_select] +" "+pin['prompt']
-    with use_scope("word_sheet",clear=True):
-        content = []
-        # if model_select in SPECIAL_WORD:
-        #     for text in SPECIAL_WORD[model_select]:
-        #         content.append(put_markdown(text))
-        # content.append(put_markdown("----"))
-        content.append(put_markdown(LoRA_INFO[extra_model_select]))
-        put_collapse("特殊提示词表",content,open=True)
-    pin['extra_model'] = "使用附加模型"
+    if val in LoRA_INFO:
+        #model_select = pin['model_name']
+        extra_model_select = pin['extra_model']
+        # pin['prompt'] = LoRA_INFO[extra_model_select].command +" "+pin['prompt']
+        with use_scope("word_sheet",clear=True):
+            content = []
+            # if model_select in SPECIAL_WORD:
+            #     for text in SPECIAL_WORD[model_select]:
+            #         content.append(put_markdown(text))
+            # content.append(put_markdown("----"))
+            content.append(put_markdown(str(LoRA_INFO[extra_model_select])))
+            put_collapse("特殊提示词表",content,open=True)
+        # pin['extra_model'] = "使用附加模型"
 
 
 
@@ -379,8 +379,8 @@ def page_main():
             new_client_id = session.local.rclient.get_new_client_id()
             set_cookie("client_id", new_client_id)
         session.local.client_id = get_cookie("client_id")
-        toast("请先登录，正在跳转到“账户”页面 ...")
-        time.sleep(0.1)
+        toast("请先登录，即将跳转到“账户”页面")
+        time.sleep(0.5)
         session.run_js(f'window.open("/account");')
         
     # 设置footer
@@ -413,8 +413,8 @@ def page_main():
 
     with use_scope('input'):
         put_select("model_name",label="模型",options=MODEL_NAMES,value='YunJingAnime-v1')
-        pin_on_change("model_name",onchange=change_prompt_word_sheet)
-        put_select("extra_model",label="附加模型",options=list(LoRA_INFO.keys()),value="使用附加模型")
+        # pin_on_change("model_name",onchange=change_prompt_word_sheet)
+        put_select("extra_model",label="附加模型",options=["点选附加模型查看信息"]+list(LoRA_INFO.keys()),value="使用附加模型")
         pin_on_change("extra_model",onchange=change_prompt_word_sheet)
 
         prompt_templates = list(prompt_template.keys())
