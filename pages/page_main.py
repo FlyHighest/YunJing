@@ -108,12 +108,12 @@ def task_post_image_gen(callback):
                 put_image(output_img_url_signed).onclick(partial(callback, img_url=output_img_url_signed,genid=image_gen_id))
         
 
-        put_image(output_img_url_signed) # 大图output
-        put_row([
-            put_html(f'<a href="{output_img_url_signed}" content-type="image/webp" download>下载图像</a>'),
-            # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
-            put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
-        ]).style("margin: 5%")
+            put_image(output_img_url_signed) # 大图output
+            put_row([
+                put_html(f'<a href="{output_img_url_signed}" content-type="image/webp" download>下载图像</a>'),
+                # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
+                put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
+            ]).style("margin: 5%")
 
  
     except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
