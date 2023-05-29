@@ -245,14 +245,14 @@ def show_lora_info_card(val):
         with use_scope("lora_info",clear=True):
             content = []
             content.append(put_markdown(str(LoRA_INFO[val])))
-            put_collapse("附加模型信息",content,open=True)
+            put_collapse("模型介绍",content,open=True)
  
 def show_model_info_card(val):
     if val in Model_INFO:
         with use_scope("model_info",clear=True):
             content = []
             content.append(put_markdown(str(Model_INFO[val])))
-            put_collapse("附加模型信息",content,open=True)
+            put_collapse("附加模型介绍",content,open=True)
  
 
 
