@@ -16,7 +16,7 @@ from utils import (task_post_enhance_prompt,
                            task_post_upscale, task_publish_to_gallery)
 from utils import gpt_image_describe,generate_image
 from utils import  get_username,put_column_autosize,upload_to_storage,put_row_autosize,get_presigned_url_tencent
-from utils import MODEL_NAMES, LoRA_INFO
+from utils import MODEL_NAMES, LoRA_INFO, Model_INFO
 
 def convert_int(s):
     try:
@@ -87,9 +87,12 @@ def task_post_image_gen(callback):
             output_img_url, nsfw = session.local.rclient.check_genid_in_imagetable(image_gen_id)
             if output_img_url is None:
                 image_generation_data['gen_id'] = image_gen_id
-                output_img_url,nsfw,score,face = generate_image(image_generation_data)
-                session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,image_generation_data,nsfw,score,face)
-
+                generate_output =  generate_image(image_generation_data)
+                if generate_output is not None:
+                    output_img_url,nsfw,score,face = generate_output
+                    session.local.rclient.record_new_generated_image(session.local.client_id, output_img_url,image_gen_id,image_generation_data,nsfw,score,face)
+                else:
+                    raise ServerError
         # 这里是正常处理
         
         output_img_url_signed=get_presigned_url_tencent(output_img_url)
@@ -116,7 +119,7 @@ def task_post_image_gen(callback):
             ]).style("margin: 5%")
 
  
-    except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
+    except ServerError as _:
         traceback.print_exc()
         toast(server_error_text,duration=4,color="warn")
     except Img2imgParamError as _:
@@ -237,20 +240,20 @@ def load_history():
         put_image(img_preview).onclick(partial(show_image_information_window,img_url=img_full, genid=genid)) 
         session.local.history_image_cnt += 1
 
-def change_prompt_word_sheet(val):
+def show_lora_info_card(val):
     if val in LoRA_INFO:
-        #model_select = pin['model_name']
-        extra_model_select = pin['extra_model']
-        # pin['prompt'] = LoRA_INFO[extra_model_select].command +" "+pin['prompt']
-        with use_scope("word_sheet",clear=True):
+        with use_scope("lora_info",clear=True):
             content = []
-            # if model_select in SPECIAL_WORD:
-            #     for text in SPECIAL_WORD[model_select]:
-            #         content.append(put_markdown(text))
-            # content.append(put_markdown("----"))
-            content.append(put_markdown(str(LoRA_INFO[extra_model_select])))
-            put_collapse("特殊提示词表",content,open=True)
-        # pin['extra_model'] = "使用附加模型"
+            content.append(put_markdown(str(LoRA_INFO[val])))
+            put_collapse("附加模型信息",content,open=True)
+ 
+def show_model_info_card(val):
+    if val in Model_INFO:
+        with use_scope("model_info",clear=True):
+            content = []
+            content.append(put_markdown(str(Model_INFO[val])))
+            put_collapse("附加模型信息",content,open=True)
+ 
 
 
 
@@ -413,14 +416,15 @@ def page_main():
 
     with use_scope('input'):
         put_select("model_name",label="模型",options=MODEL_NAMES,value='YunJingAnime-v1')
-        # pin_on_change("model_name",onchange=change_prompt_word_sheet)
+        pin_on_change("model_name",onchange=show_model_info_card)
+        put_scope("model_info")
+        show_model_info_card('YunJingAnime-v1')
+
         put_select("extra_model",label="附加模型",options=["点选附加模型查看信息"]+list(LoRA_INFO.keys()),value="使用附加模型")
-        pin_on_change("extra_model",onchange=change_prompt_word_sheet)
+        pin_on_change("extra_model",onchange=show_lora_info_card)
+        put_scope("lora_info")
 
         prompt_templates = list(prompt_template.keys())
-        put_scope("word_sheet")
-
-
         put_select("prompt_template",label="提示词模板",options=prompt_templates,value="请选择模版..."),
         pin_on_change("prompt_template",onchange=fill_prompt_template)
  

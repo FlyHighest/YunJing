@@ -1,3 +1,38 @@
+class ModelInformationCard:
+    def __init__(self, name, short_intro=None, 
+                 link=None,
+                 example_prompt=None,
+                 example_neg_prompt=None,
+                 recommended_settings=None) -> None:
+        self.name = name
+        self.short_intro = short_intro
+        self.link = link 
+        self.example_prompt = example_prompt
+        self.example_neg_prompt = example_neg_prompt
+        if type(recommended_settings)==str:
+            self.recommended_settings = [recommended_settings]
+        else:
+            self.recommended_settings = recommended_settings
+
+    def __repr__(self) -> str:
+        return self.__str__()
+    
+    def __str__(self):
+        markdown_strs = []
+        markdown_strs.append(f"### {self.name}")
+        if self.short_intro is not None:
+            markdown_strs.append(f"{self.short_intro}")
+        if self.link is not None:
+            markdown_strs.append(f"* 模型主页：{self.link}")
+        if self.example_prompt is not None:
+            markdown_strs.append(f"* 提示词推荐：`{self.example_prompt}`")
+        if self.example_prompt is not None:
+            markdown_strs.append(f"* 反向词推荐：`{self.example_neg_prompt}`")
+        if self.recommended_settings is not None:
+            markdown_strs.append(f"* 推荐设置：{';'.join(self.recommended_settings)}")
+
+        return "\n".join(markdown_strs)
+        
 class LoRAInformationCard:
     def __init__(self, name, command, 
                  default_weight=1.0, 
@@ -123,3 +158,18 @@ MODEL_NAMES = \
  'Stable-Diffusion-v2.1',
  'Vintedois-Diffusion-v0.2',
  'YunJingAnime-v1']
+
+Model_list = []
+Model_list.append(
+    ModelInformationCard('A-ZovyaRPGArtistTools-v3',
+                         short_intro="可生成RPG元素，用于电子游戏、桌游、书籍封面等物体或人物形象素材生成。使用推荐提示词画个**火车**！",
+                         link="https://civitai.com/models/8124/a-zovya-rpg-artist-tools",
+                         example_prompt="(an abandoned train ((covered with moss and rust)), lying down under the waterfall), scenery, masterpiece, best quality, high quality, award winning photography, Bokeh, Depth of Field, HDR, bloom, Photorealistic, monochrome, extremely detailed, High Detail, dramatic, volumetric lighting, trending on artstation",
+                         example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=["采样器:DPM++ 2S a Karras"])
+)
+
+Model_INFO = dict()
+
+for card in Model_list:
+    Model_INFO[card.name] = card

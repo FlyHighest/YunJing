@@ -25,3 +25,4 @@ def generate_image(image_generation_data:dict):
         return output_img_url, nsfw, score, face
     else:
         raise ServerError
+    

@@ -4,10 +4,13 @@ import os
 from pywebio.platform.tornado import webio_handler
 from search import SearchHandler
 from pages import page_gallery,page_help,page_index,page_main,page_account
-from secret import server_port
+from secret import server_port,mode
 if __name__ == '__main__':
     reconnect_timeout = 600
-    cdn =  "/statics/html"
+    if mode=="local":
+        cdn = True 
+    else:
+        cdn =  "/statics/html"
     application = tornado.web.Application([
         (r'/favicon.ico()', tornado.web.StaticFileHandler,{"path":os.path.join(os.path.dirname(__file__),"statics/favicon.ico")}),
         ('/', webio_handler(page_index, cdn=cdn,reconnect_timeout=reconnect_timeout)),
