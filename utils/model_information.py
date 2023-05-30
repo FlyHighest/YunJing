@@ -25,16 +25,17 @@ class ModelInformationCard:
         if self.link is not None:
             markdown_strs.append(f"* 模型主页：{self.link}")
         if self.example_prompt is not None:
-            markdown_strs.append(f"* 提示词推荐：`{self.example_prompt}`")
+            markdown_strs.append(f"* 示例-提示词：`{self.example_prompt}`")
         if self.example_prompt is not None:
-            markdown_strs.append(f"* 反向词推荐：`{self.example_neg_prompt}`")
+            markdown_strs.append(f"* 示例-反向词：`{self.example_neg_prompt}`")
         if self.recommended_settings is not None:
             markdown_strs.append(f"* 推荐设置：{';'.join(self.recommended_settings)}")
 
         return "\n".join(markdown_strs)
         
 class LoRAInformationCard:
-    def __init__(self, name, command, 
+    def __init__(self, name, command,
+                 link=None, 
                  default_weight=1.0, 
                  best_fit_model=None, 
                  short_intro=None, 
@@ -46,6 +47,7 @@ class LoRAInformationCard:
         self.best_fit_model = best_fit_model
         self.short_intro = short_intro
         self.trigger_words = trigger_words
+        self.link = link
         if type(additional_words)==str:
             self.additional_words = [additional_words]
         else:
@@ -59,6 +61,8 @@ class LoRAInformationCard:
         markdown_strs.append(f"### {self.name}")
         if self.short_intro is not None:
             markdown_strs.append(f"{self.short_intro}")
+        if self.link is not None:
+            markdown_strs.append(f"* 模型主页：{self.link}")
         markdown_strs.append(f"* 提示词指令：`<lora:{self.command}:{self.default_weight}>`")
         if self.best_fit_model is not None:
             markdown_strs.append(f"* 推荐模型：{self.best_fit_model}")
@@ -81,42 +85,50 @@ LoRA_list.append(
 LoRA_list.append(
     LoRAInformationCard("LoRA-国风汉服少女","hanfugirlv15",
                         short_intro=None,
+                        link="https://www.bilibili.com/read/cv21493779",
                         default_weight=0.66,best_fit_model="AsiaFacemix",
                         trigger_words=["hanfugirl,hanfu"])
 )
 LoRA_list.append(
     LoRAInformationCard("LoRA-国风汉服少女仿明风格","hanfu2ming",
                         short_intro=None,
+                        link="https://www.bilibili.com/read/cv21681512",
                         default_weight=0.66,best_fit_model="AsiaFacemix",
                         trigger_words=["duijin","ouqun","yunjian"],additional_words=["girlface"])
 )
 LoRA_list.append(
     LoRAInformationCard("LoRA-国风汉服少女仿宋风格","hanfu2song",
                         short_intro=None,
+                        link="https://www.bilibili.com/read/cv21926093",
                         default_weight=0.66,best_fit_model="AsiaFacemix",
                         trigger_words=["songmo"])
 )
 LoRA_list.append(
     LoRAInformationCard("LoRA-墨心","moxin",
                         short_intro="水墨画风，中国画风格",
+                        link="https://civitai.com/models/12597/moxin",
                         default_weight=0.7,best_fit_model=None,
                         trigger_words=["shuimobysim"],additional_words=["wuchangshuo","bonian","zhengbanqiao","badashanren"])
 )
 LoRA_list.append(
     LoRAInformationCard("LoRA-疏可走马","shukezouma",
                         short_intro="增加图像留白面积，配合墨心使用",
+                        link="https://civitai.com/models/12597/moxin",
                         default_weight=0.7,best_fit_model=None,
                         trigger_words=["shukezouma"])
 )
 LoRA_list.append(
     LoRAInformationCard("LoRA-线稿风格","anime_lineart",
+                        link="https://civitai.com/models/16014/anime-lineart-manga-like-style",
                         default_weight=1.0,best_fit_model=None,
                         trigger_words=["lineart, monochrome"])
 )
 LoRA_list.append(
     LoRAInformationCard("LoRA-立绘风格","gacha_splash",
+                        short_intro="立绘风格，效果很酷，建议调高分辨率，开启高清修复",
+                        link="https://civitai.com/models/13090/gacha-splash-lora",
                         default_weight=0.5,best_fit_model=None,
-                        trigger_words=["[(white background:1.5), ::5]"])
+                        trigger_words=["[(white background:1.5), ::5],isometric"])
 )
 
 LoRA_INFO = dict()
@@ -162,13 +174,68 @@ MODEL_NAMES = \
 Model_list = []
 Model_list.append(
     ModelInformationCard('A-ZovyaRPGArtistTools-v3',
-                         short_intro="可生成RPG元素，用于电子游戏、桌游、书籍封面等物体或人物形象素材生成。使用推荐提示词画个**火车**！",
+                         short_intro="可生成RPG元素，用于电子游戏、桌游、书籍封面等物体或人物形象素材生成。🥳使用推荐提示词画个**火车**！",
                          link="https://civitai.com/models/8124/a-zovya-rpg-artist-tools",
                          example_prompt="(an abandoned train ((covered with moss and rust)), lying down under the waterfall), scenery, masterpiece, best quality, high quality, award winning photography, Bokeh, Depth of Field, HDR, bloom, Photorealistic, monochrome, extremely detailed, High Detail, dramatic, volumetric lighting, trending on artstation",
                          example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
-                         recommended_settings=["采样器:DPM++ 2S a Karras"])
+                         recommended_settings=["采样器DPM++ 2S a Karras"])
 )
-
+Model_list.append(
+    ModelInformationCard('ACertainThing',
+                         short_intro="动漫风格，经典模型。",
+                         link="https://civitai.com/models/8124/a-zovya-rpg-artist-tools",
+                         example_prompt="masterpiece, best quality, 1girl, brown hair, green eyes, colorful, autumn, cumulonimbus clouds, lighting, blue sky, falling leaves, garden",
+                         example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('AnyLora',
+                         short_intro="动漫风格，画风和ACertainThing类似。模型作者基于AnyLora训练了许多Lora模型。",
+                         link="https://civitai.com/models/23900/anylora-checkpoint",
+                         example_prompt="masterpiece, best quality, 1girl, brown hair, green eyes, colorful, autumn, cumulonimbus clouds, lighting, blue sky, falling leaves, garden",
+                         example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('Anything-v3.2',
+                         short_intro="动漫风格，经典模型。",
+                         link="https://huggingface.co/cag/anything-v3-1",
+                         example_prompt="masterpiece, best quality, 1girl, brown hair, green eyes, colorful, autumn, cumulonimbus clouds, lighting, blue sky, falling leaves, garden",
+                         example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings="高分辨率生成建议开启高清修复")
+)
+Model_list.append(
+    ModelInformationCard('AsiaFaceMix',
+                         short_intro="擅长绘制亚洲人脸、中国元素内容。可配合汉服lora使用。",
+                         link="https://huggingface.co/dcy/AsiaFacemix/tree/main",
+                         example_prompt="年轻帅小伙的照片，高清，高质量",
+                         example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('ChilloutMixNi',
+                         short_intro="写实风格，能生成好看的人脸。",
+                         link="https://civitai.com/models/6424/chilloutmix",
+                         example_prompt="年轻帅小伙的照片，高清，高质量",
+                         example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('Counterfeit-v2.5',
+                         short_intro="动漫风格，在反向提示词输入`_easy_negative_`可有效提高画面效果",
+                         link="https://huggingface.co/gsdf/Counterfeit-V2.5",
+                         example_prompt="(masterpiece, best quality),1girl, solo, flower, long hair, outdoors, letterboxed, school uniform, day, sky, looking up, short sleeves, parted lips, shirt, cloud, black hair, sunlight, white shirt, serafuku, upper body, from side, pink flower, blurry, brown hair, blue sky, depth of field",
+                         example_neg_prompt=" _easy_negative_, extra fingers,fewer fingers,disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('Counterfeit-v3',
+                         short_intro="动漫风格，在反向提示词输入`_easy_negative_v2_`可有效提高画面效果",
+                         link="https://huggingface.co/gsdf/Counterfeit-V3.0",
+                         example_prompt="(masterpiece, best quality),1girl, solo, flower, long hair, outdoors, letterboxed, school uniform, day, sky, looking up, short sleeves, parted lips, shirt, cloud, black hair, sunlight, white shirt, serafuku, upper body, from side, pink flower, blurry, brown hair, blue sky, depth of field",
+                         example_neg_prompt=" _easy_negative_v2_, extra fingers,fewer fingers,disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
 Model_INFO = dict()
 
 for card in Model_list:
