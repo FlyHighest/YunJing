@@ -89,7 +89,9 @@ def task_post_upscale(scope, img_url):
             with put_loading():
                 upscale_data = {
                         "type":"upscale",
-                        "img_url": img_url
+                        "img_url": img_url,
+                        "up_scale":2,
+                        "up_type":"anime"
                     }
 
                 post_data = json.dumps(upscale_data)
