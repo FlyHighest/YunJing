@@ -174,7 +174,7 @@ MODEL_NAMES = \
 Model_list = []
 Model_list.append(
     ModelInformationCard('A-ZovyaRPGArtistTools-v3',
-                         short_intro="可生成RPG元素，用于电子游戏、桌游、书籍封面等物体或人物形象素材生成。🥳使用推荐提示词画个**火车**！",
+                         short_intro="可生成RPG元素，用于电子游戏、桌游、书籍封面等物体或人物形象素材生成。🥳使用推荐提示词画一辆**火车**！",
                          link="https://civitai.com/models/8124/a-zovya-rpg-artist-tools",
                          example_prompt="(an abandoned train ((covered with moss and rust)), lying down under the waterfall), scenery, masterpiece, best quality, high quality, award winning photography, Bokeh, Depth of Field, HDR, bloom, Photorealistic, monochrome, extremely detailed, High Detail, dramatic, volumetric lighting, trending on artstation",
                          example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
@@ -234,6 +234,14 @@ Model_list.append(
                          link="https://huggingface.co/gsdf/Counterfeit-V3.0",
                          example_prompt="(masterpiece, best quality),1girl, solo, flower, long hair, outdoors, letterboxed, school uniform, day, sky, looking up, short sleeves, parted lips, shirt, cloud, black hair, sunlight, white shirt, serafuku, upper body, from side, pink flower, blurry, brown hair, blue sky, depth of field",
                          example_neg_prompt=" _easy_negative_v2_, extra fingers,fewer fingers,disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('Deliberate-v2',
+                         short_intro="通用模型，相比SD1.5质量提升显著。🥳使用推荐提示词画一只**猫咪**！",
+                         link="https://civitai.com/models/4823/deliberate",
+                         example_prompt="a cute kitten, hdr, intricate details, hyperdetailed, cinematic shot, vignette, centered",
+                         example_neg_prompt="(deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, (mutated hands and fingers:1.4), disconnected limbs, mutation, mutated, ugly, disgusting, blurry, amputation, flowers, human, man, woman",
                          recommended_settings=None)
 )
 Model_INFO = dict()

@@ -39,6 +39,19 @@ class RClient:
             })
         return results
 
+    def query_user_images(self,username):
+        userid = self.r.get(f"userid:{username}")
+        genids = self.r.zrange(f"gallery:userid:{userid}",-1000,1000)
+        results = []
+        for genid in genids:
+            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","username"])
+            results.append({
+                "image_url": image_url,
+                "height": int(height),
+                "width": int(width),
+                "username": username,
+                "genid": genid
+            })
 
     def set_generation_lock(self,userid, cd=10):
         self.r.set(f"lock:gen:{userid}",1,ex=cd)

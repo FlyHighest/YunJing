@@ -260,6 +260,11 @@ def page_gallery():
 
     put_scope("image_flow")
     reset_flow()
-    session.local.image_list = session.local.rclient.query_best_images()
+
+    param_username = get_query("username")
+    if param_username is not None:
+        session.local.image_list = session.local.rclient.query_user_images(param_username)
+    else:
+        session.local.image_list = session.local.rclient.query_best_images()
     # random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)
