@@ -52,6 +52,7 @@ class RClient:
                 "username": username,
                 "genid": genid
             })
+        return results
 
     def set_generation_lock(self,userid, cd=10):
         self.r.set(f"lock:gen:{userid}",1,ex=cd)
