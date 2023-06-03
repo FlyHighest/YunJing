@@ -82,25 +82,26 @@ def task_post_enhance_prompt():
     
               
 
-def task_post_upscale(scope, img_url, genid):
+def task_post_upscale(scope, img_url, genid, factor=2):
     with use_scope(scope):
         try:
             with put_loading():
-                upscale_data = {
-                        "type":"upscale",
-                        "img_url": img_url,
-                        "up_factor":2,
-                        "up_type":"anime"
-                    }
+                output_img_url = session.local.rclient.get_upscale_url(genid,factor)
+                if output_img_url is None:
+                    upscale_data = {
+                            "type":"upscale",
+                            "img_url": img_url,
+                            "up_factor":factor,
+                            "up_type":"anime"
+                        }
 
-                output_img_url=upscale_image(upscale_data=upscale_data)
-                
+                    output_img_url=upscale_image(upscale_data=upscale_data)
+                    
                 output_img_url_presigned = get_presigned_url_tencent(output_img_url)
-                print(output_img_url_presigned)
-                put_html(f'<a href="{output_img_url_presigned}" content-type="image/webp" download>点击下载高清图像</a>'),
+                put_html(f'<a href="{output_img_url_presigned}" content-type="image/webp" download>点击下载高清图像(x{factor})</a>'),
 
                 # put_link('高清图片链接',url=output_img_url_presigned,new_window=True)
-                session.local.rclient.record_upscale_task(genid,output_img_url)
+                session.local.rclient.record_upscale_task(genid,output_img_url,factor)
         except ServerError as _:
             toast(server_error_text,   duration=4,color="warn")
         except QueueTooLong as _:

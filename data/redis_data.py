@@ -129,10 +129,18 @@ class RClient:
         return img_url_and_genid
 
 
-    def record_upscale_task(self,genid,img_url):
+    def record_upscale_task(self,genid,img_url,factor):
         self.status_add_upscale_num()
-        self.r.hset(f"image:{genid}","upx2",img_url)
-
+        if factor==2:
+            self.r.hset(f"image:{genid}","upx2",img_url)
+        elif factor==4:
+            self.r.hset(f"image:{genid}","upx4",img_url)
+        
+    def get_upscale_url(self,genid,factor=2):
+        if factor==2:
+            return self.r.hget(f"image:{genid}","upx2")
+        elif factor==4:
+            return self.r.hget(f"image:{genid}","upx4")
 
 
     # mosec服务器队列情况
