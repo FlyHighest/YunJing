@@ -114,7 +114,7 @@ def task_post_image_gen(callback):
             put_image(output_img_url_signed) # 大图output
             put_row([
                 put_html(f'<a href="{output_img_url_signed}" content-type="image/webp" download>下载图像</a>'),
-                put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url)),
+                put_button("获取高清图(x2)",color="info", onclick=partial(task_post_upscale, scope="images",img_url=output_img_url_signed,genid=image_gen_id)),
                 put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=image_gen_id))
             ]).style("margin: 5%")
 
@@ -173,6 +173,8 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     put_button("复刻这张图", color="info", onclick=partial(close_popup_and_set_params, generation_id=generation_id)),
                     put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery, scope="popup_image_disp", genid= genid)),
                     # put_button("获取高清图",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp", img_url=img_url)),
+                    put_button("获取高清图(x2)",color="info", onclick=partial(task_post_upscale, scope="popup_image_disp",img_url=img_url,genid=genid)),
+
                     put_button("删除这张图",color="danger",onclick=partial(del_from_history,genid=genid))
                 ]).style("margin: 3%; text-align: center")
                 

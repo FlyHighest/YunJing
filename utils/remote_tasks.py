@@ -14,7 +14,7 @@ from .custom_exception import *
 from secret import MODEL_URL
 from .storage_tool import get_presigned_url_tencent
 from .constants import *
-from .mosec_api import generate_image
+from .mosec_api import generate_image,upscale_image
 
 def before_post():
     if session.local.client_id.startswith("@"):
@@ -82,34 +82,25 @@ def task_post_enhance_prompt():
     
               
 
-def task_post_upscale(scope, img_url):
+def task_post_upscale(scope, img_url, genid):
     with use_scope(scope):
         try:
-
             with put_loading():
                 upscale_data = {
                         "type":"upscale",
                         "img_url": img_url,
-                        "up_scale":2,
+                        "up_factor":2,
                         "up_type":"anime"
                     }
 
-                post_data = json.dumps(upscale_data)
-                prediction = httpx.post(
-                    MODEL_URL,
-                    data=post_data,
-                    timeout=180000
-                )
-                if prediction.status_code == 200:
-                    output_img_url = json.loads(prediction.content)['img_url']
-                    if output_img_url =="Error":
-                        raise ServerError
-                else:
-                    raise ServerError
-                output_img_url = output_img_url
+                output_img_url=upscale_image(upscale_data=upscale_data)
+                
+                output_img_url_presigned = get_presigned_url_tencent(output_img_url)
+                print(output_img_url_presigned)
+                put_html(f'<a href="{output_img_url_presigned}" content-type="image/webp" download>点击下载高清图像</a>'),
 
-                put_link('高清图片链接',url=output_img_url,new_window=True)
-                session.local.rclient.record_upscale_task()
+                # put_link('高清图片链接',url=output_img_url_presigned,new_window=True)
+                session.local.rclient.record_upscale_task(genid,output_img_url)
         except ServerError as _:
             toast(server_error_text,   duration=4,color="warn")
         except QueueTooLong as _:

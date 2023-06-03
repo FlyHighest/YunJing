@@ -8,7 +8,7 @@ from utils.constants import css,header_html_index
 
 @use_scope("current_server_status",clear=True)
 def show_server_status():
-    generated_num, upscale_num, gallery_num = session.local.rclient.get_server_status()
+    generated_num, upscale_num, gallery_num = session.local.rclient.status_get_all()
     put_markdown(f" \
 - 已生成图像数：{generated_num} \n\
 - 超分辨率次数：{upscale_num} \n\

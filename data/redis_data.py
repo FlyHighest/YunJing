@@ -54,6 +54,7 @@ class RClient:
             })
         return results
 
+    # cd 功能相关
     def set_generation_lock(self,userid, cd=10):
         self.r.set(f"lock:gen:{userid}",1,ex=cd)
     
@@ -64,51 +65,77 @@ class RClient:
         self.r.delete(f"lock:gen:{userid}")
 
 
-    # 整体统计
-    def get_server_status(self):
+    # status 相关
+    def status_get_all(self):
         # 排队任务数
         # queue_size = self.get_queue_size()
         # 已生成图像数
-        generated_num = self.get_generated_number()
+        generated_num = self.status_get_generated_num()
         # 高清图生成数量
-        upscale_num = self.get_upscale_number()
+        upscale_num = self.status_get_upscale_num()
         # 画廊图像数
-        gallery_num = self.get_gallery_number()
+        gallery_num = self.status_get_gallery_num()
         return  generated_num, upscale_num, gallery_num
 
-    def add_generated_number(self):
+    def status_add_generated_num(self):
         self.r.incr("status_generated_num")
     
-    def get_generated_number(self):
+    def status_get_generated_num(self):
         try:
             return int(self.r.get("status_generated_num"))
         except:
             return 0 
 
-    def add_upscale_number(self):
+    def status_add_upscale_num(self):
         self.r.incr("status_upscale_num")
 
-    def get_upscale_number(self):
+    def status_get_upscale_num(self):
         try:
             return int(self.r.get("status_upscale_num"))
         except:
+            self.r.set("status_upscale_num",0)
             return 0
 
-    def record_upscale_task(self):
-        self.add_upscale_number()
-
-    def add_gallery_number(self):
+    def status_add_gallery_num(self):
         self.r.incr("status_gallery_num")
     
-    def get_gallery_number(self):
+    def status_get_gallery_num(self):
         try:
-            return self.r.get("status_gallery_num")
-            
+            return int(self.r.get("status_gallery_num"))
         except:
+            self.r.set("status_gallery_num",0)
             return 0
 
-    # mosec服务器队列情况
+    def record_history(self, userid, img_url,genid):
+        try:
+            self.r.rpush(f"history:{userid}",json.dumps((img_url,genid)))
+            current_length = self.r.llen(f"history:{userid}")
+            if current_length >510:
+                self.r.lpop(f"history:{userid}",current_length-510)
+        except:
+            traceback.print_exc() 
 
+    def del_history(self,userid,genid):
+        # Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
+        url = self.r.hget(f"image:{genid}","imgurl")
+        ret =self.r.lrem(f"history:{userid}",0,json.dumps((url,genid)))
+        assert ret==1
+
+    def get_history(self, userid, limit=200):
+        if userid.startswith("@"): return []
+        length = self.r.llen(f"history:{userid}")
+
+        img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",length-limit,length-1)]
+        return img_url_and_genid
+
+
+    def record_upscale_task(self,genid,img_url):
+        self.status_add_upscale_num()
+        self.r.hset(f"image:{genid}","upx2",img_url)
+
+
+
+    # mosec服务器队列情况
     def get_queue_size(self):
         try:
             metrics = httpx.get(MODEL_URL.replace("inference","metrics")).content.decode()
@@ -117,8 +144,9 @@ class RClient:
         except:
             return 0 
 
-    # 用户历史记录相关
+
     def get_new_client_id(self):
+        # 仍在使用的函数
         new_client_id = "@"+nanoid.generate(CLIENT_ID_ALPHABET, size=10)
         return new_client_id
 
@@ -157,15 +185,11 @@ class RClient:
             return 100,num_generated,num_published
         return 100*num_published/(num_generated-100),num_generated,num_published
 
-    def record_history(self, userid, img_url,genid):
-        try:
-            self.r.rpush(f"history:{userid}",json.dumps((img_url,genid)))
-        except:
-            pass 
+
 
     def record_new_generated_image(self, userid, img_url,gen_id,text2image_data,nsfw,score,face): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
-        self.add_generated_number()
+        self.status_add_gallery_num()
         try:
             data_mapping = dict(
                     genid=gen_id,
@@ -196,17 +220,6 @@ class RClient:
         # img.save()
         pass 
 
-    def del_history(self,userid,genid):
-        # Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
-        url = self.r.hget(f"image:{genid}","imgurl")
-        self.r.lrem(f"history:{userid}",0,json.dumps((url,genid)))
-
-    def get_history(self, userid, limit=200):
-        if userid.startswith("@"): return []
-        length = self.r.llen(f"history:{userid}")
-
-        img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",length-limit,length-1)]
-        return img_url_and_genid
 
     def check_genid_in_imagetable(self,genid):
         try:
