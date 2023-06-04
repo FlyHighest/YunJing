@@ -143,7 +143,7 @@ MODEL_NAMES = \
  'AnyLora',
  'Anything-v3.2',
  'AsiaFaceMix',
- 'BreakDomainRealistic'
+ 'BreakDomainRealistic',
  'ChilloutMixNi',
  'Counterfeit-v2.5',
  'Counterfeit-v3',
