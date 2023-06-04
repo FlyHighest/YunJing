@@ -379,7 +379,7 @@ class RClient:
 
     def check_published(self,genid):
         try:
-            if self.r.hget(f"image:{genid}","published")=="1":
+            if self.r.zrank("gallery",genid) is not None:
                 return True 
             else:
                 return False
