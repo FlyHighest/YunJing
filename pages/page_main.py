@@ -12,11 +12,45 @@ from utils.custom_exception import *
 from data import RClient
 
 from utils.constants import *
-from utils import (task_post_enhance_prompt,
-                           task_post_upscale, task_publish_to_gallery)
-from utils import gpt_image_describe,generate_image
+from utils import task_post_upscale, task_publish_to_gallery
+from utils import gpt_image_describe,generate_image,prompt_enhance
 from utils import  get_username,put_column_autosize,upload_to_storage,put_row_autosize,get_presigned_url_tencent
 from utils import MODEL_NAMES, LoRA_INFO, Model_INFO
+
+
+def task_post_enhance_prompt(model_type="universal"):
+    session.run_js('''$("#pywebio-scope-input textarea:first").prop("disabled",true)''')
+    try:
+        
+        data ={
+            "type": "enhanceprompt",
+            "starting_text":  pin['prompt'],
+            "model_type": model_type
+        }
+        enhanced_text = prompt_enhance(data)
+        if enhanced_text is not None:
+            pin['prompt'] = enhanced_text
+        else:
+            raise ServerError
+    except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
+        traceback.print_exc()
+        toast(server_error_text,duration=4,color="warn")
+    except QueueTooLong as _:
+        traceback.print_exc()
+        toast(queue_too_long_text, duration=4,color="warn" )
+    except TooFrequent as _:
+        toast(too_frequent_error_text, duration=4,color="warn")
+    except NotLoginError as _:
+        toast(not_login_error_text, duration=4,color="warn")
+    except Exception as _:
+        traceback.print_exc()
+        toast(unknown_error_text,duration=4,color="warn")
+
+    finally:
+        session.run_js('''$("#pywebio-scope-input textarea:first").prop("disabled",false)''')
+
+    
+
 
 def convert_int(s):
     try:
@@ -437,7 +471,8 @@ def page_main():
                 rows=2,
             )
         put_row_autosize([
-            put_button("帮我写(通用)",color="info",onclick=task_post_enhance_prompt),
+            put_button("帮我写(通用)",color="info",onclick=partial(task_post_enhance_prompt,model_type="universal")),
+            put_button("帮我写(动漫)",color="info",onclick=partial(task_post_enhance_prompt,model_type="anime")),
             put_button("帮我写(ChatGPT版)",color="info",onclick=show_chatgpt_window),
         ])
         

@@ -258,7 +258,7 @@ class RClient:
     def record_publish(self,genid):
         try:
             self.r.hset(f"image:{genid}","published",1)
-            self.add_gallery_number()
+            self.status_add_gallery_num()
             userid = self.r.hget(f"image:{genid}","userid")
             num_published = int(self.r.hget(f"user:{userid}","num_published"))  
             self.r.hset(f"user:{userid}","num_published",num_published+1)

@@ -14,7 +14,7 @@ from .custom_exception import *
 from secret import MODEL_URL
 from .storage_tool import get_presigned_url_tencent
 from .constants import *
-from .mosec_api import generate_image,upscale_image
+from .mosec_api import generate_image,upscale_image,prompt_enhance
 
 def before_post():
     if session.local.client_id.startswith("@"):
@@ -40,46 +40,6 @@ def task_publish_to_gallery(scope, genid):
     else:
         toast(publish_fail_text, color="warn")
  
-def task_post_enhance_prompt():
-    session.run_js('''$("#pywebio-scope-input textarea:first").prop("disabled",true)''')
-    try:
-        
-        data ={
-            "type": "enhanceprompt",
-            "starting_text":  pin['prompt'],
-            "model_type": "universal"
-        }
-        post_data = json.dumps(data)
-        prediction = httpx.post(
-            MODEL_URL,
-            data=post_data,
-            timeout=180000
-        )
-        if prediction.status_code == 200:
-            enhanced_text = json.loads(prediction.content)['enhanced_text']
-            pin['prompt'] = enhanced_text
-        else:
-            ret = prediction.content.decode()
-            if ret.startswith("request validation error: "):
-                pin['prompt'] = ret.replace("request validation error: ","")
-    except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
-        traceback.print_exc()
-        toast(server_error_text,duration=4,color="warn")
-    except QueueTooLong as _:
-        traceback.print_exc()
-        toast(queue_too_long_text, duration=4,color="warn" )
-    except TooFrequent as _:
-        toast(too_frequent_error_text, duration=4,color="warn")
-    except NotLoginError as _:
-        toast(not_login_error_text, duration=4,color="warn")
-    except Exception as _:
-        traceback.print_exc()
-        toast(unknown_error_text,duration=4,color="warn")
-
-    finally:
-        session.run_js('''$("#pywebio-scope-input textarea:first").prop("disabled",false)''')
-
-    
               
 
 def task_post_upscale(scope, img_url, genid, factor=2):

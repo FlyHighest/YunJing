@@ -42,3 +42,21 @@ def upscale_image(upscale_data:dict):
     else:
         raise ServerError
     return output_img_url
+
+@api_checker
+def prompt_enhance(enhance_data:dict):
+    post_data = json.dumps(enhance_data)
+    prediction = httpx.post(
+        MODEL_URL,
+        data=post_data,
+        timeout=180000
+    )
+    if prediction.status_code == 200:
+        enhanced_text = json.loads(prediction.content)['enhanced_text']
+        return enhanced_text
+    else:
+        ret = prediction.content.decode()
+        if ret.startswith("request validation error: "):
+            return ret.replace("request validation error: ","")
+        else:
+            return None

@@ -244,6 +244,14 @@ Model_list.append(
                          example_neg_prompt="(deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, (mutated hands and fingers:1.4), disconnected limbs, mutation, mutated, ugly, disgusting, blurry, amputation, flowers, human, man, woman",
                          recommended_settings=None)
 )
+Model_list.append(
+    ModelInformationCard('DreamShaper-v4',
+                         short_intro="通用模型，相比SD1.5质量提升显著。🥳使用推荐提示词画一座**城堡**！",
+                         link="https://civitai.com/models/4384/dreamshaper",
+                         example_prompt="a cute kitten, hdr, intricate details, hyperdetailed, cinematic shot, vignette, centered",
+                         example_neg_prompt="(deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, (mutated hands and fingers:1.4), disconnected limbs, mutation, mutated, ugly, disgusting, blurry, amputation, flowers, human, man, woman",
+                         recommended_settings=None)
+)
 Model_INFO = dict()
 
 for card in Model_list:
