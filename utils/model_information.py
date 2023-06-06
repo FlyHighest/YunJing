@@ -166,6 +166,7 @@ MODEL_NAMES = \
  'ProtoGen-x5.8',
  'RealisticVision-V1.3',
  'RealisticVision-v2',
+ 'ReVAnimated-v1.2.2',
  'Stable-Diffusion-v1.5',
  'Stable-Diffusion-v2.1',
  'Vintedois-Diffusion-v0.2',
@@ -342,7 +343,7 @@ Model_list.append(
 )
 Model_list.append(
     ModelInformationCard('OpenGen-v1',
-                         short_intro="通用模型",
+                         short_intro="通用模型，融合了许多个模型，支持许多特殊触发词，建议去模型官网查看详情",
                          link="https://civitai.com/models/58844?modelVersionId=63288",
                          recommended_settings=None)
 )
