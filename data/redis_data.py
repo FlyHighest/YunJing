@@ -197,7 +197,7 @@ class RClient:
 
     def record_new_generated_image(self, userid, img_url,gen_id,text2image_data,nsfw,score,face): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
-        self.status_add_gallery_num()
+        self.status_add_generated_num()
         try:
             data_mapping = dict(
                     genid=gen_id,
