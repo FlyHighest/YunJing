@@ -55,6 +55,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                 None,
                 put_scope("popup_image_info")
             ],size="66% 2% 32%")
+            
             with use_scope("popup_image_disp"):
                 put_image(img_url)
 
@@ -82,6 +83,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
 
                 if len(buttons)>0:
                     put_column(buttons).style("margin: 3%; text-align: center")
+                put_scope("rating")
 
             with use_scope("popup_user"):
                 put_text("作者: @"+text2image_data["user"])
@@ -137,6 +139,40 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                     hiresfix = "Off" 
                 put_select("hiresfix",label="高清修复",value=hiresfix,options=[hiresfix])
                 
+            with use_scope("rating"):
+                if False and session.local.rclient.get_user_config(session.local.client_id)["annotation"]:
+                    callback_score_id = output_register_callback(partial(record_score,genid=genid,userid=session.local.client_id))
+                    put_markdown("-----")
+                    put_html("""
+评分<span class="rating">
+  <input id="rating5" type="radio" name="rating" value="5">
+  <label for="rating5">5</label>
+  <input id="rating4" type="radio" name="rating" value="4">
+  <label for="rating4">4</label>
+  <input id="rating3" type="radio" name="rating" value="3">
+  <label for="rating3">3</label>
+  <input id="rating2" type="radio" name="rating" value="2">
+  <label for="rating2">2</label>
+  <input id="rating1" type="radio" name="rating" value="1">
+  <label for="rating1">1</label>
+</span>
+<script>
+
+const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+radioButtons.forEach(radioButton => {
+  radioButton.addEventListener('click', () => {
+    WebIO.pushData(`${radioButton.value}`,%r);
+  });
+});
+
+</script>
+
+"""%callback_score_id)
+                
+def record_score(score,genid,userid):
+    session.local.rclient.record_anno_score(genid,score,userid)
+    toast("评分成功",duration=1)
 
 def open_main_page_with_generate_params(generate_url):
     session.run_js(f'window.open("{generate_url}", "_blank");')

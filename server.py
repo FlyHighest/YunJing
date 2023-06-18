@@ -18,7 +18,9 @@ if __name__ == '__main__':
         ('/gallery', webio_handler(page_gallery, cdn=cdn,reconnect_timeout=reconnect_timeout)),
         ('/help', webio_handler(page_help, cdn=cdn,reconnect_timeout=reconnect_timeout)),
         ('/account', webio_handler(page_account, cdn=cdn,reconnect_timeout=reconnect_timeout)),
-    #     ('/statics', tornado.web.StaticFileHandler,{"path":os.path.join(os.path.dirname(__file__),"statics")}),
+        (r'/star-on.png()', tornado.web.StaticFileHandler,{"path":os.path.join(os.path.dirname(__file__),"statics/star-on.png")}),
+        (r'/star-off.png()', tornado.web.StaticFileHandler,{"path":os.path.join(os.path.dirname(__file__),"statics/star-off.png")}),
+
         
     ])
     application.listen(port=server_port, address='localhost')

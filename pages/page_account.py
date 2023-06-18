@@ -467,6 +467,7 @@ def update_user_config():
     config = {} 
     config["colnum"] = int(pin['config_colnum'])
     config["hisnum"] = int(pin['config_hisnum'])
+    config["annotation"] = True if pin['config_annotation'] == "是" else False
     if session.local.rclient.update_user_config(session.local.client_id, config):
         toast("保存配置成功",duration=1)
     else:
@@ -529,12 +530,18 @@ def page_account():
                 hisnum_val = str(config['hisnum'])
             else:
                 hisnum_val = "200"
+            if "annotation" in config:
+                anno_val = "是" if config['annotation'] else "否"
+            else:
+                anno_val = "否"
             put_markdown("-----")
             put_row([
                 None,
                 put_column_autosize([
                     put_select("config_colnum", label="- 画廊显示列数", options=["2","3","4","5","6","7","8"], value=colnum_val),   
-                    put_select("config_hisnum", label="- 历史记录图像数", options=["10","20","50","80","110","140","170","200"],value=hisnum_val)                 
+                    put_select("config_hisnum", label="- 历史记录图像数", options=["10","20","50","80","110","140","170","200"],value=hisnum_val) ,
+                    put_select("config_annotation", label="- 加入标注计划", options=["是","否"],value=anno_val,help_text="您可以对生成的图像进行标注，帮助我们改进AI模型；勾选后您可能看到不适合在工作场合打开的图像，请谨慎开启本选项")                
+                
                 ]),
                 None
             ],size="20% 60% 20%")

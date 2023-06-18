@@ -143,6 +143,7 @@ MODEL_NAMES = \
  'AnyLora',
  'Anything-v3.2',
  'AsiaFaceMix',
+ 'AWPainting-v1',
  'BreakDomainRealistic',
  'ChilloutMixNi',
  'Counterfeit-v2.5',
@@ -157,6 +158,7 @@ MODEL_NAMES = \
  'GuoFeng-v2',
  'GuoFeng-v3.3',
  'GuoFengRealMix',
+ 'MajicMixRealistic-v6',
  'MeinaMix-v10',
  'MeinaMix-v8',
  'MoonMix-Utopia',
@@ -211,6 +213,14 @@ Model_list.append(
                          link="https://huggingface.co/dcy/AsiaFacemix/tree/main",
                          example_prompt="年轻帅小伙的照片，高清，高质量",
                          example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('AWPainting-v1',
+                         short_intro="本模型适用性较广，插画、二次元及普遍的2D均可很好出图",
+                         link="https://civitai.com/models/84476/awpainting",
+                         #example_prompt="年轻帅小伙的照片，高清，高质量",
+                         #example_neg_prompt="disfigured, kitsch, ugly, oversaturated, grain, low-res, Deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, ugly, disgusting, poorly drawn, childish",
                          recommended_settings=None)
 )
 Model_list.append(
@@ -309,6 +319,14 @@ Model_list.append(
                          link="https://civitai.com/models/77650?modelVersionId=82410",
                          example_prompt="best quality, masterpiece, highres, 1girl,china dress,Beautiful face",
                          example_neg_prompt="NSFW, lowres,bad anatomy,bad hands, text, error, missing fingers,extra digit, fewer digits, cropped, worstquality, low quality, normal quality,jpegartifacts,signature, watermark, username,blurry,bad feet",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('MajicMixRealistic-v6',
+                         short_intro="融合了多种模型，可以生成好看的脸部，也能有效应对暗部处理",
+                         link="https://civitai.com/models/43331?modelVersionId=94640",
+                         #example_prompt="1girl, white hair, multicolored hair, purple eyes, mask on head, sidelighting, light particles, wallpaper",
+                         #example_neg_prompt="(worst quality, low quality:1.4), (zombie, sketch, interlocked fingers, comic)",
                          recommended_settings=None)
 )
 Model_list.append(

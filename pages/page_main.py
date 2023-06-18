@@ -66,6 +66,12 @@ def check_i2i_param(denoising_strength, img_url):
     except:
         return False 
 
+def onchange_nsfw_anno(val):
+    session.local.rclient.record_anno_nsfw(session.local.last_genid,
+                                           val,
+                                           session.local.client_id)
+    toast("感谢反馈!",duration=1,color="success")
+
 @use_scope('images', clear=False)
 def task_post_image_gen(callback):
     clear()
@@ -135,6 +141,12 @@ def task_post_image_gen(callback):
 
         if nsfw:
             put_text(nsfw_warn_text_gen)
+            # check current user is in annotation project
+            if session.local.rclient.get_user_config(session.local.client_id)['annotation']:
+                put_image(output_img_url_signed) # 大图output
+                put_select(name='nsfw_anno',label='请标注该图像是否属于违规图像', options=['是', '否'], value='否')
+                session.local.last_genid = image_gen_id
+                pin_on_change('nsfw_anno', onchange_nsfw_anno)
         else:
             with use_scope('history_images'):
                 session.local.history_image_cnt += 1
@@ -425,7 +437,8 @@ def page_main():
          
     # 设置footer
     sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
-    footer_html = "您好，{}！<br>当前分享值{:.2f}%，生成数{}，分享数{}。".format(username,sharerate,num_gen,num_pub)
+    server_status, server_status_id = session.local.rclient.get_generation_server_status()
+    footer_html = "服务器状态:{}<br />当前分享值{:.2f}%，生成数{}，分享数{}。".format(server_status,sharerate,num_gen,num_pub)
     session.run_js(f'$("footer").html("{footer_html}")')
 
     # session.local.last_task_time = time.time() - 3

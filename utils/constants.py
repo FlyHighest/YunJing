@@ -112,6 +112,38 @@ img2img_param_error = "图像引导参数错误，请修改后重试"
 has_published_text = "图像已发布"
 
 css = """
+
+.rating {
+  overflow: hidden;
+  vertical-align: bottom;
+  display: inline-block;
+  width: auto;
+  height: 30px;
+}
+.rating > input {
+  opacity: 0;
+  margin-right: -100%;
+}
+.rating > label {
+  position: relative;
+  display: block;
+  float: right;
+  background: url('star-off.png');
+  background-size: 30px 30px;
+}
+.rating > label:before {
+  display: block;
+  opacity: 0;
+  content: '';
+  width: 30px;
+  height: 30px;
+  background: url('star-on.png');
+  background-size: 30px 30px;
+  transition: opacity 0.2s linear;
+}
+.rating > label:hover:before,  .rating > label:hover ~ label:before,  .rating:not(:hover) > :checked ~ label:before { opacity: 1; }
+
+
 .footer {
     height: 100%;
     text-align: center;

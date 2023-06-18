@@ -8,11 +8,37 @@ import httpx,re,json
 from secret import *
 import os 
 import time
+from collections import deque , defaultdict
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
+# a custom deque class. When append elements, check the left element within time range 10 minitues
+class CustomDeque:
+    def __init__(self, expire_time_seconds=3600) -> None:
+        self.expire_time_seconds = expire_time_seconds
+        self.queue = deque()
+        self.unique_set = defaultdict(int)
+    
+    def append(self,element):
+        self.queue.append((time.time(),element))
+        self.unique_set[element] += 1 
 
-# from .data_models import mysql_db, User,Image,Likes,Histories
+    
+    def remove_expired_element(self):
+        while len(self.queue)>0 and self.queue[0][0] < time.time()-self.expire_time_seconds:
+            poped_element = self.queue.popleft()[1]
+            self.unique_set[poped_element] -= 1 
+            if self.unique_set[poped_element]<=0:
+                del self.unique_set[poped_element]
 
+    def get_unique_element_count(self):
+        self.remove_expired_element()
+        return len(self.unique_set)
+    
+    def get_queue_length(self):
+        self.remove_expired_element()
+        return len(self.queue)
+
+        
 
 
 class RClient:
@@ -22,6 +48,8 @@ class RClient:
 
         if not self.r.exists("max_userid"):
             self.r.set("max_userid",10000)
+        
+        self.generation_task_queue = CustomDeque()
 
     # 画廊query相关 
     def query_best_images(self):
@@ -64,6 +92,18 @@ class RClient:
     def unset_generation_lock(self,userid):
         self.r.delete(f"lock:gen:{userid}")
 
+
+    def get_generation_server_status(self):
+        unique_user_count = self.generation_task_queue.get_unique_element_count()
+        task_count = self.generation_task_queue.get_queue_length()
+        if unique_user_count <= 1:
+            return "🟢空闲",0
+        elif unique_user_count <= 3:
+            return "🟡繁忙",1
+        elif unique_user_count <= 5:
+            return "🟠拥挤",2
+        else:
+            return "🔴爆满",3
 
     # status 相关
     def status_get_all(self):
@@ -160,11 +200,15 @@ class RClient:
 
     def get_user_config(self,userid):
         try:
-            return json.loads(self.r.hget(f"user:{userid}","config"))
+            ret = json.loads(self.r.hget(f"user:{userid}","config"))
+            if "annotation" not in ret:
+                ret["annotation"] = False
+            return ret
         except:
             return {
                 "colnum":6,
-                "hisnum": 200
+                "hisnum": 200,
+                "annotation": False
             }
 
     def update_user_config(self,userid,config):
@@ -198,6 +242,7 @@ class RClient:
     def record_new_generated_image(self, userid, img_url,gen_id,text2image_data,nsfw,score,face): 
         # client id 也有可能是一个userid，如果已经登陆，session的client id使用username
         self.status_add_generated_num()
+        self.generation_task_queue.append(userid)
         try:
             data_mapping = dict(
                     genid=gen_id,
@@ -221,12 +266,7 @@ class RClient:
             pass
         
     def mark_as_nsfw(self,genid):
-        # Histories.delete().where(Histories.genid==genid).execute()
-        # img = Image.get_by_id(genid)
-        # img.nsfw=True
-        # img.published=False
-        # img.save()
-        pass 
+        self.cancel_publish(genid)
 
 
     def check_genid_in_imagetable(self,genid):
@@ -388,6 +428,12 @@ class RClient:
 
     def record_chatgpt(self,input,output):
         self.r.rpush("chatgptrecord",input+"|"+output)
+
+    def record_anno_nsfw(self,genid,anno,userid):
+        self.r.set(f"anno_nsfw:{genid}:{userid}",anno)
+    
+    def record_anno_score(self,genid,anno,userid):
+        self.r.set(f"anno_score:{genid}:{userid}",anno)
 
     
 
