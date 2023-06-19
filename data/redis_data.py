@@ -61,6 +61,8 @@ class RClient:
             image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","username"])
             if image_url.startswith("https://storage.yunj"):
                 continue 
+            if username=="zdy":
+                continue 
             results.append({
                 "image_url": image_url,
                 "height": int(height),
