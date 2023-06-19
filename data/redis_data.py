@@ -58,10 +58,10 @@ class RClient:
         results = []
         genids = genids[:400]
         for genid in genids:
-            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","username"])
+            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
             if image_url.startswith("https://storage.yunj"):
                 continue 
-            if username=="zdf":
+            if str(username)=="3466":
                 continue 
             results.append({
                 "image_url": image_url,
