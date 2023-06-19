@@ -56,9 +56,11 @@ class RClient:
         genids = self.r.zrange("gallery",-20000,-1)
         random.shuffle(genids)
         results = []
-        genids = genids[:200]
+        genids = genids[:400]
         for genid in genids:
             image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","username"])
+            if image_url.startswith("https://storage.yunj"):
+                continue 
             results.append({
                 "image_url": image_url,
                 "height": int(height),
