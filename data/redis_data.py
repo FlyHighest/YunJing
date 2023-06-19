@@ -53,9 +53,10 @@ class RClient:
 
     # 画廊query相关 
     def query_best_images(self):
-        genids = self.r.zrange("gallery",-200,-1)
+        genids = self.r.zrange("gallery",-20000,-1)
         random.shuffle(genids)
         results = []
+        genids = genids[:200]
         for genid in genids:
             image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","username"])
             results.append({
