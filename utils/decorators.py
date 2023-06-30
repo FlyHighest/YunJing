@@ -83,6 +83,7 @@ def cd_checker(func):
             # 分享率大于10的用户，固定为10；分享率小于10的，为60*（10-分享率）+10
             sharerate,_,_ = session.local.rclient.get_sharerate(userid)
             cool_down_time =  max(0, (10 - sharerate)*60) + 10
+            cool_down_time = int(cool_down_time)
             session.local.rclient.set_generation_lock(userid, cd=cool_down_time)
         
         res = func(*args, **kwargs)
