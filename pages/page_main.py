@@ -177,7 +177,8 @@ def task_post_image_gen(callback):
     finally:
         session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",false)''')
         sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
-        footer_html = "您好，{}！<br>当前分享值{:.2f}%，生成数{}，分享数{}。".format(session.local.username,sharerate,num_gen,num_pub)
+        server_status, server_status_id = session.local.rclient.get_generation_server_status()
+        footer_html = "服务器状态:{}<br />当前分享值{:.2f}%，生成数{}，分享数{}。".format(server_status,sharerate,num_gen,num_pub)
         session.run_js(f'$("footer").html("{footer_html}")')
 
 
