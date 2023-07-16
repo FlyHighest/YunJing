@@ -107,6 +107,15 @@ def task_post_image_gen(callback):
                 "hiresfix":            pin["hiresfix"]
             }
 
+            # check pro limitation
+            if not session.local.rclient.is_user_pro(session.local.client_id):
+                if image_generation_data["height"]>=1024 or image_generation_data["width"]>=1024:
+                    toast("分辨率超过1024:"+not_pro_user,color="warn")
+                    return 
+                if image_generation_data["num_inference_steps"]>=35:
+                    toast("步数超过35:"+not_pro_user,color="warn")
+                    return
+
             # add img2img params
             if len(pin["enable_img2img"])>0:
                 i2i_url = pin["img2img-url"]
@@ -406,7 +415,11 @@ def set_gpt_output():
                 ]
             ).style("text-align:center")
 
-def show_chatgpt_window():        
+def show_chatgpt_window(): 
+    if not session.local.rclient.is_user_pro(session.local.client_id):
+        toast(not_pro_user,color='warn')
+        return 
+
     with popup("帮我写(ChatGPT版)"):
         put_column([
             put_input("gpt_input",placeholder="例如：月亮上的树",help_text="简单描述您想生成的图像中的内容"),
