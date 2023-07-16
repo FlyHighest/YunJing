@@ -441,7 +441,7 @@ class RClient:
         self.r.set(f"anno_score:{genid}:{userid}",anno)
 
     def is_user_pro(self,userid):
-        sharerate, _ = self.get_sharerate(userid)
+        sharerate, _,_ = self.get_sharerate(userid)
         return sharerate>10
 
 if __name__=="__main__":
