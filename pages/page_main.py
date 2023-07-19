@@ -82,7 +82,7 @@ def task_post_image_gen(callback):
             
             seed = convert_int(pin['seed'])
             
-            seed = random.randint(-2**31,2**31-1) if seed==-1 else seed
+            seed = random.randint(1,2**31-1) if seed==-1 else seed
 
             # add lora
             try:
