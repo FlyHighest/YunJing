@@ -82,7 +82,9 @@ def task_post_image_gen(callback):
             
             seed = convert_int(pin['seed'])
             
+
             seed = random.randint(0,2**31-1) if seed==-1 else seed
+
 
             # add lora
             try:
@@ -106,6 +108,15 @@ def task_post_image_gen(callback):
                 "userid":              str(session.local.client_id),
                 "hiresfix":            pin["hiresfix"]
             }
+
+            # check pro limitation
+            if not session.local.rclient.is_user_pro(session.local.client_id):
+                if image_generation_data["height"]>=1024 or image_generation_data["width"]>=1024:
+                    toast("分辨率超过1024:"+not_pro_user,color="warn")
+                    return 
+                if image_generation_data["num_inference_steps"]>=35:
+                    toast("步数超过35:"+not_pro_user,color="warn")
+                    return
 
             # add img2img params
             if len(pin["enable_img2img"])>0:
@@ -177,7 +188,8 @@ def task_post_image_gen(callback):
     finally:
         session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",false)''')
         sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
-        footer_html = "您好，{}！<br>当前分享值{:.2f}%，生成数{}，分享数{}。".format(session.local.username,sharerate,num_gen,num_pub)
+        server_status, server_status_id = session.local.rclient.get_generation_server_status()
+        footer_html = "服务器状态:{}<br />当前分享值{:.2f}%，生成数{}，分享数{}。".format(server_status,sharerate,num_gen,num_pub)
         session.run_js(f'$("footer").html("{footer_html}")')
 
 
@@ -405,7 +417,11 @@ def set_gpt_output():
                 ]
             ).style("text-align:center")
 
-def show_chatgpt_window():        
+def show_chatgpt_window(): 
+    if not session.local.rclient.is_user_pro(session.local.client_id):
+        toast(not_pro_user,color='warn')
+        return 
+
     with popup("帮我写(ChatGPT版)"):
         put_column([
             put_input("gpt_input",placeholder="例如：月亮上的树",help_text="简单描述您想生成的图像中的内容"),

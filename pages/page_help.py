@@ -87,8 +87,8 @@ _easy_negative_, _bad_prompt_, _bad_prompt_version2_, _bad_hand_, _bad_artist_, 
 - [LoRA-墨心 & 疏可走马](https://civitai.com/models/12597/moxin): simhuang制作的水墨风lora。
 - [LoRA-线稿风格](https://civitai.com/models/16014/anime-lineart-manga-like-style): 配合提示词lineart, monochrome，绘制线稿、漫画风图像。
 - [LoRA-立绘风格](https://civitai.com/models/13090/gacha-splash-lora): 立绘风格Lora，效果很酷。 
-- [LoRA-细节调整] https://civitai.com/models/58390?modelVersionId=62833)
-- [LoRA-CLAMP风格]](https://civitai.com/models/76069/clamp-style-lora)
+- [LoRA-细节调整](https://civitai.com/models/58390?modelVersionId=62833)
+- [LoRA-CLAMP风格](https://civitai.com/models/76069/clamp-style-lora)
 - [LoRA-Hamao风格](https://civitai.com/models/76790/hamao-style-lora)
 - [LoRA-LAM风格](https://civitai.com/models/69673/lam-ramdayo-style-lora)
 - [LoRA-《无职转生》风格](https://civitai.com/models/62950/mushoku-tensei-jobless-reincarnation-anime-style-lora)

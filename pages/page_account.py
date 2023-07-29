@@ -468,6 +468,9 @@ def update_user_config():
     config["colnum"] = int(pin['config_colnum'])
     config["hisnum"] = int(pin['config_hisnum'])
     config["annotation"] = True if pin['config_annotation'] == "是" else False
+    if config["annotation"] and not session.local.rclient.is_user_pro(session.local.client_id):
+        config["annotation"] = False 
+        toast("无法加入标注计划："+not_pro_user, color="warn",duration=2)
     if session.local.rclient.update_user_config(session.local.client_id, config):
         toast("保存配置成功",duration=1)
     else:

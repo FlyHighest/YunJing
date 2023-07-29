@@ -130,7 +130,83 @@ LoRA_list.append(
                         default_weight=0.5,best_fit_model=None,
                         trigger_words=["[(white background:1.5), ::5],isometric"])
 )
-
+LoRA_list.append(
+    LoRAInformationCard("LoRA-细节调整","add_detail",
+                        short_intro="增强或者减少细节，权重可调整范围-2到2",
+                        link="https://civitai.com/models/58390?modelVersionId=62833",
+                        default_weight=0.0,best_fit_model=None,
+                        trigger_words=[],additional_words=[])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-CLAMP风格","clamp_style",
+                        short_intro="CLAMP风格LoRA",
+                        link="https://civitai.com/models/76069/clamp-style-lora",
+                        default_weight=1.0,best_fit_model="AnyLora",
+                        trigger_words=["clamp \(circle\)","chobits"],additional_words=["watercolor, 1990s \(style\), retro artstyle"])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-Hamao风格","hamao_style",
+                        short_intro="画师Hamao风格",
+                        link="https://civitai.com/models/76790/hamao-style-lora",
+                        default_weight=1.0,best_fit_model="AnyLora",
+                        trigger_words=["hamao"],additional_words=[])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-LAM风格","lam_style",
+                        short_intro="画师LAM风格的Lora",
+                        link="https://civitai.com/models/69673/lam-ramdayo-style-lora",
+                        default_weight=1.0,best_fit_model="AnyLora",
+                        trigger_words=["lam \(ramdayo\)"],additional_words=[])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-《无职转生》风格","mushoku_tensei_style",
+                        short_intro="《无职转生》动漫风格Lora",
+                        link="https://civitai.com/models/62950/mushoku-tensei-jobless-reincarnation-anime-style-lora",
+                        default_weight=1.0,best_fit_model="AnyLora",
+                        trigger_words=["mushoku tensei style"],additional_words=[])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-《龙珠超》风格","dbsuper_style",
+                        short_intro="《龙珠超》动漫风格Lora",
+                        link="https://civitai.com/models/59619/dragon-ball-super-style-lora",
+                        default_weight=1.0,best_fit_model="AnyLora",
+                        trigger_words=["dbsuper style"],additional_words=[])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-《鬼灭之刃》风格","kimetsu_no_yaiba_style",
+                        short_intro="《鬼灭之刃》动画风格",
+                        link="https://civitai.com/models/21272/demon-slayer-kimetsu-no-yaiba-anime-style-lora",
+                        default_weight=1.0,best_fit_model="AnyLora",
+                        trigger_words=["kimetsu no yaiba style"],additional_words=["anime coloring"])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-新海诚风格","shinkai_makoto_style",
+                        short_intro="新海诚电影风格",
+                        link="https://civitai.com/models/10626/makoto-shinkai-your-name-substyles-style-lora",
+                        default_weight=1.0,best_fit_model="AnyLora",
+                        trigger_words=["shinkai makoto","kimi no na wa.","tenki no ko","kotonoha no niwa"],additional_words=[])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-派蒙的画作风格","paimonpaintingstickerstyle",
+                        short_intro="原神角色贴纸、卡通头像风格",
+                        link="https://civitai.com/models/26291/paimons-paintings-style-genshin-impact-stickers",
+                        default_weight=1.0,best_fit_model=None,
+                        trigger_words=[],additional_words=["chibi,white background,simple background,thick outline"])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-沁彩","colorwater_v4",
+                        short_intro="水彩风格，推荐权重0.8-1，引导程度3-6",
+                        link="https://civitai.com/models/16055/colorwater",
+                        default_weight=0.8,best_fit_model=None,
+                        trigger_words=[],additional_words=[])
+)
+LoRA_list.append(
+    LoRAInformationCard("LoRA-小人书风格","xrs2.0",
+                        short_intro="20世纪初叶，在上海形成并开始广泛流传的通俗图画读物始称连环画，俗称“小人书”。中华人民共和国成立后，连环画作为一种通俗的传播文化的艺术形式得到迅速发展，形成中国现代美术的一个主要画种。",
+                        link="https://civitai.com/models/18323?modelVersionId=25661",
+                        default_weight=0.8,best_fit_model=None,
+                        trigger_words=[],additional_words=[])
+)
 LoRA_INFO = dict()
 
 for card in LoRA_list:
@@ -364,6 +440,66 @@ Model_list.append(
                          short_intro="通用模型，融合了许多个模型，支持许多特殊触发词，建议去模型官网查看详情",
                          link="https://civitai.com/models/58844?modelVersionId=63288",
                          recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('PixelModel',
+                         short_intro="像素风模型，首发于https://publicprompts.art/。\n`pixelsprite`: 像素风格触发词，绘制物体; \n`16bitscene`:  像素风格触发词，绘制场景",
+                         link="https://civitai.com/models/34/all-in-one-pixel-model",
+
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('ProtoGen-x5.8',
+                         short_intro="科幻风和动漫风融合模型",
+                         link="https://civitai.com/models/3867?modelVersionId=4298",
+
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('RealisticVision-V1.3',
+                         short_intro="写实风人像模型，在提示词模板中可以找到模型作者推荐的正向和反向提示词模板。",
+                         link="https://civitai.com/models/4201",
+                         recommended_settings="推荐提示词加入以下词条:`RAW photo, subject, (high detailed skin:1.2), 8k uhd, dslr, soft lighting, high quality, film grain, Fujifilm XT3`")
+)
+
+Model_list.append(
+    ModelInformationCard('RealisticVision-v2',
+                         short_intro="写实风人像模型，在提示词模板中可以找到模型作者推荐的正向和反向提示词模板。",
+                         link="https://civitai.com/models/4201",
+                         recommended_settings="推荐提示词加入以下词条:`RAW photo, subject, (high detailed skin:1.2), 8k uhd, dslr, soft lighting, high quality, film grain, Fujifilm XT3`")
+)
+Model_list.append(
+    ModelInformationCard('ReVAnimated-v1.2.2',
+                         short_intro="动漫风格融合模型，能够生产2.5D效果的图像",
+                         link="https://civitai.com/models/7371?modelVersionId=46846",
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('Stable-Diffusion-v1.5',
+                         short_intro="StabilityAI和RunwayML发布的模型，是许多社区模型的基础",
+                         link="https://huggingface.co/runwayml/stable-diffusion-v1-5",
+
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('Stable-Diffusion-v2.1',
+                         short_intro="Stable-Diffusion-1.5的升级版本",
+                         link="https://huggingface.co/stabilityai/stable-diffusion-2-1",
+
+                         recommended_settings=None)
+)
+Model_list.append(
+    ModelInformationCard('Vintedois-Diffusion-v0.2',
+                         short_intro="通用模型，基于SD1.5微调",
+                         link="https://huggingface.co/22h/vintedois-diffusion-v0-2",
+
+                         recommended_settings="提示词添加`estilovintedois`")
+)
+Model_list.append(
+    ModelInformationCard('YunJingAnime-v1',
+                         short_intro="Counterfeit和PastelMix融合的动漫模型",
+                         link=None,
+                         recommended_settings="配合提示词模板使用")
 )
 
 Model_INFO = dict()
