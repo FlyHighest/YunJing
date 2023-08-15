@@ -32,7 +32,7 @@ def page_index():
 感谢您的配合和参与！
                  
 <details>
-<summary>给网站用户的一封信/summary>
+<summary>给网站用户的一封信</summary>
                  
 尊敬的用户，
 
