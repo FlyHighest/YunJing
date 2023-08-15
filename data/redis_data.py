@@ -447,3 +447,4 @@ class RClient:
 if __name__=="__main__":
     r=RClient()
     r.move_redis_gallery_to_mysql()
+    from diffusers import StableDiffusionPipeline
