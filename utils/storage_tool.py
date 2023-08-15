@@ -29,6 +29,7 @@ config = CosConfig(Region="ap-shanghai", SecretId=tencentcloud_secret_id, Secret
 client = CosS3Client(config)
 
 def get_domain_key_from_tencent_url(image_url):
+    image_url = image_url.split("?")[0]
     splits = image_url.split("/")
     return "/".join(splits[:3]), "/".join(splits[3:])
 
@@ -103,7 +104,7 @@ class StorageTool:
     def __init__(self) -> None:
         self.client = client 
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
-        self.tencent_url = "https://images.dong-liu.com/"
+        
         
   
     def upload(self, img_path,userid="tmp"):
@@ -137,7 +138,7 @@ class StorageTool:
             return url
     
     def tencent_copy(self,image_url_temp,userid):
-        source_key = image_url_temp[len(self.tencent_url):]
+        _ ,source_key = get_domain_key_from_tencent_url (image_url_temp)
         key = f'{userid}/{nanoid.generate(self.alphabet,8)}.webp'
         self.client.copy(
             Bucket='yunjing-images-1256692038',
@@ -160,7 +161,7 @@ class StorageTool:
 
     def tencent_check_nsfw(self,image_path:str):
         image_url = self.upload_tencent(image_path,"tmp_check")
-        key = image_url[len(self.tencent_url):]
+        _,key = get_domain_key_from_tencent_url(image_url)
         response = self.client.get_object_sensitive_content_recognition(
             Bucket='yunjing-images-1256692038',
             Key=key,
