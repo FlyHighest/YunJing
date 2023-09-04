@@ -465,6 +465,10 @@ def popup_keyinput():
     def submit_prokey():
         if session.local.rclient.check_pro_key(pin['prokey_in']):
             session.local.rclient.add_pro_time(session.local.client_id)
+            toast("已增加专业版功能时长",color="success")
+        else:
+            toast("验证失败，请检查",color="warn")
+        close_popup()
     with popup("输入激活码"):
         put_input("prokey_in",label="激活码")
         put_button("确认",onclick=submit_prokey)
