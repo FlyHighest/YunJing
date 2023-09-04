@@ -467,8 +467,9 @@ class RClient:
         time_str= self.r.get(f"protime:{userid}") 
         if time_str is None:
             showtime = "（未激活专业版功能）"
-        dt_object = datetime.fromtimestamp(int(time_str))
-        showtime = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            dt_object = datetime.fromtimestamp(int(time_str))
+            showtime = dt_object.strftime("%Y-%m-%d %H:%M:%S")
         return showtime 
     
 
