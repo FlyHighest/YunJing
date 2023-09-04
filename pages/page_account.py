@@ -528,7 +528,7 @@ def page_account():
         with use_scope("login"):
             put_text("您已成功登录，欢迎您，"+username)
             put_text("专业版功能到期时间: "+session.local.rclient.get_pro_time_show(session.local.client_id))
-            put_button("激活专业版",onclick=popup_keyinput)
+            put_button("激活专业版",onclick=popup_keyinput,color="success")
             # put_text("注册用户的历史记录保留7天，数量提升至200张；发布作品时会关联到您的用户名")
             sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
             put_text("您当前分享值为: {:.2f}% (生成数{} | 分享数{})".format(sharerate,num_gen,num_pub))
