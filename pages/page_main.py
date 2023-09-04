@@ -153,7 +153,7 @@ def task_post_image_gen(callback):
         if nsfw:
             put_text(nsfw_warn_text_gen)
             # check current user is in annotation project
-            if session.local.rclient.get_user_config(session.local.client_id)['annotation']:
+            if session.local.rclient.get_user_config(session.local.client_id)['annotation'] and session.local.rclient.is_user_pro(session.local.client_id):
                 put_image(output_img_url_signed) # 大图output
                 put_select(name='nsfw_anno',label='请标注该图像是否属于违规图像', options=['是', '否'], value='否')
                 session.local.last_genid = image_gen_id

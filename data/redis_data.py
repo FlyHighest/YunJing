@@ -8,6 +8,8 @@ import httpx,re,json
 from secret import *
 import os 
 import time
+from datetime import datetime
+
 from collections import deque , defaultdict
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
@@ -432,7 +434,8 @@ class RClient:
             return False 
 
     def record_chatgpt(self,input,output):
-        self.r.rpush("chatgptrecord",input+"|"+output)
+        # self.r.rpush("chatgptrecord",input+"|"+output)
+        pass
 
     def record_anno_nsfw(self,genid,anno,userid):
         self.r.set(f"anno_nsfw:{genid}:{userid}",anno)
@@ -441,8 +444,34 @@ class RClient:
         self.r.set(f"anno_score:{genid}:{userid}",anno)
 
     def is_user_pro(self,userid):
-        sharerate, _,_ = self.get_sharerate(userid)
-        return sharerate>10
+        protime = self.r.get(f"protime:{userid}") or 0
+        protime= int(protime)
+        if protime > time.time():
+            return True 
+        else:
+            return False 
+    
+    def check_pro_key(self,key):
+        if self.r.get("prokey:"+key) == 0 :
+            self.r.set("prokey:"+key,1)
+            return True 
+        else:
+            return False 
+
+
+    def add_pro_time(self, userid):
+        endtime = int( time.time() + 2678400 )
+        self.r.set(f"protime:{userid}",str(endtime))
+
+    def get_pro_time_show(self,userid):
+        time_str= self.r.get(f"protime:{userid}") 
+        if time_str is None:
+            showtime = "（未激活专业版功能）"
+        dt_object = datetime.fromtimestamp(int(time_str))
+        showtime = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+        return showtime 
+    
+
 
 if __name__=="__main__":
     r=RClient()
