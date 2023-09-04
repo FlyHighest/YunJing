@@ -460,7 +460,9 @@ class RClient:
 
 
     def add_pro_time(self, userid):
-        endtime = int( time.time() + 2678400 )
+        protime = self.r.get(f"protime:{userid}") or time.time()
+        protime= int(protime)
+        endtime = int( protime + 2678400 )
         self.r.set(f"protime:{userid}",str(endtime))
 
     def get_pro_time_show(self,userid):
