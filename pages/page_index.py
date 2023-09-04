@@ -24,7 +24,7 @@ def page_index():
     put_markdown("""
 ### 专业版功能激活码使用说明
 
-Hi，大家好，专业版功能现在仅限专业版账号使用。专业版激活码获取链接：https://afdian.net/a/terryzhang。
+Hi，大家好，专业版功能现在仅限专业版账号使用。专业版激活码获取链接：https://afdian.net/a/terryzhang
 
 在“账户”界面，您会看到激活按钮，点击按钮，输入激活码即可增加专业版时长。
 
