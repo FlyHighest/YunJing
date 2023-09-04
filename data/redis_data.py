@@ -452,8 +452,8 @@ class RClient:
             return False 
     
     def check_pro_key(self,key):
-        if self.r.get("prokey:"+key) == 0 :
-            self.r.set("prokey:"+key,1)
+        if self.r.get("prokey:"+key) == "0" :
+            self.r.set("prokey:"+key,"1")
             return True 
         else:
             return False 
