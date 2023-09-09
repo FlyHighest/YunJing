@@ -93,7 +93,7 @@ class GalleryDataManager:
         if modelname is not None:
             query_str += f'model:"{modelname}" '
         if text is not None:
-            query_str += f'prompt:"{text}" '
+            query_str += f'prompt:({text}) '
         with self.ix.searcher() as searcher:
             parser=QueryParser("prompt",self.ix.schema)
             query = parser.parse(query_str)
