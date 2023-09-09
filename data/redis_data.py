@@ -9,7 +9,7 @@ from secret import *
 import os 
 import time
 from datetime import datetime
-from .gallery_data import GalleryDataManager
+# from .gallery_data import GalleryDataManager
 from collections import deque , defaultdict
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
@@ -52,7 +52,7 @@ class RClient:
             self.r.set("max_userid",10000)
         
         self.generation_task_queue = CustomDeque()
-        self.gallery_data_manager = GalleryDataManager()
+        self.gallery_data_manager = None # GalleryDataManager()
     
     # 画廊query相关 
     def query_best_images(self):
