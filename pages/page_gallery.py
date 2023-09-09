@@ -228,7 +228,7 @@ def reset_flow():
 def get_search_images_on_gallery():
     reset_flow()
     model_name = pin['search_model'].strip().lower()
-    if model_name not in MODEL_NAMES:
+    if len(model_name)==0:
         model_name = None 
     text = pin['search_prompt'].strip().lower()
     if len(text)==0:
