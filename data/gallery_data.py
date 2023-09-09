@@ -62,7 +62,7 @@ def init_schema(dir_path):
     ix = create_in(dir_path,schema,indexname="gallery_index")
 
 class GalleryDataManager:
-    def __init__(self,dir_path="../GIndex") -> None:
+    def __init__(self,dir_path="GIndex") -> None:
         self.ix = open_dir(dir_path,indexname="gallery_index")
     
     def add_item(self,author,prompt,model,genid):
