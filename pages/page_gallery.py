@@ -10,7 +10,7 @@ from pywebio_battery.web import *
 from data import RClient
 import time ,random
 from utils.constants import *
-from utils import task_post_upscale
+from utils import task_post_upscale,task_publish_to_gallery
 from utils import get_username,get_presigned_url_tencent,MODEL_NAMES
 
 # from search import query_recent_images,query_by_input
@@ -84,10 +84,15 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                         put_button("标记为高质量",color="danger",onclick=partial(mark_as_hq,genid=genid))
                     )
                 # print(session.local.client_id,text2image_data['userid'])
-                if str(session.local.client_id)==str(text2image_data["userid"]):
-                    buttons.append(
-                        put_button("取消分享",color="danger",onclick=partial(cancel_publish,genid=genid))
-                    )
+                if str(session.local.client_id)==str(text2image_data["userid"]) :
+                    if text2image_data['published']==True :
+                        buttons.append(
+                            put_button("取消分享",color="danger",onclick=partial(cancel_publish,genid=genid))
+                        )
+                    else:
+                        buttons.append(
+                            put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=generation_id))
+                        )
 
                 if len(buttons)>0:
                     put_column(buttons).style("margin: 3%; text-align: center")
