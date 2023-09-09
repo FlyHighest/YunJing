@@ -77,6 +77,8 @@ class RClient:
         results = []
         for url,genid in img_url_and_genid:
             image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
+            if image_url.startswith("https://storage.yunjing.gallery"):
+                continue 
             results.append({
                 "image_url": image_url,
                 "height": int(height),
