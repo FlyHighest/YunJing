@@ -48,9 +48,10 @@ def ChineseAnalyzerPlusSingleChar(stoplist=STOP_WORDS, minsize=1, stemfn=stem, c
             StemFilter(stemfn=stemfn, ignore=None, cachesize=cachesize))
 
 
-analyzer = ChineseAnalyzerPlusSingleChar()
+
 
 class Text2ImageSchema(SchemaClass):
+    analyzer = ChineseAnalyzerPlusSingleChar()
     author = ID(stored=True)
     prompt = TEXT(stored=True,analyzer=analyzer)
     model = TEXT(stored=True,analyzer=analyzer)
@@ -63,7 +64,7 @@ def init_schema(dir_path):
 
 class GalleryDataManager:
     def __init__(self,dir_path="GIndex") -> None:
-        self.ix = open_dir(dir_path,indexname="gallery_index")
+        self.ix = open_dir(dir_path,indexname="gallery_index",schema=Text2ImageSchema())
     
     def add_item(self,author,prompt,model,genid):
         writer = self.ix.writer(timeout=10) 
