@@ -21,6 +21,7 @@ def generate_image(image_generation_data:dict):
         score = output['score'] # float
         face = output['face'] # bool
         if output_img_url == "Error":
+            print("Server Error with post data", post_data)
             raise ServerError
         return output_img_url, nsfw, score, face
     else:
