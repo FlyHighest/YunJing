@@ -72,6 +72,23 @@ class RClient:
             })
         return results
 
+    def query_all_images(self):
+        genids = list(self.r.smembers("gallery-all"))
+        random.shuffle(genids)
+        results = []
+        genids = genids[:400]
+        for genid in genids:
+            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
+           
+            results.append({
+                "image_url": image_url,
+                "height": int(height),
+                "width": int(width),
+                "username": username,
+                "genid": genid
+            })
+        return results
+
     def query_personal_history(self,userid):
         img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",0,-1)]
         results = []

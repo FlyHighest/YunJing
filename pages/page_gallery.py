@@ -81,7 +81,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                         put_button("标记为NSFW",color="danger",onclick=partial(mark_as_nsfw,genid=genid))
                     )
                     buttons.append(
-                        put_button("标记为NSFW",color="danger",onclick=partial(mark_as_hq,genid=genid))
+                        put_button("标记为高质量",color="danger",onclick=partial(mark_as_hq,genid=genid))
                     )
                 # print(session.local.client_id,text2image_data['userid'])
                 if str(session.local.client_id)==str(text2image_data["userid"]):
@@ -313,8 +313,11 @@ def page_gallery():
         else:
             toast("无法加载个人记录:"+not_pro_user,color="warn")
             session.local.image_list = session.local.rclient.query_best_images()
+    elif param_username == "all" and 6 == session.local.rclient.get_user_level(session.local.client_id):
+        session.local.image_list = session.local.rclient.query_all_images()
     else:
-        # 展示画廊精选
         session.local.image_list = session.local.rclient.query_best_images()
+    
+
     # random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)
