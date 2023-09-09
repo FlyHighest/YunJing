@@ -306,10 +306,10 @@ def page_gallery():
     reset_flow()
 
     param_username = get_query("user")
-    if param_username == "self":
+    if param_username == "self" :
         if session.local.rclient.is_user_pro(session.local.client_id):
             # 展示个人历史
-            session.local.image_list = session.local.rclient.query_personal_history()
+            session.local.image_list = session.local.rclient.query_personal_history(session.local.client_id)
         else:
             toast("无法加载个人记录:"+not_pro_user,color="warn")
             session.local.image_list = session.local.rclient.query_best_images()
