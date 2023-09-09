@@ -9,7 +9,7 @@ from secret import *
 import os 
 import time
 from datetime import datetime
-
+from gallery_data import GalleryDataManager
 from collections import deque , defaultdict
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
@@ -52,10 +52,11 @@ class RClient:
             self.r.set("max_userid",10000)
         
         self.generation_task_queue = CustomDeque()
-
+        self.gallery_data_manager = GalleryDataManager()
+    
     # 画廊query相关 
     def query_best_images(self):
-        genids = self.r.zrange("gallery",-20000,-1)
+        genids = list(self.r.smembers("gallery-hq"))
         random.shuffle(genids)
         results = []
         genids = genids[:400]
@@ -74,20 +75,7 @@ class RClient:
             })
         return results
 
-    def query_user_images(self,username):
-        userid = self.r.get(f"userid:{username}")
-        genids = self.r.zrange(f"gallery:userid:{userid}",-1000,1000)
-        results = []
-        for genid in genids:
-            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","username"])
-            results.append({
-                "image_url": image_url,
-                "height": int(height),
-                "width": int(width),
-                "username": username,
-                "genid": genid
-            })
-        return results
+
 
     # cd 功能相关
     def set_generation_lock(self,userid, cd=10):
@@ -143,14 +131,12 @@ class RClient:
             self.r.set("status_upscale_num",0)
             return 0
 
-    def status_add_gallery_num(self):
-        self.r.incr("status_gallery_num")
-    
+
     def status_get_gallery_num(self):
         try:
-            return int(self.r.get("status_gallery_num"))
+            return int(self.r.scard("gallery-all"))
         except:
-            self.r.set("status_gallery_num",0)
+            
             return 0
 
     def record_history(self, userid, img_url,genid):
@@ -305,30 +291,39 @@ class RClient:
     def record_publish(self,genid):
         try:
             self.r.hset(f"image:{genid}","published",1)
-            self.status_add_gallery_num()
+            
             userid = self.r.hget(f"image:{genid}","userid")
             num_published = int(self.r.hget(f"user:{userid}","num_published"))  
             self.r.hset(f"user:{userid}","num_published",num_published+1)
 
-            score = float(self.r.hget(f"image:{genid}","score"))
             model_name = self.r.hget(f"image:{genid}","modelname")
-            self.r.zadd("gallery",{genid:score})
-            self.r.zadd(f"gallery:userid:{userid}",{genid:score})
-            self.r.zadd(f"gallery:model:{model_name}",{genid:score})
-            
+            prompt = self.r.hget(f"image:{genid}","prompt")
+
+            username = self.r.hget(f"user:{userid}","username")
+            self.r.sadd("gallery-all",genid)
+
+            self.gallery_data_manager.add_item(username,prompt,model_name,genid)
+           
             return True
         except Exception as _:
             traceback.print_exc()
             return False
-        
+
+    def record_highquality_gallery(self,genid):
+        try:
+            self.r.sadd("gallery-hq",genid)
+            return True
+        except Exception as _:
+            traceback.print_exc()
+            return False
 
     def cancel_publish(self,genid):
+        self.gallery_data_manager.del_item(genid)
         self.r.hset(f"image:{genid}","published",0)
-        self.r.zrem("gallery",genid)
-        userid = self.r.hget(f"image:{genid}","userid")
-        model_name = self.r.hget(f"image:{genid}","modelname")
-        self.r.zrem(f"gallery:userid:{userid}",genid)
-        self.r.zrem(f"gallery:model:{model_name}",genid)
+        self.r.srem("gallery-all",genid)
+        self.r.srem("gallery-hq",genid) 
+        
+  
 
 
     def reset_pass_and_email(self,username,password,email):
@@ -426,7 +421,7 @@ class RClient:
 
     def check_published(self,genid):
         try:
-            if self.r.zrank("gallery",genid) is not None:
+            if self.r.sismember("gallery-all",genid):
                 return True 
             else:
                 return False
@@ -479,4 +474,3 @@ class RClient:
 if __name__=="__main__":
     r=RClient()
     r.move_redis_gallery_to_mysql()
-    from diffusers import StableDiffusionPipeline

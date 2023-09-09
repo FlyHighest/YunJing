@@ -28,6 +28,11 @@ def mark_as_nsfw(genid):
     toast("成功删除",duration=1)
     close_popup()
 
+def mark_as_hq(genid):
+    session.local.rclient.record_highquality_gallery(genid)
+    toast("成功添加高质量图像")
+    close_popup()
+
 def cancel_publish(genid):
     session.local.rclient.cancel_publish(genid)
     toast("已取消分享",duration=1)
@@ -74,6 +79,9 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                 if user_level==6:
                     buttons.append( 
                         put_button("标记为NSFW",color="danger",onclick=partial(mark_as_nsfw,genid=genid))
+                    )
+                    buttons.append(
+                        put_button("标记为NSFW",color="danger",onclick=partial(mark_as_hq,genid=genid))
                     )
                 # print(session.local.client_id,text2image_data['userid'])
                 if str(session.local.client_id)==str(text2image_data["userid"]):
@@ -298,9 +306,6 @@ def page_gallery():
     reset_flow()
 
     param_username = get_query("username")
-    if param_username is not None:
-        session.local.image_list = session.local.rclient.query_user_images(param_username)
-    else:
-        session.local.image_list = session.local.rclient.query_best_images()
+    session.local.image_list = session.local.rclient.query_best_images()
     # random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)
