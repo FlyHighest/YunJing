@@ -106,6 +106,9 @@ class RClient:
             })
         return results             
 
+    def query_by_input(self,author,modelname,text):
+        pass 
+    
     # cd 功能相关
     def set_generation_lock(self,userid, cd=10):
         self.r.set(f"lock:gen:{userid}",1,ex=cd)

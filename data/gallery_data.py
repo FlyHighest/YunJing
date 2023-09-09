@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from whoosh.analysis import LowercaseFilter, StopFilter, StemFilter
 from whoosh.analysis import Tokenizer, Token
 from whoosh.lang.porter import stem
+from whoosh.qparser import QueryParser
 
 import jieba
 import re
@@ -80,6 +81,23 @@ class GalleryDataManager:
         ret = []
         with self.ix.searcher() as searcher:
             results = searcher.find("prompt",keyword)
+            for r in results:
+                ret.append(r["genid"])
+        return ret
+
+    def search(self,author,modelname,text):
+        ret = []
+        query_str = ''
+        if author is not None:
+            query_str += f'author:"{author}" '
+        if modelname is not None:
+            query_str += f'model:"{modelname}" '
+        if text is not None:
+            query_str += f'prompt:"{text}" '
+        with self.ix.searcher() as searcher:
+            parser=QueryParser("prompt",self.ix.schema)
+            query = parser.parse(query_str)
+            results = searcher.search(query,limit=200)
             for r in results:
                 ret.append(r["genid"])
         return ret

@@ -11,7 +11,7 @@ from data import RClient
 import time ,random
 from utils.constants import *
 from utils import task_post_upscale
-from utils import get_username,get_presigned_url_tencent
+from utils import get_username,get_presigned_url_tencent,MODEL_NAMES
 
 # from search import query_recent_images,query_by_input
 import numpy as np 
@@ -227,7 +227,21 @@ def reset_flow():
 
 def get_search_images_on_gallery():
     reset_flow()
-    session.local.image_list = []# query_by_input(pin['search_prompt'],pin['search_model'],pin['search_user'])
+    model_name = pin['search_model'].strip().lower()
+    if model_name not in MODEL_NAMES:
+        model_name = None 
+    text = pin['search_prompt'].strip().lower()
+    if len(text)==0:
+        text = None 
+    username = pin['search_user'].strip()
+    if len(username)==0:
+        username = None 
+    
+    if model_name is None and text is None and username is None:
+        toast("请输入搜索条件",color="warn")
+        return 
+
+    session.local.image_list = session.local.rclient.query_by_input(username, model_name,text)
     toast(f"搜索到{len(session.local.image_list)}张图像",duration=2)
     
     load_more_images_on_gallery(0)
@@ -289,18 +303,18 @@ def page_gallery():
     # put_row([ 
     #         put_column(put_markdown('## 云景 · 画廊')),
     #     ])
-    # put_scope("search_scope")
-    # with use_scope("search_scope"):
-    #     put_row([
-    #         put_column(
-    #             put_textarea("search_prompt",label="",placeholder="请输入关键词",rows=1),
-    #         ),
-    #     ])
-    #     put_row([
-    #         put_column(put_select("search_model",label="",options=["模型: 任意"]+MODELS,value="模型: 任意")),
-    #         put_column(put_textarea("search_user",label="",placeholder="作者",rows=1)),
-    #         put_column(put_button(label="搜索",onclick=get_search_images_on_gallery))
-    #     ])
+    put_scope("search_scope")
+    with use_scope("search_scope"):
+        put_row([
+            put_column(
+                put_textarea("search_prompt",label="",placeholder="请输入关键词",rows=1),
+            ),
+        ])
+        put_row([
+            put_column(put_textarea("search_model",label="",placeholder="模型名",rows=1)),
+            put_column(put_textarea("search_user",label="",placeholder="作者",rows=1)),
+            put_column(put_button(label="搜索",onclick=get_search_images_on_gallery))
+        ])
 
     put_scope("image_flow")
     reset_flow()
