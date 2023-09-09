@@ -305,7 +305,14 @@ def page_gallery():
     put_scope("image_flow")
     reset_flow()
 
-    param_username = get_query("username")
-    session.local.image_list = session.local.rclient.query_best_images()
+    param_username = get_query("user")
+    if param_username == "self":
+        if session.local.rclient.is_user_pro(session.local.client_id):
+            # 展示个人历史
+            session.local.image_list = session.local.rclient.query_personal_history()
+
+    else:
+        # 展示画廊精选
+        session.local.image_list = session.local.rclient.query_best_images()
     # random.shuffle(session.local.image_list) 
     load_more_images_on_gallery(0)

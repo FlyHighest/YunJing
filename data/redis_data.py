@@ -62,10 +62,7 @@ class RClient:
         genids = genids[:400]
         for genid in genids:
             image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
-            if image_url.startswith("https://storage.yunj"):
-                continue 
-            if str(username)=="3466":
-                continue 
+           
             results.append({
                 "image_url": image_url,
                 "height": int(height),
@@ -75,7 +72,19 @@ class RClient:
             })
         return results
 
-
+    def query_personal_history(self,userid):
+        img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",0,-1)]
+        results = []
+        for url,genid in img_url_and_genid:
+            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
+            results.append({
+                "image_url": image_url,
+                "height": int(height),
+                "width": int(width),
+                "username": username,
+                "genid": genid
+            })
+        return results             
 
     # cd 功能相关
     def set_generation_lock(self,userid, cd=10):

@@ -81,7 +81,7 @@ class GalleryDataManager:
         with self.ix.searcher() as searcher:
             results = searcher.find("prompt",keyword)
             for r in results:
-                ret.append(r["prompt"])
+                ret.append(r["genid"])
         return ret
 
 

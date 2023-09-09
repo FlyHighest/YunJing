@@ -537,6 +537,7 @@ def page_main():
 
             put_scrollable(put_scope('history_images'), height=0, keep_bottom=True, border=False)],
         open=True)
+        put_link("查看更多历史记录(最多500张)", url="/gallery?user=self")
     
     load_history()
         
