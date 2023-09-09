@@ -9,7 +9,7 @@ from secret import *
 import os 
 import time
 from datetime import datetime
-from gallery_data import GalleryDataManager
+from .gallery_data import GalleryDataManager
 from collections import deque , defaultdict
 CLIENT_ID_ALPHABET = "1234567890abcdefghjkmnpqrstuvwxyz"
 
