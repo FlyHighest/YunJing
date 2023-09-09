@@ -54,45 +54,9 @@ class RClient:
         self.generation_task_queue = CustomDeque()
         self.gallery_data_manager =  GalleryDataManager()
     
-    # 画廊query相关 
-    def query_best_images(self):
-        genids = list(self.r.smembers("gallery-hq"))
-        random.shuffle(genids)
+    def genid_to_gallery_return_list(self,genids):
         results = []
-        genids = genids[:400]
         for genid in genids:
-            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
-           
-            results.append({
-                "image_url": image_url,
-                "height": int(height),
-                "width": int(width),
-                "username": username,
-                "genid": genid
-            })
-        return results
-
-    def query_all_images(self):
-        genids = list(self.r.smembers("gallery-all"))
-        random.shuffle(genids)
-        results = []
-        genids = genids[:400]
-        for genid in genids:
-            image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
-           
-            results.append({
-                "image_url": image_url,
-                "height": int(height),
-                "width": int(width),
-                "username": username,
-                "genid": genid
-            })
-        return results
-
-    def query_personal_history(self,userid):
-        img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",0,-1)]
-        results = []
-        for url,genid in img_url_and_genid:
             image_url,height,width,username=self.r.hmget(f"image:{genid}",["imgurl","height","width","userid"])
             if "storage.yunjing.gallery" in image_url:
                 print(image_url)
@@ -104,11 +68,35 @@ class RClient:
                 "username": username,
                 "genid": genid
             })
-        return results             
+        return results  
+               
+    # 画廊query相关 
+    def query_best_images(self):
+        genids = list(self.r.smembers("gallery-hq"))
+        random.shuffle(genids)
+        genids = genids[:400]
+        return self.genid_to_gallery_return_list(genids)
+
+    def query_all_images(self):
+        genids = list(self.r.smembers("gallery-all"))
+        random.shuffle(genids)
+        genids = genids[:400]
+        return self.genid_to_gallery_return_list(genids)
+
+    def query_personal_history(self,userid):
+        img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",0,-1)]
+        genids = []
+        for url,genid in img_url_and_genid:
+            genids.append(genid)
+        return self.genid_to_gallery_return_list(genids)   
 
     def query_by_input(self,author,modelname,text):
-        pass 
-    
+        genids = self.gallery_data_manager.search(author,modelname,text)
+        random.shuffle(genids)
+        genids = genids[:400]
+        return self.genid_to_gallery_return_list(genids)
+
+
     # cd 功能相关
     def set_generation_lock(self,userid, cd=10):
         self.r.set(f"lock:gen:{userid}",1,ex=cd)
