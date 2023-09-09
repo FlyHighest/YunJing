@@ -310,7 +310,9 @@ def page_gallery():
         if session.local.rclient.is_user_pro(session.local.client_id):
             # 展示个人历史
             session.local.image_list = session.local.rclient.query_personal_history()
-
+        else:
+            toast("无法加载个人记录:"+not_pro_user,color="warn")
+            session.local.image_list = session.local.rclient.query_best_images()
     else:
         # 展示画廊精选
         session.local.image_list = session.local.rclient.query_best_images()
