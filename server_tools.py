@@ -9,12 +9,15 @@ def find_users_activate(date):
     all_history = r.keys("history:*")
     users_activate = set()
     for history_key in tqdm(all_history):
-        url_and_genids = [json.loads(i) for i in r.lrange(history_key,0,-1)]
-        for url,genid in url_and_genids:
+        his_and_genids = [(i,json.loads(i)[1]) for i in r.lrange(history_key,0,-1)]
+        for his,genid in his_and_genids:
 
             gen_time = r.hget(f"image:{genid}","gentime")
             if gen_time is None:
                 print("None error: ",genid)
+                val = r.lrem(history_key,0,his)
+                print(f"Delete {val} history records")
+                continue 
             if gen_time.split(" ")[0]==date:
                 users_activate.add(history_key.split(":")[1])
                 break
