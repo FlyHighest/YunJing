@@ -22,13 +22,16 @@ def find_users_activate(date):
                 users_activate.add(history_key.split(":")[1])
                 break
 
-    return  len(users_activate)
+    return  len(users_activate), users_activate
 
 def report_last_days(days):
+    users_all = set()
     for i in range(days):
         date = (datetime.datetime.now() - datetime.timedelta(days=i)).strftime("%Y-%m-%d")
-        user_activate = find_users_activate(date)
-        print(f"{date} 活跃用户数: {user_activate}")
-
+        user_activate_length, users_activate = find_users_activate(date)
+        print(f"{date} 活跃用户数: {user_activate_length}")
+        users_all = users_all | users_activate
+    print(f"{days}天总活跃用户数: {len(users_all)}")
+    
 if __name__ == "__main__":
     report_last_days(7)
