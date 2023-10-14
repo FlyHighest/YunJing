@@ -32,7 +32,7 @@ def task_post_enhance_prompt(model_type="universal"):
             pin['prompt'] = enhanced_text
         else:
             raise ServerError
-    except (ServerError, ConnectionRefusedError, httpx.ConnectError) as _:
+    except (ServerError, httpx.ConnectError) as _:
         traceback.print_exc()
         toast(server_error_text,duration=4,color="warn")
     except QueueTooLong as _:

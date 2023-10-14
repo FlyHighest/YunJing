@@ -376,6 +376,7 @@ class RClient:
             self.r.hset(f"user:{userid}",mapping=mapping)
             self.r.set(f"userid:{username}",userid)
             self.r.sadd("user-emails",email)
+            self.add_pro_time(userid,86400)
             return True
         except:
             return False
@@ -474,10 +475,10 @@ class RClient:
             return False 
 
 
-    def add_pro_time(self, userid):
+    def add_pro_time(self, userid, timevalue=2678400):
         protime = self.r.get(f"protime:{userid}") or time.time()
         protime= int(protime)
-        endtime = int( protime + 2678400 )
+        endtime = int( protime + timevalue )
         self.r.set(f"protime:{userid}",str(endtime))
 
     def get_pro_time_show(self,userid):
