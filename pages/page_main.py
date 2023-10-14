@@ -1,4 +1,4 @@
-import time, os,nanoid,string
+import time, os,nanoid,string,datetime
 from functools import partial
 import httpx,traceback
 import random 
@@ -74,6 +74,12 @@ def onchange_nsfw_anno(val):
 
 @use_scope('images', clear=False)
 def task_post_image_gen(callback):
+    # 检查当前小时是否在pro专门时间段： 9-21点
+    if not session.local.rclient.is_user_pro(session.local.client_id):
+        hour = datetime.datetime.now().hour
+        if hour >=9 and hour<=20:
+            toast("上午9点至晚上21点为专业版用户独享时间，请稍后再来～",duration=4)
+            return 
     clear()
     session.run_js('''$("#pywebio-scope-generate_button button").prop("disabled",true)''')
     try:

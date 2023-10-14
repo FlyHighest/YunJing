@@ -6,14 +6,6 @@ from data import RClient
 
 from utils.constants import css,header_html_index
 
-@use_scope("current_server_status",clear=True)
-def show_server_status():
-    generated_num, upscale_num, gallery_num = session.local.rclient.status_get_all()
-    put_markdown(f" \
-- 已生成图像数：{generated_num} \n\
-- 超分辨率次数：{upscale_num} \n\
-- 画廊图像数：{gallery_num}  \
-    ") 
 
 @config(theme="minty", css_style=css, title='云景AI绘图平台',description="AI画图工具，输入文本生成图像，二次元、写实、人物、风景、设计素材，支持中文，图像库分享")
 def page_index():
@@ -28,7 +20,19 @@ Hi，大家好，专业版功能现在仅限专业版账号使用。专业版激
 
 在“账户”界面，您会看到激活按钮，点击按钮，输入激活码即可增加专业版时长。
 
-**2023年10月14日后新注册的用户自动获得24小时专业版时长**                 
+**2023年10月14日后新注册的用户自动获得24小时专业版时长**   
+                 
+为了优先保证专业版用户体验，每天**9:00-20:59**仅专业版用户可提交图像生成任务。
+
+专业版用户独享的功能包括：
+- 帮我写(ChatGPT）
+- 加入标注计划 
+- 35及以上的推理步骤数
+- 1024及更高分辨率
+- 生成速率无视分享值限制    
+- 查看至多500张历史记录图像
+- 全天24小时都可以生成图像          
+
                  
 ### 用户需求调研问卷
 
@@ -88,15 +92,6 @@ Hi，大家好，专业版功能现在仅限专业版账号使用。专业版激
 
 **请勿公开发布不适合工作场合观看的内容**。
 
-------
-
-**服务器状态**
-
-    """)
-    put_button("刷新",onclick=show_server_status)
-    put_scope("current_server_status")
-    show_server_status()
-    put_markdown("""
 ------
 
 **更新日志**
