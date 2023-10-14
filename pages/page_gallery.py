@@ -28,6 +28,11 @@ def mark_as_nsfw(genid):
     toast("成功删除",duration=1)
     close_popup()
 
+def del_from_history(genid):
+    session.local.rclient.del_history(session.local.client_id,genid)
+    toast("已从历史记录中删除")
+    close_popup()
+    
 def mark_as_hq(genid):
     session.local.rclient.record_highquality_gallery(genid)
     toast("成功添加高质量图像")
@@ -93,6 +98,8 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                         buttons.append(
                             put_button("发布到画廊",color="info",onclick=partial(task_publish_to_gallery,scope="images", genid=generation_id))
                         )
+                    buttons.append(put_button("删除历史记录",color="danger",onclick=partial(del_from_history,genid=genid)))
+
 
                 if len(buttons)>0:
                     put_column(buttons).style("margin: 3%; text-align: center")
