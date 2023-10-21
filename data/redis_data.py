@@ -80,7 +80,9 @@ class RClient:
     def query_all_images(self):
         genids = list(self.r.smembers("gallery-all"))
         random.shuffle(genids)
+
         genids = genids[:400]
+        genids = [g for g in genids if self.r.sismember("gallery-hq",g)==False]
         return self.genid_to_gallery_return_list(genids)
 
     def query_personal_history(self,userid):
