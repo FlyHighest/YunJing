@@ -371,7 +371,7 @@ def show_img2img_options(val):
                     put_select("i2i-preprocess",
                         label="预处理方式",
                         options=
-                           [  '边缘提取(Canny)', '边缘提取(HED)', '线段提取', '草图提取', '人体姿态估计', '语义分割', '深度估计', '法线贴图估计', '线稿提取', '线稿提取(动漫)']),
+                           [ '原图', '边缘提取(Canny)', '边缘提取(HED)', '线段提取', '草图提取', '人体姿态估计', '语义分割', '深度估计', '法线贴图估计', '线稿提取', '线稿提取(动漫)']),
                     put_select("i2i-model",label="引导模型",
                         options=[ 'ControlNet-Canny', 'ControlNet-深度图', 'ControlNet-软边缘', 'ControlNet-线段', 'ControlNet-法线贴图', 'ControlNet-人体姿态', 'ControlNet-草图', 'ControlNet-语义分割', 'ControlNet-Tile', 'ControlNet-线稿', 'ControlNet-线稿(动漫)']),
                     put_input("i2i-strength",label="图像引导力度",value="0.9",help_text="范围0-1,越大越像引导图")
@@ -503,7 +503,7 @@ def page_main():
 
         ])
         put_row([            
-            put_column(put_select("num_inference_steps",label="推理步骤",options=["20","25","30","35","40"],value="20")),
+            put_column(put_select("num_inference_steps",label="推理步骤",options=["10","15","20","25","30","35","40"],value="20")),
             put_column(put_select("scheduler_name",label="采样器",options=SCHEDULERS,value="Euler_A")),
         ])
         put_row([ 

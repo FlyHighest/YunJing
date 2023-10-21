@@ -172,7 +172,16 @@ class RClient:
         # Histories.delete().where((Histories.userid==userid)&(Histories.genid==genid)).execute()
         url = self.r.hget(f"image:{genid}","imgurl")
         ret =self.r.lrem(f"history:{userid}",0,json.dumps((url,genid)))
-        assert ret==1
+        if  ret!=1:
+            print("del histroy error",userid,genid)
+            img_url_and_genid = [json.loads(i) for i in self.r.lrange(f"history:{userid}",0,-1)]
+            genids = []
+            for url,genid_ in img_url_and_genid:
+                if genid_==genid:
+                    ret = self.r.lrem(f"history:{userid}",0,json.dumps((url,genid)))
+                    if ret==1:
+                        print("del history ok")
+                        break
 
     def get_history(self, userid, limit=200):
         if userid.startswith("@"): return []
