@@ -32,7 +32,7 @@ def del_from_history(genid):
     session.local.rclient.del_history(session.local.client_id,genid)
     toast("已从历史记录中删除")
     close_popup()
-    
+
 def mark_as_hq(genid):
     session.local.rclient.record_highquality_gallery(genid)
     toast("成功添加高质量图像")
@@ -340,7 +340,8 @@ def page_gallery():
             toast("无法加载个人记录:"+not_pro_user,color="warn")
             session.local.image_list = session.local.rclient.query_best_images()
     elif param_username == "all" and 6 == session.local.rclient.get_user_level(session.local.client_id):
-        session.local.image_list = session.local.rclient.query_all_images()
+        date = get_query("date")
+        session.local.image_list = session.local.rclient.query_all_images(date)
     else:
         session.local.image_list = session.local.rclient.query_best_images()
     

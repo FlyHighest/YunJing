@@ -77,12 +77,17 @@ class RClient:
         genids = genids[:400]
         return self.genid_to_gallery_return_list(genids)
 
-    def query_all_images(self):
+    def query_all_images(self,date_str):
         genids = list(self.r.smembers("gallery-all"))
         random.shuffle(genids)
 
         genids = genids[:400]
-        genids = [g for g in genids if self.r.sismember("gallery-hq",g)==False]
+        if isinstance(date_str,str):
+            genids = [g for g in genids
+                       if g.startswith(date_str) and self.r.sismember("gallery-hq",g)==False
+                         ]
+        else:
+            genids = [g for g in genids if self.r.sismember("gallery-hq",g)==False]
         return self.genid_to_gallery_return_list(genids)
 
     def query_personal_history(self,userid):
