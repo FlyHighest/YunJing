@@ -81,12 +81,13 @@ class RClient:
         genids = list(self.r.smembers("gallery-all"))
         random.shuffle(genids)
 
-        genids = genids[:400]
+        
         if isinstance(date_str,str):
             genids = [g for g in genids
                        if g.startswith(date_str) and self.r.sismember("gallery-hq",g)==False
                          ]
         else:
+            genids = genids[:400]
             genids = [g for g in genids if self.r.sismember("gallery-hq",g)==False]
         return self.genid_to_gallery_return_list(genids)
 
