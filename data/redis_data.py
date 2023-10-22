@@ -493,7 +493,12 @@ class RClient:
 
 
     def add_pro_time(self, userid, timevalue=2678400):
-        protime = self.r.get(f"protime:{userid}") or time.time()
+        current = self.r.get(f"protime:{userid}")
+        if current is None:
+            protime =  time.time()
+        else:
+            protime = max(int(current), time.time())
+            
         protime= int(protime)
         endtime = int( protime + timevalue )
         self.r.set(f"protime:{userid}",str(endtime))
