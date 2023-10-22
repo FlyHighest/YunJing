@@ -547,7 +547,7 @@ def page_account():
         with use_scope("login"):
             put_text("您已成功登录，欢迎您，"+username)
             put_text("专业版功能到期时间: "+session.local.rclient.get_pro_time_show(session.local.client_id))
-            put_text("专业版奖励时长剩余: "+session.local.rclient.get_bonus_pro_time(session.local.client_id)+"小时")
+            put_text(f"专业版奖励时长剩余: {session.local.rclient.get_bonus_pro_time(session.local.client_id):.01f}小时")
             
             put_row([
                 put_button("提交激活码",onclick=popup_keyinput,color="success"),
