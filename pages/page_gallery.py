@@ -33,8 +33,9 @@ def del_from_history(genid):
     toast("已从历史记录中删除")
     close_popup()
 
-def mark_as_hq(genid):
+def mark_as_hq(genid,userid):
     session.local.rclient.record_highquality_gallery(genid)
+    session.local.rclient.add_bonus_pro_time(userid,1)
     toast("成功添加高质量图像")
     close_popup()
 
@@ -86,7 +87,7 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                         put_button("标记为NSFW",color="danger",onclick=partial(mark_as_nsfw,genid=genid))
                     )
                     buttons.append(
-                        put_button("标记为高质量",color="danger",onclick=partial(mark_as_hq,genid=genid))
+                        put_button("标记为高质量",color="danger",onclick=partial(mark_as_hq,genid=genid,userid=str(text2image_data["userid"])))
                     )
                 # print(session.local.client_id,text2image_data['userid'])
                 if str(session.local.client_id)==str(text2image_data["userid"]) :

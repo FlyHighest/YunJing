@@ -491,6 +491,17 @@ class RClient:
         else:
             return False 
 
+    def get_bonus_pro_time(self,userid):
+        # hour
+        b_time = self.r.get(f"bonusprotime:{userid}") or 0 
+        return float(b_time)
+    
+    def set_bonus_pro_time(self,userid,b_time):
+        self.r.set(f"bonusprotime:{userid}",b_time)
+
+    def add_bonus_pro_time(self,userid,b_time):
+        current_b_time = self.get_bonus_pro_time(userid)
+        self.set_bonus_pro_time(userid,float(b_time)+float(current_b_time))
 
     def add_pro_time(self, userid, timevalue=2678400):
         current = self.r.get(f"protime:{userid}")
@@ -498,7 +509,7 @@ class RClient:
             protime =  time.time()
         else:
             protime = max(int(current), time.time())
-            
+
         protime= int(protime)
         endtime = int( protime + timevalue )
         self.r.set(f"protime:{userid}",str(endtime))

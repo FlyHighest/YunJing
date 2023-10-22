@@ -473,7 +473,26 @@ def popup_keyinput():
         put_input("prokey_in",label="激活码")
         put_button("确认",onclick=submit_prokey)
 
-    
+def popup_bonusget():
+    def submit_protime():
+        input_time = pin['probonus_get_input']
+        try:
+            input_time = float(input_time)
+            assert input_time > 0
+            bonus_hour = session.local.rclient.get_bonus_pro_time(session.local.client_id)
+            assert input_time < bonus_hour
+        except:
+            toast("添加失败，请检查是否有可用时长",color="warn")
+
+        session.local.rclient.add_pro_time(session.local.client_id, input_time*3600)
+        session.local.rclient.set_bonus_pro_time(session.local.client_id,bonus_hour-input_time)
+        toast("已增加专业版功能时长",color="success")
+        
+        close_popup()
+    with popup("提取奖励时长"):
+        put_input("probonus_get_input",label="获取时长（小时）")
+        put_button("确认",onclick=submit_protime)
+
 def update_user_config():
     config = {} 
     config["colnum"] = int(pin['config_colnum'])
@@ -528,12 +547,18 @@ def page_account():
         with use_scope("login"):
             put_text("您已成功登录，欢迎您，"+username)
             put_text("专业版功能到期时间: "+session.local.rclient.get_pro_time_show(session.local.client_id))
-            put_button("激活专业版",onclick=popup_keyinput,color="success")
+            put_text("专业版奖励时长剩余: "+session.local.rclient.get_bonus_pro_time(session.local.client_id)+"小时")
+            
+            put_row([
+                put_button("提交激活码",onclick=popup_keyinput,color="success"),
+                put_button("提取奖励时长",onclick=popup_bonusget,color="success"),
+
+            ])
             put_markdown("[激活码获取链接](https://afdian.net/a/terryzhang)")
             # put_text("注册用户的历史记录保留7天，数量提升至200张；发布作品时会关联到您的用户名")
             sharerate,num_gen,num_pub = session.local.rclient.get_sharerate(session.local.client_id)
             put_text("您当前分享值为: {:.2f}% (生成数{} | 分享数{})".format(sharerate,num_gen,num_pub))
-            put_text("（分享值小于10%，生成速度将受限; 生成数量低于100时不计算分享值）")
+            put_text("(分享值小于10%，生成速度将受限; 生成数量低于100时不计算分享值。分享的图像如被选为高质量精选图像，则自动获取1小时专业版奖励时长。)")
             put_button("退出登录",onclick=revoke_auth)
 
         with use_scope("userconfig"):
