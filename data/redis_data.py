@@ -346,6 +346,9 @@ class RClient:
             traceback.print_exc()
             return False
 
+    def is_in_gallery_hq(self,genid):
+        return self.r.sismember("gallery-hq",genid)
+
     def record_highquality_gallery(self,genid):
         try:
             self.r.sadd("gallery-hq",genid)

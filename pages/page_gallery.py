@@ -70,10 +70,8 @@ def show_image_information_window(img_url,genid, fuke_func=None):
             with use_scope("popup_image_disp"):
                 put_image(img_url)
 
-                put_row([
-                    put_scope("popup_user"),
-                    put_scope("popup_likes")
-                ]).style("margin:2%")
+                put_scope("popup_user"),
+                
                 buttons = []
                 if not session.local.client_id.startswith("@"): 
                     buttons.extend( [
@@ -111,24 +109,24 @@ def show_image_information_window(img_url,genid, fuke_func=None):
                 put_text("日期: "+text2image_data["gentime"].split(" ")[0])
 
 
-            with use_scope("popup_likes"):
-                # 登录否？
-                like_num = session.local.rclient.get_likenum(generation_id)
+            # with use_scope("popup_likes"):
+            #     # 登录否？
+            #     like_num = session.local.rclient.get_likenum(generation_id)
 
-                if session.local.client_id.startswith("@"):
+            #     if session.local.client_id.startswith("@"):
                     
-                    put_html(thumbup_false).onclick(lambda: toast("请先登录",duration=1)),
-                    put_text(like_num)
+            #         put_html(thumbup_false).onclick(lambda: toast("请先登录",duration=1)),
+            #         put_text(like_num)
                 
-                else:
-                    userid = session.local.client_id
-                    if session.local.rclient.check_likes(userid,generation_id):
-                        put_html(thumbup_true).onclick(partial(popup_cancel_like,userid=userid,genid=generation_id)),
-                        put_text(like_num)
+            #     else:
+            #         userid = session.local.client_id
+            #         if session.local.rclient.check_likes(userid,generation_id):
+            #             put_html(thumbup_true).onclick(partial(popup_cancel_like,userid=userid,genid=generation_id)),
+            #             put_text(like_num)
                         
-                    else:
-                        put_html(thumbup_false).onclick(partial(popup_create_like,userid=userid,genid=generation_id)),
-                        put_text(like_num)
+            #         else:
+            #             put_html(thumbup_false).onclick(partial(popup_create_like,userid=userid,genid=generation_id)),
+            #             put_text(like_num)
                         
 
             with use_scope("popup_image_info"):
@@ -216,6 +214,10 @@ def load_more_images_on_gallery(val=None):
             # find col
             short_ind = np.argmin(session.local.col_height)
             session.local.col_height[short_ind] += height * (256 / width)
+            if session.local.rclient.is_in_gallery_hq(genid):
+                goodlabel="-good"
+            else:
+                goodlabel =""
             with use_scope("img-col"+str(short_ind)):
                 if "storage." in img_url:
                     img_url_md = img_url.replace(".jpeg",".md.jpeg")
@@ -224,7 +226,9 @@ def load_more_images_on_gallery(val=None):
                     img_url = img_url
                     img_url = get_presigned_url_tencent(img_url)
                     img_url_md = get_presigned_url_tencent(img_url_md)
-                put_image(img_url_md).onclick(
+                put_html(
+                    f'<div class="img-container{goodlabel}"> <img src="{img_url_md}" alt="" style=""> </div>'
+                ).onclick(
                     partial(
                         show_image_information_window, 
                         img_url=img_url, genid=genid,

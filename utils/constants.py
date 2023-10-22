@@ -112,7 +112,22 @@ img2img_param_error = "图像引导参数错误，请修改后重试"
 has_published_text = "图像已发布"
 not_pro_user = "您还不是专业版用户，无法使用该功能😭"
 css = """
+.img-container {
+    position: relative;
+    display: inline-block;
+}
+.img-container-good {
+    position: relative;
+    display: inline-block;
+}
 
+.img-container-good::before {
+    content: "⭐️";     
+    position: absolute;
+    top: 0.5vw;         
+    left: 0.5vw;        
+    font-size: 2vw;  
+}
 .rating {
   overflow: hidden;
   vertical-align: bottom;
