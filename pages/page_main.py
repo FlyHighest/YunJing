@@ -140,7 +140,7 @@ def task_post_image_gen(callback):
                 image_generation_data['type']="image2image"
 
 
-            image_gen_id = time.strftime("%Y%m%d")+"+"+hashlib.sha1(json.dumps(image_generation_data).encode('utf-8')).hexdigest()
+            image_gen_id = time.strftime("%Y%m%d")+"T"+hashlib.sha1(json.dumps(image_generation_data).encode('utf-8')).hexdigest()
             output_img_url, nsfw = session.local.rclient.check_genid_in_imagetable(image_gen_id)
             if output_img_url is None:
                 image_generation_data['gen_id'] = image_gen_id
