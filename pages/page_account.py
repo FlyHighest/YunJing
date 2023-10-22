@@ -483,12 +483,14 @@ def popup_bonusget():
             assert input_time < bonus_hour
         except:
             toast("添加失败，请检查是否有可用时长",color="warn")
+            close_popup()
+            return 
 
         session.local.rclient.add_pro_time(session.local.client_id, input_time*3600)
         session.local.rclient.set_bonus_pro_time(session.local.client_id,bonus_hour-input_time)
         toast("已增加专业版功能时长",color="success")
-        
         close_popup()
+        
     with popup("提取奖励时长"):
         put_input("probonus_get_input",label="获取时长（小时）")
         put_button("确认",onclick=submit_protime)
