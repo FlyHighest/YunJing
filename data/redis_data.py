@@ -319,7 +319,7 @@ class RClient:
             userid = image_record["userid"]
             ret["user"] = self.r.hget(f"user:{userid}","username")
             ret["userid"] = userid 
-            ret['published'] = image_record["published"] # TODO: possibly unused
+            ret['published'] = True if int(image_record["published"])==1 else False # TODO: possibly unused
             return ret 
         except:
             traceback.print_exc()
