@@ -346,7 +346,10 @@ def page_gallery():
             session.local.image_list = session.local.rclient.query_best_images()
     elif param_username == "all" and 6 == session.local.rclient.get_user_level(session.local.client_id):
         date = get_query("date")
-        session.local.image_list = session.local.rclient.query_all_images(date)
+        show_hq = get_query("showhq") or False 
+        if show_hq=="True":
+            show_hq = True
+        session.local.image_list = session.local.rclient.query_all_images(date,show_hq)
     else:
         session.local.image_list = session.local.rclient.query_best_images()
     
