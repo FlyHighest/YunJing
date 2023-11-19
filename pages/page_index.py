@@ -23,7 +23,7 @@ def page_index():
 
 十分感谢9月份以来付费支持本站的用户！十分感谢从建站以来提出宝贵意见和建议的用户！
 
-网站前后端和模型侧源码:
+网站源码:
 - https://github.com/FlyHighest/mosec-server
 - https://github.com/FlyHighest/YunJing
                  
